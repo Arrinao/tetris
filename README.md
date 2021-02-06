@@ -1,2 +1,2 @@
-# Tetris
+# tetris
 A tetris project
