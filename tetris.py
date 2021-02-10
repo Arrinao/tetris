@@ -7,9 +7,7 @@ Created on Mon Jan 25 03:36:28 2021
 import sys
 import pathlib
 import random
-import tkinter
-
-root = tkinter.Tk()
+import time
 
 height=20
 width=12
@@ -17,16 +15,7 @@ width=12
 x = int(width/2)
 y = 0
 
-
-def shape_mover(shape_coords):
-    root.after(500)
-    for shape in shape_coords:
-        print (f'Delete {shape[0]} and {shape[1]}.')
-    shape_coords = [(x, y+1) for x, y in shape_coords]
-    for shape in shape_coords:
-        print(shape[0], shape[1])
-    shape_mover(shape_coords)
-
+landed_shapes = [(6, 20)]
        
 def shapes():
     shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
@@ -65,9 +54,19 @@ def shapes():
         for block_x, block_y in shape_coords:
              print(block_x, block_y)
         shape_mover(shape_coords)
-    
-shapes()
 
+def shape_mover(shape_coords):
+    time.sleep(0.5)
+    for shape in shape_coords:
+        print (f'Delete {shape[0]} and {shape[1]}.')
+    if [(x, y+1) for x, y in shape_coords] not in landed_shapes: 
+        shape_coords = [(x, y+1) for x, y in shape_coords]
+        for shape in shape_coords:
+            print(shape[0], shape[1])
+        shape_mover(shape_coords)
+
+
+shapes()
 
        
 root.mainloop()
