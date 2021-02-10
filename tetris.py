@@ -58,16 +58,21 @@ def shapes():
 def shape_mover(shape_coords):
     time.sleep(0.5)
     for shape in shape_coords:
-        print (f'Delete {shape[0]} and {shape[1]}.')
+        print (f'Deleted at {shape[0]}, {shape[1]}.')
     if any((x, y-1) in shape_coords for (x, y) in landed_shapes):
-        landed_shapes.append(shape_coords)
-        print(landed_shapes)
+        for coord in shape_coords:
+            landed_shapes.append(coord)
         shapes()
+        return
     else: 
         shape_coords = [(x, y+1) for x, y in shape_coords]
         for shape in shape_coords:
-            print(shape[0], shape[1])
+            print(f'Spawned at {shape[0]}, {shape[1]}.')
         shape_mover(shape_coords)
+
+
+
+
 
 
 shapes()
