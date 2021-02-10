@@ -15,7 +15,7 @@ width=12
 x = int(width/2)
 y = 0
 
-landed_shapes = [(6, 20)]
+landed_shapes = [(6, 10)]
        
 def shapes():
     shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
@@ -59,7 +59,11 @@ def shape_mover(shape_coords):
     time.sleep(0.5)
     for shape in shape_coords:
         print (f'Delete {shape[0]} and {shape[1]}.')
-    if [(x, y+1) for x, y in shape_coords] not in landed_shapes: 
+    if any((x, y-1) in shape_coords for (x, y) in landed_shapes):
+        landed_shapes.append(shape_coords)
+        print(landed_shapes)
+        shapes()
+    else: 
         shape_coords = [(x, y+1) for x, y in shape_coords]
         for shape in shape_coords:
             print(shape[0], shape[1])
@@ -67,7 +71,4 @@ def shape_mover(shape_coords):
 
 
 shapes()
-
-       
-root.mainloop()
 
