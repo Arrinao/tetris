@@ -8,15 +8,31 @@ import sys
 import pathlib
 import random
 import time
+import tkinter
+from tkinter import ttk
 
-height=20
-width=12
+game_speed = 0.5
 
-x = int(width/2)
+class Board:
+    height = 20
+    width = 12
+    black = (0, 0, 0)
+    rectangle = 25, 25
+
+    def __init__(self, speed):
+        self.speed = speed
+
+    root = tkinter.Tk()
+    root.resizable(False, False)
+
+
+tetris_board = Board(game_speed)
+
+x = int(tetris_board.width/2)
 y = 0
 
 landed_shapes = [(6, 10)]
-       
+
 def shapes():
     shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
     if shape_choice == 'L':
@@ -28,7 +44,7 @@ def shapes():
         shape_coords = [(x-1, y+1), (x-1, y), (x, y), (x+1, y)]
         for block_x, block_y in shape_coords:
              print(block_x, block_y)
-        shape_mover(shape_coords)     
+        shape_mover(shape_coords)
     elif shape_choice == 'O':
         shape_coords = [(x-1, y), (x, y), (x-1, y+1), (x, y+1)]
         for block_x, block_y in shape_coords:
@@ -56,19 +72,19 @@ def shapes():
         shape_mover(shape_coords)
 
 def shape_mover(shape_coords):
-    time.sleep(0.5)
+    time.sleep(game_speed)
     for shape in shape_coords:
         print (f'Delete {shape[0]} and {shape[1]}.')
     if any((x, y-1) in shape_coords for (x, y) in landed_shapes):
-        landed_shapes.append(shape_coords)
+        for coord in shape_coords:
+            landed_shapes.append(coord)
         print(landed_shapes)
-        shapes()
-    else: 
+        #shapes()
+    else:
         shape_coords = [(x, y+1) for x, y in shape_coords]
         for shape in shape_coords:
             print(shape[0], shape[1])
         shape_mover(shape_coords)
 
-
+#tetris_board.root.mainloop()
 shapes()
-
