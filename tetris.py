@@ -11,21 +11,29 @@ import time
 import tkinter
 from tkinter import ttk
 
-game_speed = 0.5
+game_speed = 0.
+rec_x = rec_y = 25
 
-class TetrisGUI:
-    height = 20
-    width = 12
-    rectangle = 25, 25
-
-    def __init__(self, speed):
-        self.speed = speed
+def make_gui():
+    root = tkinter.Tk()
+    root.resizable(False, False)
 
     root = tkinter.Tk()
     root.resizable(False, False)
 
     tetris_canvas = tkinter.Canvas(root, width=400, height=800, background='black')
     tetris_canvas.grid()
+
+    tetris_gui = TetrisGUI(game_speed, root)
+    tetris_gui.draw_board()
+    tetris_gui.root.mainloop()
+
+
+
+class TetrisGUI:
+    def __init__(self, speed, canvas):
+        self.speed = speed
+        self.canvas = canvas
 
     def draw_board(self):
         """
@@ -42,8 +50,6 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
-
-tetris_gui = TetrisGUI(game_speed)
 
 x = int(tetris_gui.width/2)
 y = 0
@@ -103,6 +109,5 @@ def shape_mover(shape_coords):
             print(shape[0], shape[1])
         shape_mover(shape_coords)
 
-tetris_gui.root.mainloop()
-tetris_gui.draw_board()
+
 #shapes()
