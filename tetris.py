@@ -54,39 +54,22 @@ def shapes():
     shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
     if shape_choice == 'L':
         shape_coords = [(x-1, y), (x,y), (x+1, y), (x+1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'L_rev':
         shape_coords = [(x-1, y+1), (x-1, y), (x, y), (x+1, y)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'O':
         shape_coords = [(x-1, y), (x, y), (x-1, y+1), (x, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'I':
         shape_coords = [(x-2, y), (x-1, y), (x, y), (x+1, y)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'E':
         shape_coords = [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'Z':
         shape_coords = [(x-1, y), (x, y), (x, y+1), (x-1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'Z_rev':
         shape_coords = [(x+1, y), (x, y), (x, y+1), (x-1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
+
+    for block_x, block_y in shape_coords:
+        print(block_x, block_y)
+    shape_mover(shape_coords)
 
 def shape_mover(shape_coords):
     time.sleep(game_speed)
