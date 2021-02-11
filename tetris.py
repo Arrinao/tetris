@@ -11,32 +11,50 @@ import time
 import tkinter
 from tkinter import ttk
 
-game_speed = 0.5
+game_speed = 0.
+rec_x = rec_y = 25
 
-class Board:
-    height = 20
-    width = 12
-    black = (0, 0, 0)
-    rectangle = 25, 25
-
-    def __init__(self, speed):
-        self.speed = speed
+def make_gui():
+    root = tkinter.Tk()
+    root.resizable(False, False)
 
     root = tkinter.Tk()
     root.resizable(False, False)
-    root.geometry("400x800")
-    frame = ttk.Frame(root)
-    frame.pack(fill="both", expand=True)
+
+    tetris_canvas = tkinter.Canvas(root, width=400, height=800, background='black')
+    tetris_canvas.grid()
+
+    tetris_gui = TetrisGUI(game_speed, root)
+    tetris_gui.draw_board()
+    tetris_gui.root.mainloop()
 
 
-tetris_board = Board(game_speed)
 
-height = 20
-width = 12
-x = int(tetris_board.width/2)
+class TetrisGUI:
+    def __init__(self, speed, canvas):
+        self.speed = speed
+        self.canvas = canvas
+
+    def draw_board(self):
+        """
+        Draws the board of rectangles on top of the canvas
+        """
+        print("inside draw_board()")
+        for x in range(10):
+            for y in range(20):
+                tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
+
+    def draw_shape():
+
+        """
+        Draws the different shapes on the board
+        """
+
+
+x = int(tetris_gui.width/2)
 y = 0
 
-landed_shapes = []
+landed_shapes = [(6, 10)]
 
 def shapes():
     shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
@@ -66,14 +84,12 @@ def shape_mover(shape_coords):
         for coord in shape_coords:
             landed_shapes.append(coord)
         print(landed_shapes)
-        return shapes()
+        #shapes()
     else:
         shape_coords = [(x, y+1) for x, y in shape_coords]
         for shape in shape_coords:
-            print(f'Spawned at {shape[0]}, {shape[1]}.')
+            print(shape[0], shape[1])
         shape_mover(shape_coords)
 
 
-
-#tetris_board.root.mainloop()
-shapes()
+#shapes()
