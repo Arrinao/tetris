@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 25 03:36:28 2021
-
-@author: Martin
-"""
 import sys
 import pathlib
 import random
