@@ -7,6 +7,8 @@ from tkinter import ttk
 
 game_speed = 0.
 rec_x = rec_y = 25
+width=10
+height=20
 
 def make_gui():
     root = tkinter.Tk()
@@ -24,28 +26,28 @@ def make_gui():
 
 
 
-class TetrisGUI:
-    def __init__(self, speed, canvas):
-        self.speed = speed
-        self.canvas = canvas
-
-    def draw_board(self):
-        """
-        Draws the board of rectangles on top of the canvas
-        """
-        print("inside draw_board()")
-        for x in range(10):
-            for y in range(20):
-                tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
-
-    def draw_shape():
-
-        """
-        Draws the different shapes on the board
-        """
-
-
-x = int(tetris_gui.width/2)
+# class TetrisGUI:
+#     def __init__(self, speed, canvas):
+#         self.speed = speed
+#         self.canvas = canvas
+#
+#     def draw_board(self):
+#         """
+#         Draws the board of rectangles on top of the canvas
+#         """
+#         print("inside draw_board()")
+#         for x in range(10):
+#             for y in range(20):
+#                 tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
+#
+#     def draw_shape():
+#
+#         """
+#         Draws the different shapes on the board
+#         """
+#
+#
+x = int(width/2)
 y = 0
 
 landed_shapes = [(6, 10)]
