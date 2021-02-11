@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 25 03:36:28 2021
-
-@author: Martin
-"""
 import sys
 import pathlib
 import random
@@ -11,8 +5,10 @@ import time
 import tkinter
 from tkinter import ttk
 
-game_speed = 0.
+game_speed = 0.5
 rec_x = rec_y = 25
+width = 10
+height = 20
 
 def make_gui():
     root = tkinter.Tk()
@@ -30,75 +26,55 @@ def make_gui():
 
 
 
-class TetrisGUI:
-    def __init__(self, speed, canvas):
-        self.speed = speed
-        self.canvas = canvas
+# class TetrisGUI:
+#     def __init__(self, speed, canvas):
+#         self.speed = speed
+#         self.canvas = canvas
+#
+#     def draw_board(self):
+#         """
+#         Draws the board of rectangles on top of the canvas
+#         """
+#         print("inside draw_board()")
+#         for x in range(10):
+#             for y in range(20):
+#                 tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
+#
+#     def draw_shape():
+#
+#         """
+#         Draws the different shapes on the board
+#         """
 
-    def draw_board(self):
-        """
-        Draws the board of rectangles on top of the canvas
-        """
-        print("inside draw_board()")
-        for x in range(10):
-            for y in range(20):
-                tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
 
-    def draw_shape():
-
-        """
-        Draws the different shapes on the board
-        """
-
-
-x = int(tetris_gui.width/2)
+x = int(width/2)
 y = 0
 
 landed_shapes = [(6, 10)]
 
+
 def shapes():
-    shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
-    if shape_choice == 'L':
-        shape_coords = [(x-1, y), (x,y), (x+1, y), (x+1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
-    elif shape_choice == 'L_rev':
-        shape_coords = [(x-1, y+1), (x-1, y), (x, y), (x+1, y)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
-    elif shape_choice == 'O':
-        shape_coords = [(x-1, y), (x, y), (x-1, y+1), (x, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
-    elif shape_choice == 'I':
-        shape_coords = [(x-2, y), (x-1, y), (x, y), (x+1, y)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
-    elif shape_choice == 'E':
-        shape_coords = [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
-    elif shape_choice == 'Z':
-        shape_coords = [(x-1, y), (x, y), (x, y+1), (x-1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
-    elif shape_choice == 'Z_rev':
-        shape_coords = [(x+1, y), (x, y), (x, y+1), (x-1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
+    shapes = {
+    'L': [(x-1, y), (x,y), (x+1, y), (x+1, y+1)],
+    'L_rev': [(x-1, y+1), (x-1, y), (x, y), (x+1, y)],
+    'O': [(x-1, y), (x, y), (x-1, y+1), (x, y+1)],
+    'E': [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)],
+    'Z': [(x-1, y), (x, y), (x, y+1), (x-1, y+1)],
+    'Z_rev': [(x+1, y), (x, y), (x, y+1), (x-1, y+1)],
+    'I': [(x-2, y), (x-1, y), (x, y), (x+1, y)]
+    }
+    shape_choice = random.choice(list(shapes.keys()))
+
+    for block_x, block_y in shapes[shape_choice]:
+        print(block_x, block_y)
+        shape_mover(shapes[shape_choice])
+
 
 def shape_mover(shape_coords):
     time.sleep(game_speed)
     for shape in shape_coords:
-        print (f'Delete {shape[0]} and {shape[1]}.')
-    if any((x, y-1) in shape_coords for (x, y) in landed_shapes):
+        print (f'Deleted at {shape[0]}, {shape[1]}.')
+    if any((x, y+1) in landed_shapes for (x, y) in shape_coords) or any(y+1 == height for (x, y) in shape_coords):
         for coord in shape_coords:
             landed_shapes.append(coord)
         print(landed_shapes)
@@ -110,4 +86,4 @@ def shape_mover(shape_coords):
         shape_mover(shape_coords)
 
 
-#shapes()
+shapes()
