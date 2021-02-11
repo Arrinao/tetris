@@ -42,45 +42,27 @@ def shapes():
     shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
     if shape_choice == 'L':
         shape_coords = [(x-1, y), (x,y), (x+1, y), (x+1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'L_rev':
         shape_coords = [(x-1, y+1), (x-1, y), (x, y), (x+1, y)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'O':
         shape_coords = [(x-1, y), (x, y), (x-1, y+1), (x, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'I':
         shape_coords = [(x-2, y), (x-1, y), (x, y), (x+1, y)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'E':
         shape_coords = [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'Z':
         shape_coords = [(x-1, y), (x, y), (x, y+1), (x-1, y+1)]
-        for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-        shape_mover(shape_coords)
     elif shape_choice == 'Z_rev':
         shape_coords = [(x+1, y), (x, y), (x, y+1), (x-1, y+1)]
-        for block_x, block_y in shape_coords:
+    for block_x, block_y in shape_coords:
              print(block_x, block_y)
-        shape_mover(shape_coords)
+    shape_mover(shape_coords)
 
 def shape_mover(shape_coords):
     time.sleep(game_speed)
     for shape in shape_coords:
         print (f'Deleted at {shape[0]}, {shape[1]}.')
-    if any((x, y-1) in shape_coords for (x, y) in landed_shapes) or any((y-1) == height for (x, y) in shape_coords):
+    if any((x, y+1) in landed_shapes for (x, y) in shape_coords) or any(y+1 == height for (x, y) in shape_coords):
         for coord in shape_coords:
             landed_shapes.append(coord)
         print(landed_shapes)
