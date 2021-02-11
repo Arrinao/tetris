@@ -24,6 +24,9 @@ class Board:
 
     root = tkinter.Tk()
     root.resizable(False, False)
+    root.geometry("400x800")
+    frame = ttk.Frame(root)
+    frame.pack(fill="both", expand=True)
 
 
 tetris_board = Board(game_speed)
@@ -85,5 +88,5 @@ def shape_mover(shape_coords):
             print(f'Spawned at {shape[0]}, {shape[1]}.')
         shape_mover(shape_coords)
 
-#tetris_board.root.mainloop()
-shapes()
+tetris_board.root.mainloop()
+#shapes()
