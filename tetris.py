@@ -28,6 +28,9 @@ def make_gui():
     tetris_gui.draw_board()
     tetris_gui.root.mainloop()
 
+    root.bind('<Left>', left)
+    root.bind('<Right>', right)
+
 
 
 class TetrisGUI:
@@ -91,5 +94,7 @@ def shape_mover(shape_coords):
             print(shape[0], shape[1])
         shape_mover(shape_coords)
 
+
+    
 
 #shapes()
