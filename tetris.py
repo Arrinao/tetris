@@ -58,19 +58,19 @@ landed_shapes = [(6, 10)]
 
 def shapes():
     shapes = {
-    'L': [(x-1, y), (x,y), (x+1, y), (x+1, y+1)],
-    'L_rev': [(x-1, y+1), (x-1, y), (x, y), (x+1, y)],
-    'O': [(x-1, y), (x, y), (x-1, y+1), (x, y+1)],
-    'E': [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)],
-    'Z': [(x-1, y), (x, y), (x, y+1), (x-1, y+1)],
-    'Z_rev': [(x+1, y), (x, y), (x, y+1), (x-1, y+1)],
-    'I': [(x-2, y), (x-1, y), (x, y), (x+1, y)]
+        'L': [(x-1, y), (x,y), (x+1, y), (x+1, y+1)],
+        'L_rev': [(x-1, y+1), (x-1, y), (x, y), (x+1, y)],
+        'O': [(x-1, y), (x, y), (x-1, y+1), (x, y+1)],
+        'E': [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)],
+        'Z': [(x-1, y), (x, y), (x, y+1), (x-1, y+1)],
+        'Z_rev': [(x+1, y), (x, y), (x, y+1), (x-1, y+1)],
+        'I': [(x-2, y), (x-1, y), (x, y), (x+1, y)]
     }
     shape_choice = random.choice(list(shapes.keys()))
 
     for block_x, block_y in shapes[shape_choice]:
         print(block_x, block_y)
-        shape_mover(shapes[shape_choice])
+    shape_mover(shapes[shape_choice])
 
 
 def shape_mover(shape_coords):
