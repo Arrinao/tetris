@@ -109,21 +109,17 @@ class TetrisGame:
         if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
             y + 1 == height for (x, y) in current_block
         ):
+            # TODO: figure out what this code is supposed to do
             for coord in block_coords:
-                landed_points.append(coord)
+                self.landed_points.append(coord)
             block_coords.pop(0)
             print(self.landed_points)
-            new_block()
+            self.new_block()
         else:
             current_block = [(x, y + 1) for x, y in current_block]
             for block in current_block:
                 print(block[0], block[1])
                 self.block_mover(current_block)
 
-root.bind("<Left>", user_input_left)
-root.bind("<Right>", user_input_right)
 
-
-# tetris_gui.draw_board()
-root.mainloop()
-TetrisGame.new_block()
+run_gui()
