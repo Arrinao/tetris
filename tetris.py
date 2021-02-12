@@ -79,8 +79,8 @@ y = 0
 
 
 class TetrisGame:
-    def __init__(self):
-        self.landed_points = [(6, 10)]
+    def __init__(self, landed_blocks):
+        self.landed_blocks = [(6, 10)]
 
     def new_block(self):
         blocks = {
@@ -109,11 +109,9 @@ class TetrisGame:
         if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
             y + 1 == height for (x, y) in current_block
         ):
-            # TODO: figure out what this code is supposed to do
-            for coord in block_coords:
-                self.landed_points.append(coord)
-            block_coords.pop(0)
-            print(self.landed_points)
+            for coord in current_block:
+                self.landed_blocks.append(coord)
+            print(self.landed_blocks)
             self.new_block()
         else:
             current_block = [(x, y + 1) for x, y in current_block]
