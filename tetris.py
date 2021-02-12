@@ -65,7 +65,7 @@ class TetrisGUI:
 
     def user_input_left(self, event):
         print("Going left!")
-        for (x, y) in block_coords:
+        for (x, y) in TetrisGame.current_block:
             return (x - 1, y)
 
     def user_input_right(self, event):
@@ -92,21 +92,22 @@ class TetrisGame:
             "Z_rev": [(x + 1, y), (x, y), (x, y + 1), (x - 1, y + 1)],
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
-        upcoming_block = random.choice(list(blocks.values()))
-        if len(block_coords) > 1:
-            block_coords = random.choice(list(blocks.values()))
+        self.next_block = random.choice(list(blocks.values()))
+        if len(self.landed_blocks) == 0:
+            self.current_block = self.next_block
         else:
-            block_coords = upcoming_block
+            self.current_block = self.upcoming_block
+        self.upcoming_block = random.choice(list(blocks.values()))
 
-        print(block_coords)
-        block_mover(block_coords)
+        print(self.current_block)
+        self.block_mover(self.current_block)
 
-    def block_mover(self, block_coords):
+    def block_mover(self, current_block):
         time.sleep(0.5)
-        for block in block_coords:
+        for block in current_block:
             print(f"Deleted at {block[0]}, {block[1]}.")
-        if any((x, y + 1) in landed_points for (x, y) in block_coords) or any(
-            y + 1 == height for (x, y) in block_coords
+        if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
+            y + 1 == height for (x, y) in current_block
         ):
             for coord in block_coords:
                 landed_points.append(coord)
@@ -114,11 +115,15 @@ class TetrisGame:
             print(self.landed_points)
             new_block()
         else:
-            block_coords = [(x, y + 1) for x, y in block_coords]
-            for block in block_coords:
+            current_block = [(x, y + 1) for x, y in current_block]
+            for block in current_block:
                 print(block[0], block[1])
-                block_mover(block_coords)
+                self.block_mover(current_block)
+
+root.bind("<Left>", user_input_left)
+root.bind("<Right>", user_input_right)
 
 
-run_gui()
-# new_block()
+# tetris_gui.draw_board()
+root.mainloop()
+TetrisGame.new_block()
