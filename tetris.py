@@ -16,11 +16,22 @@ GREEN = ("#05ff00")
 GREY = ("#666666")
 D_GREY = ("#383838")
 
-root = tkinter.Tk()
-root.resizable(False, False)
+def run_gui():
 
-tetris_canvas = tkinter.Canvas(root, width=rec_x * 10, height=rec_x * 20)
-tetris_canvas.grid()
+    root = tkinter.Tk()
+    root.resizable(False, False)
+
+    tetris_canvas = tkinter.Canvas(root, width=rec_x * 10, height=rec_x * 20)
+    tetris_canvas.grid()
+
+    tetris_gui = TetrisGUI(game_speed, tetris_canvas)
+
+    root.bind("<Left>", tetris_gui.user_input_left)
+    root.bind("<Right>", tetris_gui.user_input_right)
+
+    tetris_gui.draw_board()
+    root.mainloop()
+
 
 
 class TetrisGUI:
@@ -28,6 +39,8 @@ class TetrisGUI:
         self.speed = speed
         self.canvas = canvas
         self.rect_size = 25
+        self.tetris_game = TetrisGame()
+
 
     def draw_board(self):
         """
@@ -37,7 +50,7 @@ class TetrisGUI:
         for x in range(10):
             y_gap = 2
             for y in range(20):
-                tetris_canvas.create_rectangle(
+                self.canvas.create_rectangle(
                 x_gap, y_gap, x_gap + rec_x, y_gap + rec_y,
                 fill=D_GREY, outline=GREY)
                 y_gap += 35
@@ -49,18 +62,26 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
+    def user_input_left(self, event):
+        print("Going left!")
+        for (x, y) in block_coords:
+            return (x - 1, y)
 
-tetris_gui = TetrisGUI(game_speed, root)
+    def user_input_right(self, event):
+        print("Going right!")
+        for (x, y) in block_coords:
+            return (x + 1, y)
+
 
 x = int(width / 2)
 y = 0
 
 
 class TetrisGame:
-    def __init__(self, landed_points):
+    def __init__(self):
         self.landed_points = [(6, 10)]
 
-    def blocks(self):
+    def new_block(self):
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -90,28 +111,13 @@ class TetrisGame:
                 landed_points.append(coord)
             block_coords.pop(0)
             print(self.landed_points)
-            blocks()
+            new_block()
         else:
             block_coords = [(x, y + 1) for x, y in block_coords]
             for block in block_coords:
                 print(block[0], block[1])
                 block_mover(block_coords)
 
-    def user_input_left(self, event):
-        print("Going left!")
-        for (x, y) in block_coords:
-            return (x - 1, y)
 
-    def user_input_right(self, event):
-        print("Going right!")
-        for (x, y) in block_coords:
-            return (x + 1, y)
-
-
-root.bind("<Left>", user_input_left)
-root.bind("<Right>", user_input_right)
-
-
-# tetris_gui.draw_board()
-root.mainloop()
-blocks()
+run_gui()
+#new_block()
