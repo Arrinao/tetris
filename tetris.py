@@ -6,19 +6,20 @@ import tkinter
 from tkinter import ttk
 
 game_speed = 0.5
-rec_x = rec_y = 25
+rec_x = rec_y = 35
 width = 10
 height = 20
-BLACK = (0, 0, 0)
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-
+BLACK = ("#000000")
+BLUE = ("#0029ff")
+RED = ("#ff1700")
+GREEN = ("#05ff00")
+GREY = ("#666666")
+D_GREY = ("#383838")
 
 root = tkinter.Tk()
 root.resizable(False, False)
 
-tetris_canvas = tkinter.Canvas(root, width=400, height=800, background='black')
+tetris_canvas = tkinter.Canvas(root, width=rec_x * 10, height=rec_x * 20)
 tetris_canvas.grid()
 
 class TetrisGUI:
@@ -31,15 +32,18 @@ class TetrisGUI:
         """
         Draws the board of rectangles on top of the canvas
         """
-        x_gap = 25
-        y_gap = 25
+        x_gap = 2
         for x in range(10):
+            y_gap = 2
             for y in range(20):
-                y_gap += 25
-                tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
-            x_gap += 25
+                tetris_canvas.create_rectangle(
+                x_gap, y_gap, x_gap + rec_x, y_gap + rec_y,
+                fill=D_GREY, outline=GREY)
+                y_gap += 35
 
-    def draw_shape():
+            x_gap += 35
+
+    def draw_shape(self, coord_x, coord_y):
 
         """
         Draws the different shapes on the board
@@ -103,6 +107,6 @@ root.bind('<Left>', user_input_left)
 root.bind('<Right>', user_input_right)
 
 
-#shapes()
-#tetris_gui.draw_board()
+# shapes()
+tetris_gui.draw_board()
 root.mainloop()
