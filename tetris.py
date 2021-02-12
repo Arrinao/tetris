@@ -9,12 +9,12 @@ game_speed = 0.5
 rec_x = rec_y = 35
 width = 10
 height = 20
-BLACK = ("#000000")
-BLUE = ("#0029ff")
-RED = ("#ff1700")
-GREEN = ("#05ff00")
-GREY = ("#666666")
-D_GREY = ("#383838")
+BLACK = "#000000"
+BLUE = "#0029ff"
+RED = "#ff1700"
+GREEN = "#05ff00"
+GREY = "#666666"
+D_GREY = "#383838"
 
 root = tkinter.Tk()
 root.resizable(False, False)
@@ -38,8 +38,13 @@ class TetrisGUI:
             y_gap = 2
             for y in range(20):
                 tetris_canvas.create_rectangle(
-                x_gap, y_gap, x_gap + rec_x, y_gap + rec_y,
-                fill=D_GREY, outline=GREY)
+                    x_gap,
+                    y_gap,
+                    x_gap + rec_x,
+                    y_gap + rec_y,
+                    fill=D_GREY,
+                    outline=GREY,
+                )
                 y_gap += 35
 
             x_gap += 35
@@ -49,6 +54,16 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
+    def user_input_left(self, event):
+        print("Going left!")
+        for (x, y) in TetrisGame.current_block:
+            return (x - 1, y)
+
+    def user_input_right(self, event):
+        print("Going right!")
+        for (x, y) in TetrisGame.current_block:
+            return (x + 1, y)
+
 
 tetris_gui = TetrisGUI(game_speed, root)
 
@@ -57,10 +72,10 @@ y = 0
 
 
 class TetrisGame:
-    def __init__(self, landed_points):
-        self.landed_points = [(6, 10)]
+    def __init__(self, landed_blocks):
+        self.landed_blocks = [(6, 10)]
 
-    def blocks(self):
+    def new_block(self):
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -70,43 +85,32 @@ class TetrisGame:
             "Z_rev": [(x + 1, y), (x, y), (x, y + 1), (x - 1, y + 1)],
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
-        upcoming_block = random.choice(list(blocks.values()))
-        if len(block_coords) > 1:
-            block_coords = random.choice(list(blocks.values()))
+        self.next_block = random.choice(list(blocks.values()))
+        if len(self.landed_blocks) == 0:
+            self.current_block = self.next_block
         else:
-            block_coords = upcoming_block
+            self.current_block = self.upcoming_block
+        self.upcoming_block = random.choice(list(blocks.values()))
 
-        print(block_coords)
-        block_mover(block_coords)
+        print(self.current_block)
+        self.block_mover(self.current_block)
 
-    def block_mover(self, block_coords):
+    def block_mover(self, current_block):
         time.sleep(0.5)
-        for block in block_coords:
+        for block in current_block:
             print(f"Deleted at {block[0]}, {block[1]}.")
-        if any((x, y + 1) in landed_points for (x, y) in block_coords) or any(
-            y + 1 == height for (x, y) in block_coords
+        if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
+            y + 1 == height for (x, y) in current_block
         ):
-            for coord in block_coords:
-                landed_points.append(coord)
-            block_coords.pop(0)
-            print(self.landed_points)
-            blocks()
+            for coord in current_block:
+                self.landed_blocks.append(coord)
+            print(self.landed_blocks)
+            self.new_block()
         else:
-            block_coords = [(x, y + 1) for x, y in block_coords]
-            for block in block_coords:
+            current_block = [(x, y + 1) for x, y in current_block]
+            for block in current_block:
                 print(block[0], block[1])
-                block_mover(block_coords)
-
-    def user_input_left(self, event):
-        print("Going left!")
-        for (x, y) in block_coords:
-            return (x - 1, y)
-
-    def user_input_right(self, event):
-        print("Going right!")
-        for (x, y) in block_coords:
-            return (x + 1, y)
-
+                self.block_mover(current_block)
 
 root.bind("<Left>", user_input_left)
 root.bind("<Right>", user_input_right)
@@ -114,4 +118,4 @@ root.bind("<Right>", user_input_right)
 
 # tetris_gui.draw_board()
 root.mainloop()
-blocks()
+TetrisGame.new_block()
