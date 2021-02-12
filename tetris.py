@@ -5,10 +5,10 @@ import time
 import tkinter
 from tkinter import ttk
 
-game_speed = 0.
+game_speed = 0.5
 rec_x = rec_y = 25
-width=10
-height=20
+width = 10
+height = 20
 
 def make_gui():
     root = tkinter.Tk()
@@ -48,32 +48,30 @@ def make_gui():
 #         """
 #         Draws the different shapes on the board
 #         """
-#
-#
+
+
 x = int(width/2)
 y = 0
 
 landed_shapes = [(6, 10)]
 
+
 def shapes():
-    shape_choice = random.choice(['L', 'O', 'L_rev', 'E', 'Z', 'Z_rev', 'I'])
-    if shape_choice == 'L':
-        shape_coords = [(x-1, y), (x,y), (x+1, y), (x+1, y+1)]
-    elif shape_choice == 'L_rev':
-        shape_coords = [(x-1, y+1), (x-1, y), (x, y), (x+1, y)]
-    elif shape_choice == 'O':
-        shape_coords = [(x-1, y), (x, y), (x-1, y+1), (x, y+1)]
-    elif shape_choice == 'I':
-        shape_coords = [(x-2, y), (x-1, y), (x, y), (x+1, y)]
-    elif shape_choice == 'E':
-        shape_coords = [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)]
-    elif shape_choice == 'Z':
-        shape_coords = [(x-1, y), (x, y), (x, y+1), (x-1, y+1)]
-    elif shape_choice == 'Z_rev':
-        shape_coords = [(x+1, y), (x, y), (x, y+1), (x-1, y+1)]
-    for block_x, block_y in shape_coords:
-             print(block_x, block_y)
-    shape_mover(shape_coords)
+    shapes = {
+        'L': [(x-1, y), (x,y), (x+1, y), (x+1, y+1)],
+        'L_rev': [(x-1, y+1), (x-1, y), (x, y), (x+1, y)],
+        'O': [(x-1, y), (x, y), (x-1, y+1), (x, y+1)],
+        'E': [(x, y), (x-1, y+1), (x, y+1), (x+1, y+1)],
+        'Z': [(x-1, y), (x, y), (x, y+1), (x-1, y+1)],
+        'Z_rev': [(x+1, y), (x, y), (x, y+1), (x-1, y+1)],
+        'I': [(x-2, y), (x-1, y), (x, y), (x+1, y)]
+    }
+    shape_choice = random.choice(list(shapes.keys()))
+
+    for block_x, block_y in shapes[shape_choice]:
+        print(block_x, block_y)
+    shape_mover(shapes[shape_choice])
+
 
 def shape_mover(shape_coords):
     time.sleep(1.0)
