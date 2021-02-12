@@ -24,8 +24,8 @@ def run_gui():
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
 
-    root.bind("<Left>", tetris_gui.user_input_left)
-    root.bind("<Right>", tetris_gui.user_input_right)
+    root.bind("<Left>", lambda event: tetris_gui.tetris_game.user_input_left())
+    root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right())
 
     tetris_gui.draw_board()
     root.mainloop()
@@ -63,17 +63,6 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
-    def user_input_left(self, event):
-        print("Going left!")
-        for (x, y) in TetrisGame.current_block:
-            return (x - 1, y)
-
-    def user_input_right(self, event):
-        print("Going right!")
-        for (x, y) in block_coords:
-            return (x + 1, y)
-
-
 x = int(width / 2)
 y = 0
 
@@ -101,6 +90,16 @@ class TetrisGame:
 
         print(self.current_block)
         self.block_mover(self.current_block)
+
+    def user_input_left(self, event):
+        print("Going left!")
+        for (x, y) in self.current_block:
+            return (x - 1, y)
+
+    def user_input_right(self, event):
+        print("Going right!")
+        for (x, y) in self.current_block:
+            return (x + 1, y)
 
     def block_mover(self, current_block):
         time.sleep(0.5)
