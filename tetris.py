@@ -9,46 +9,45 @@ game_speed = 0.5
 rec_x = rec_y = 25
 width = 10
 height = 20
-
-def make_gui():
-    root = tkinter.Tk()
-    root.resizable(False, False)
-
-    root = tkinter.Tk()
-    root.resizable(False, False)
-
-    tetris_canvas = tkinter.Canvas(root, width=400, height=800, background='black')
-    tetris_canvas.grid()
-
-    root.bind('<Left>', user_input_left)
-    root.bind('<Right>', user_input_right)
-    
-    tetris_gui = TetrisGUI(game_speed, root)
-    tetris_gui.draw_board()
-    tetris_gui.root.mainloop()
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 
+root = tkinter.Tk()
+root.resizable(False, False)
 
-# class TetrisGUI:
-#     def __init__(self, speed, canvas):
-#         self.speed = speed
-#         self.canvas = canvas
-#
-#     def draw_board(self):
-#         """
-#         Draws the board of rectangles on top of the canvas
-#         """
-#         print("inside draw_board()")
-#         for x in range(10):
-#             for y in range(20):
-#                 tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
-#
-#     def draw_shape():
-#
-#         """
-#         Draws the different shapes on the board
-#         """
+tetris_canvas = tkinter.Canvas(root, width=400, height=800, background='black')
+tetris_canvas.grid()
 
+class TetrisGUI:
+    def __init__(self, speed, canvas):
+        self.speed = speed
+        self.canvas = canvas
+        self.rect_size = 25
+
+    def draw_board(self):
+        """
+        Draws the board of rectangles on top of the canvas
+        """
+        x_gap = 25
+        y_gap = 25
+        for x in range(10):
+            for y in range(20):
+                y_gap += 25
+                tetris_canvas.create_rectangle(20, 20, 200, 50, fill='red', outline='blue')
+            x_gap += 25
+
+    def draw_shape():
+
+        """
+        Draws the different shapes on the board
+        """
+
+
+
+tetris_gui = TetrisGUI(game_speed, root)
 
 x = int(width/2)
 y = 0
@@ -97,9 +96,13 @@ def user_input_left(event):
 def user_input_right(event):
     print('Going right!')
 #    for (x, y) in shape_coords:
-#        return (x+1, y) 
-            
+#        return (x+1, y)
 
-    
 
-shapes()
+root.bind('<Left>', user_input_left)
+root.bind('<Right>', user_input_right)
+
+
+#shapes()
+#tetris_gui.draw_board()
+root.mainloop()
