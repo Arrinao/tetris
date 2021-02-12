@@ -1,20 +1,18 @@
-import sys
-import pathlib
 import random
 import time
 import tkinter
-from tkinter import ttk
 
 game_speed = 0.5
 rec_x = rec_y = 35
 width = 10
 height = 20
-BLACK = ("#000000")
-BLUE = ("#0029ff")
-RED = ("#ff1700")
-GREEN = ("#05ff00")
-GREY = ("#666666")
-D_GREY = ("#383838")
+BLACK = "#000000"
+BLUE = "#0029ff"
+RED = "#ff1700"
+GREEN = "#05ff00"
+GREY = "#666666"
+D_GREY = "#383838"
+
 
 def run_gui():
 
@@ -33,14 +31,12 @@ def run_gui():
     root.mainloop()
 
 
-
 class TetrisGUI:
     def __init__(self, speed, canvas):
         self.speed = speed
         self.canvas = canvas
         self.rect_size = 25
         self.tetris_game = TetrisGame()
-
 
     def draw_board(self):
         """
@@ -51,8 +47,13 @@ class TetrisGUI:
             y_gap = 2
             for y in range(20):
                 self.canvas.create_rectangle(
-                x_gap, y_gap, x_gap + rec_x, y_gap + rec_y,
-                fill=D_GREY, outline=GREY)
+                    x_gap,
+                    y_gap,
+                    x_gap + rec_x,
+                    y_gap + rec_y,
+                    fill=D_GREY,
+                    outline=GREY,
+                )
                 y_gap += 35
 
             x_gap += 35
@@ -120,4 +121,4 @@ class TetrisGame:
 
 
 run_gui()
-#new_block()
+# new_block()
