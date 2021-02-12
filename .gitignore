@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Funny file on ThePhilgrim's computer
+.DS_Store
