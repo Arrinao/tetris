@@ -20,6 +20,9 @@ def make_gui():
     tetris_canvas = tkinter.Canvas(root, width=400, height=800, background='black')
     tetris_canvas.grid()
 
+    root.bind('<Left>', user_input_left)
+    root.bind('<Right>', user_input_right)
+    
     tetris_gui = TetrisGUI(game_speed, root)
     tetris_gui.draw_board()
     tetris_gui.root.mainloop()
@@ -71,7 +74,7 @@ def shapes():
 
 
 def shape_mover(shape_coords):
-    time.sleep(game_speed)
+    time.sleep(1.0)
     for shape in shape_coords:
         print (f'Deleted at {shape[0]}, {shape[1]}.')
     if any((x, y+1) in landed_shapes for (x, y) in shape_coords) or any(y+1 == height for (x, y) in shape_coords):
@@ -85,5 +88,18 @@ def shape_mover(shape_coords):
             print(shape[0], shape[1])
         shape_mover(shape_coords)
 
+def user_input_left(event):
+    print('Going left!')
+#    for (x, y) in shape_coords:
+#        return (x-1, y)
+
+
+def user_input_right(event):
+    print('Going right!')
+#    for (x, y) in shape_coords:
+#        return (x+1, y) 
+            
+
+    
 
 shapes()
