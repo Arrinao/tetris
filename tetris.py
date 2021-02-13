@@ -63,12 +63,13 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
+
 x = int(width / 2)
 y = 0
 
 
 class TetrisGame:
-    def __init__(self, landed_blocks):
+    def __init__(self):
         self.landed_blocks = [(6, 10)]
 
     def new_block(self):
@@ -82,7 +83,7 @@ class TetrisGame:
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
         self.next_block = random.choice(list(blocks.values()))
-        if len(self.landed_blocks) == 0:
+        if len(self.upcoming_blocks) == 0:
             self.current_block = self.next_block
         else:
             self.current_block = self.upcoming_block
@@ -92,19 +93,20 @@ class TetrisGame:
         self.block_mover(self.current_block)
 
     def user_input_left(self, event):
+        self.left = []
         print("Going left!")
         for (x, y) in self.current_block:
-            return (x - 1, y)
+            self.left.append(x + 1, y)
+        return self.current_block, self.left
 
     def user_input_right(self, event):
+        self.right = []
         print("Going right!")
         for (x, y) in self.current_block:
-            return (x + 1, y)
+            self.right.append(x + 1, y)
+        return self.current_block, self.left
 
     def block_mover(self, current_block):
-        time.sleep(0.5)
-        for block in current_block:
-            print(f"Deleted at {block[0]}, {block[1]}.")
         if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
             y + 1 == height for (x, y) in current_block
         ):
@@ -116,7 +118,6 @@ class TetrisGame:
             current_block = [(x, y + 1) for x, y in current_block]
             for block in current_block:
                 print(block[0], block[1])
-                self.block_mover(current_block)
 
 
 run_gui()
