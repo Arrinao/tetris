@@ -23,11 +23,13 @@ def run_gui():
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
+    tetris_gui.tetris_game.new_block()
 
     root.bind("<Left>", lambda event: tetris_gui.tetris_game.user_input_left())
     root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right())
 
     tetris_gui.draw_board()
+    tetris_gui.draw_block()
     root.mainloop()
 
 
@@ -42,9 +44,9 @@ class TetrisGUI:
         """
         Draws the board of rectangles on top of the canvas
         """
-        x_gap = 2
+        x_gap = 0
         for x in range(10):
-            y_gap = 2
+            y_gap = 0
             for y in range(20):
                 self.canvas.create_rectangle(
                     x_gap,
@@ -58,10 +60,21 @@ class TetrisGUI:
 
             x_gap += 35
 
-    def draw_shape(self, coord_x, coord_y):
+    def draw_block(self):
         """
         Draws the different shapes on the board
         """
+        current_block_draw = self.tetris_game.current_block
+        print(current_block_draw)
+
+        for x, y in current_block_draw:
+            self.canvas.create_rectangle(
+            x * rec_x,
+            y * rec_y,
+            x * rec_x + rec_x,
+            y * rec_x + rec_x,
+            fill=RED
+            )
 
 
 x = int(width / 2)
@@ -90,8 +103,9 @@ class TetrisGame:
             self.current_block = self.upcoming_block
         self.upcoming_block = random.choice(list(blocks.values()))
 
-        print(self.current_block)
-        self.block_mover(self.current_block)
+
+
+
 
     def user_input_left(self, event):
         left = []
@@ -119,6 +133,7 @@ class TetrisGame:
             current_block = [(x, y + 1) for x, y in current_block]
             for block in current_block:
                 print(block[0], block[1])
+        print("inside block_mover")
 
 
 run_gui()
