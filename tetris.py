@@ -71,6 +71,8 @@ y = 0
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = [(6, 10)]
+        self.current_block = None
+        self.upcoming_block = None
 
     def new_block(self):
         blocks = {
@@ -82,9 +84,8 @@ class TetrisGame:
             "Z_rev": [(x + 1, y), (x, y), (x, y + 1), (x - 1, y + 1)],
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
-        self.next_block = random.choice(list(blocks.values()))
-        if len(self.upcoming_blocks) == 0:
-            self.current_block = self.next_block
+        if self.upcoming_block is None:
+            self.current_block = random.choice(list(blocks.values()))
         else:
             self.current_block = self.upcoming_block
         self.upcoming_block = random.choice(list(blocks.values()))
