@@ -63,6 +63,7 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
+
 x = int(width / 2)
 y = 0
 
@@ -82,7 +83,7 @@ class TetrisGame:
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
         self.next_block = random.choice(list(blocks.values()))
-        if len(self.landed_blocks) == 0:
+        if len(self.upcoming_blocks) == 0:
             self.current_block = self.next_block
         else:
             self.current_block = self.upcoming_block
@@ -96,18 +97,14 @@ class TetrisGame:
         print("Going left!")
         for (x, y) in self.current_block:
             self.left.append(x + 1, y)
-        TetrisGUI.delete_shape(self.current_block)
-        TetrisGUI.draw_shape(self.left)
-        self.left = self.current_block
+        return self.current_block, self.left
 
     def user_input_right(self, event):
         self.right = []
         print("Going right!")
         for (x, y) in self.current_block:
             self.right.append(x + 1, y)
-        TetrisGUI.delete_shape(self.current_block)
-        TetrisGUI.draw_shape(self.right)
-        self.right = self.current_block
+        return self.current_block, self.left
 
     def block_mover(self, current_block):
         if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
