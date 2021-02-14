@@ -29,7 +29,7 @@ def run_gui():
     root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right())
 
     tetris_gui.draw_board()
-    tetris_gui.draw_block()
+    tetris_gui.draw_block(tetris_gui.tetris_game.current_block)
     root.mainloop()
 
 
@@ -60,21 +60,22 @@ class TetrisGUI:
 
             x_gap += 35
 
-    def draw_block(self):
+    def draw_block(self, block_coords):
         """
         Draws the different shapes on the board
         """
-        current_block_draw = self.tetris_game.current_block
+        current_block_draw = block_coords
         print(current_block_draw)
 
         for x, y in current_block_draw:
             self.canvas.create_rectangle(
-            x * rec_x,
-            y * rec_y,
-            x * rec_x + rec_x,
-            y * rec_x + rec_x,
-            fill=RED
+                x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, fill=RED
             )
+
+        # while current_block_draw not in landed_blocks:
+        #self.canvas.after(2000, self.tetris_game.block_mover(current_block_draw))
+
+
 
 
 x = int(width / 2)
@@ -103,10 +104,6 @@ class TetrisGame:
             self.current_block = self.upcoming_block
         self.upcoming_block = random.choice(list(blocks.values()))
 
-
-
-
-
     def user_input_left(self, event):
         left = []
         print("Going left!")
@@ -133,7 +130,7 @@ class TetrisGame:
             current_block = [(x, y + 1) for x, y in current_block]
             for block in current_block:
                 print(block[0], block[1])
-        print("inside block_mover")
+
 
 
 run_gui()
