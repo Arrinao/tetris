@@ -109,14 +109,14 @@ class TetrisGame:
         print("Going left!")
         for (x, y) in self.current_block:
             left.append((x + 1, y))
-        return self.current_block, left
+        self.current_block = left
 
     def user_input_right(self, event):
         right = []
         print("Going right!")
         for (x, y) in self.current_block:
             right.append((x + 1, y))
-        return self.current_block, right
+        self.current_block = right
 
     def block_mover(self, current_block):
         if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
