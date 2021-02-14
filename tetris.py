@@ -29,7 +29,8 @@ def run_gui():
     root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right())
 
     tetris_gui.draw_board()
-    tetris_gui.draw_block(tetris_gui.tetris_game.current_block)
+    tetris_gui.draw_block()
+    tetris_gui.block_mediator()
     root.mainloop()
 
 
@@ -60,20 +61,25 @@ class TetrisGUI:
 
             x_gap += 35
 
-    def draw_block(self, block_coords):
+    def draw_block(self):
         """
         Draws the different shapes on the board
         """
-        current_block_draw = block_coords
-        print(current_block_draw)
+        current_block_draw = self.tetris_game.current_block
 
         for x, y in current_block_draw:
             self.canvas.create_rectangle(
                 x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, fill=RED
             )
 
-        # while current_block_draw not in landed_blocks:
-        #self.canvas.after(2000, self.tetris_game.block_mover(current_block_draw))
+    def block_mediator(self):
+        """
+        Has the responsibility to call block_mover() and draw_block() to
+        simulate the blocks moving downwards on the canvas
+        """
+        self.tetris_game.block_mover()
+
+        self.draw_block()
 
 
 
@@ -118,18 +124,19 @@ class TetrisGame:
             right.append((x + 1, y))
         self.current_block = right
 
-    def block_mover(self, current_block):
-        if any((x, y + 1) in self.landed_blocks for (x, y) in current_block) or any(
-            y + 1 == height for (x, y) in current_block
+    def block_mover(self):
+        if any((x, y + 1) in self.landed_blocks for (x, y) in self.current_block) or any(
+            y + 1 == height for (x, y) in self.current_block
         ):
-            for coord in current_block:
+            for coord in self.current_block:
                 self.landed_blocks.append(coord)
-            print(self.landed_blocks)
+            # print(self.landed_blocks)
             self.new_block()
         else:
-            current_block = [(x, y + 1) for x, y in current_block]
-            for block in current_block:
-                print(block[0], block[1])
+            self.current_block = [(x, y + 1) for x, y in self.current_block]
+            return self.current_block
+            for block in self.current_block:  # TODO: Remove this for loop when
+                print(block[0], block[1])     # everything works
 
 
 
