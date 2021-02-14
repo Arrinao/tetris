@@ -33,6 +33,8 @@ def run_gui():
     tetris_gui.block_mediator()
     root.mainloop()
 
+    tetris_gui.tetris_game.block_rotator()
+
 
 class TetrisGUI:
     def __init__(self, speed, canvas):
@@ -84,8 +86,6 @@ class TetrisGUI:
 
 
 
-x = int(width / 2)
-y = 0
 
 
 class TetrisGame:
@@ -95,6 +95,8 @@ class TetrisGame:
         self.upcoming_block = None
 
     def new_block(self):
+        x = int(width / 2)
+        y = 0
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -139,5 +141,11 @@ class TetrisGame:
                 print(block[0], block[1])     # everything works
 
 
+    def block_rotator(self, event):
+        rotate = []
+        for (x, y) in self.current_block:
+            rotate.append((y, x))
+        self.current_block = rotate
 
 run_gui()
+
