@@ -84,10 +84,6 @@ class TetrisGUI:
         self.draw_block()
 
 
-
-
-
-
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = [(6, 10)]
@@ -127,9 +123,9 @@ class TetrisGame:
         self.current_block = right
 
     def block_mover(self):
-        if any((x, y + 1) in self.landed_blocks for (x, y) in self.current_block) or any(
-            y + 1 == height for (x, y) in self.current_block
-        ):
+        if any(
+            (x, y + 1) in self.landed_blocks for (x, y) in self.current_block
+        ) or any(y + 1 == height for (x, y) in self.current_block):
             for coord in self.current_block:
                 self.landed_blocks.append(coord)
             # print(self.landed_blocks)
@@ -138,8 +134,7 @@ class TetrisGame:
             self.current_block = [(x, y + 1) for x, y in self.current_block]
             return self.current_block
             for block in self.current_block:  # TODO: Remove this for loop when
-                print(block[0], block[1])     # everything works
-
+                print(block[0], block[1])  # everything works
 
     def block_rotator(self, event):
         rotate = []
@@ -147,5 +142,5 @@ class TetrisGame:
             rotate.append((y, x))
         self.current_block = rotate
 
-run_gui()
 
+run_gui()
