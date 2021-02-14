@@ -2,7 +2,7 @@ import random
 import time
 import tkinter
 
-game_speed = 0.5
+game_speed = 800
 rec_x = rec_y = 35
 width = 10
 height = 20
@@ -65,12 +65,22 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
+        previous_block_clear = self.tetris_game.previous_block
+
         current_block_draw = self.tetris_game.current_block
+
+        if (
+            previous_block_clear is not None
+            and previous_block_clear not in self.tetris_game.landed_blocks
+        ):
+            for coord in previous_block_clear:
+                self.canvas.delete()
 
         for x, y in current_block_draw:
             self.canvas.create_rectangle(
                 x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, fill=RED
-            )
+            )  # TODO: Find way to assign whole block to a variable so it
+            # can be deleted
 
     def block_mediator(self):
         """
@@ -81,7 +91,7 @@ class TetrisGUI:
 
         self.draw_block()
 
-
+        self.canvas.after(game_speed, self.block_mediator)
 
 
 x = int(width / 2)
@@ -91,10 +101,16 @@ y = 0
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = [(6, 10)]
+        self.previous_block = None
         self.current_block = None
         self.upcoming_block = None
 
     def new_block(self):
+        """
+        Chooses a random block from "blocks" and assigns it to
+        self.current_block
+        """
+        test_block = [(x, y)]
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -105,12 +121,18 @@ class TetrisGame:
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
         if self.upcoming_block is None:
-            self.current_block = random.choice(list(blocks.values()))
+            # self.current_block = random.choice(list(blocks.values()))
+            self.current_block = test_block  # Remove when code is working
         else:
             self.current_block = self.upcoming_block
-        self.upcoming_block = random.choice(list(blocks.values()))
+        self.previous_block = self.current_block
+        # self.upcoming_block = random.choice(list(blocks.values()))
+        self.upcoming_block = test_block  # Remove when code is working
 
     def user_input_left(self, event):
+        """
+        Moves the current block to the left on the canvas
+        """
         left = []
         print("Going left!")
         for (x, y) in self.current_block:
@@ -118,6 +140,9 @@ class TetrisGame:
         self.current_block = left
 
     def user_input_right(self, event):
+        """
+        Moves the current block to the right on the canvas
+        """
         right = []
         print("Going right!")
         for (x, y) in self.current_block:
@@ -125,9 +150,12 @@ class TetrisGame:
         self.current_block = right
 
     def block_mover(self):
-        if any((x, y + 1) in self.landed_blocks for (x, y) in self.current_block) or any(
-            y + 1 == height for (x, y) in self.current_block
-        ):
+        """
+        Moves the current block downwards one square on the canvas
+        """
+        if any(
+            (x, y + 1) in self.landed_blocks for (x, y) in self.current_block
+        ) or any(y + 1 == height for (x, y) in self.current_block):
             for coord in self.current_block:
                 self.landed_blocks.append(coord)
             # print(self.landed_blocks)
@@ -136,8 +164,7 @@ class TetrisGame:
             self.current_block = [(x, y + 1) for x, y in self.current_block]
             return self.current_block
             for block in self.current_block:  # TODO: Remove this for loop when
-                print(block[0], block[1])     # everything works
-
+                print(block[0], block[1])  # everything works
 
 
 run_gui()
