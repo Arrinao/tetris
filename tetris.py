@@ -32,6 +32,8 @@ def run_gui():
     tetris_gui.draw_block(tetris_gui.tetris_game.current_block)
     root.mainloop()
 
+    tetris_gui.tetris_game.block_rotator()
+
 
 class TetrisGUI:
     def __init__(self, speed, canvas):
@@ -72,14 +74,10 @@ class TetrisGUI:
                 x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, fill=RED
             )
 
-        # while current_block_draw not in landed_blocks:
-        #self.canvas.after(2000, self.tetris_game.block_mover(current_block_draw))
+        #while current_block_draw not in self.tetris_game.landed_blocks:
+         #   self.canvas.after(2000, self.tetris_game.block_mover(current_block_draw))
 
 
-
-
-x = int(width / 2)
-y = 0
 
 
 class TetrisGame:
@@ -89,6 +87,8 @@ class TetrisGame:
         self.upcoming_block = None
 
     def new_block(self):
+        x = int(width / 2)
+        y = 0
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -128,9 +128,13 @@ class TetrisGame:
             self.new_block()
         else:
             current_block = [(x, y + 1) for x, y in current_block]
-            for block in current_block:
-                print(block[0], block[1])
+            return current_block
 
-
+    def block_rotator(self, event):
+        rotate = []
+        for (x, y) in self.current_block:
+            rotate.append((y, x))
+        self.current_block = rotate
 
 run_gui()
+
