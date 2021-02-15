@@ -71,7 +71,7 @@ class TetrisGUI:
 
         current_block_draw = self.tetris_game.current_block
 
-        self.canvas.delete("currblock")
+        self.canvas.delete("block")
 
         for x, y in current_block_draw:
             self.canvas.create_rectangle(
@@ -79,7 +79,7 @@ class TetrisGUI:
                 y * rec_y,
                 x * rec_x + rec_x,
                 y * rec_x + rec_x,
-                tags="currblock",
+                tags="block",
                 fill=RED,
             )  # TODO: Find way to assign whole block to a variable so it
             # can be deleted
@@ -90,7 +90,7 @@ class TetrisGUI:
                 y * rec_y,
                 x * rec_x + rec_x,
                 y * rec_x + rec_x,
-                tags="landblock",
+                tags="block",
                 fill=BLUE,
             )
 
