@@ -4,8 +4,8 @@ import tkinter
 
 game_speed = 300
 rec_x = rec_y = 35
-width = 10
-height = 20
+game_width = 10
+game_height = 20
 BLACK = "#000000"
 BLUE = "#0029ff"
 RED = "#ff1700"
@@ -19,7 +19,7 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    tetris_canvas = tkinter.Canvas(root, width=rec_x * 10, height=rec_x * 20)
+    tetris_canvas = tkinter.Canvas(root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0)
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
@@ -32,6 +32,9 @@ def run_gui():
     tetris_gui.draw_board()
     tetris_gui.draw_block()
     tetris_gui.block_mediator()
+
+    root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
+    # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) INSERT LATER
     root.mainloop()
 
 
@@ -49,9 +52,9 @@ class TetrisGUI:
         Draws the board of rectangles on top of the canvas
         """
         x_gap = 0
-        for x in range(width):
+        for x in range(game_width):
             y_gap = 0
-            for y in range(height):
+            for y in range(game_height):
                 self.canvas.create_rectangle(
                     x_gap,
                     y_gap,
@@ -123,7 +126,7 @@ class TetrisGame:
         self.upcoming_block = None
 
     def new_block(self):
-        x = int(width / 2)
+        x = int(game_width / 2)
         y = 0
         """
         Chooses a random block from "blocks" and assigns it to
@@ -176,7 +179,7 @@ class TetrisGame:
         """
         if any(
             (x, y + 1) in self.landed_blocks for (x, y) in self.current_block
-        ) or any(y + 1 == height for (x, y) in self.current_block):
+        ) or any(y + 1 == game_height for (x, y) in self.current_block):
             for coord in self.current_block:
                 self.landed_blocks.append(coord)
             self.new_block()
