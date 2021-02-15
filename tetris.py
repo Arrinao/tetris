@@ -1,3 +1,5 @@
+import random
+import time
 import tkinter
 
 game_speed = 300
@@ -120,12 +122,12 @@ class TetrisGame:
         self.upcoming_block = None
 
     def new_block(self):
+        x = int(width / 2)
+        y = 0
         """
         Chooses a random block from "blocks" and assigns it to
         self.current_block
         """
-        x = int(width / 2)
-        y = 0
         test_block = [(x, y)]
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
@@ -187,6 +189,7 @@ class TetrisGame:
         for (x, y) in self.current_block:
             rotate.append((y, x))
         self.current_block = rotate
+
 
 
 run_gui()
