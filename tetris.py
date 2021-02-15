@@ -2,7 +2,7 @@ import random
 import time
 import tkinter
 
-game_speed = 800
+game_speed = 500
 rec_x = rec_y = 35
 width = 10
 height = 20
@@ -65,22 +65,21 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
-        previous_block_clear = self.tetris_game.previous_block
 
         current_block_draw = self.tetris_game.current_block
 
-        if (
-            previous_block_clear is not None
-            and previous_block_clear not in self.tetris_game.landed_blocks
-        ):
-            for coord in previous_block_clear:
-                self.canvas.delete()
+        self.canvas.delete('currblock')
+
 
         for x, y in current_block_draw:
             self.canvas.create_rectangle(
-                x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, fill=RED
-            )  # TODO: Find way to assign whole block to a variable so it
+                x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, tags='currblock', fill=RED)  # TODO: Find way to assign whole block to a variable so it
             # can be deleted
+
+        for x, y in self.tetris_game.landed_blocks:
+            self.canvas.create_rectangle(
+                x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, tags='landblock', fill=BLUE)
+
 
     def block_mediator(self):
         """
@@ -121,13 +120,13 @@ class TetrisGame:
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
         if self.upcoming_block is None:
-            # self.current_block = random.choice(list(blocks.values()))
-            self.current_block = test_block  # Remove when code is working
+            self.current_block = random.choice(list(blocks.values()))
+            # self.current_block = test_block  # Remove when code is working
         else:
             self.current_block = self.upcoming_block
         self.previous_block = self.current_block
-        # self.upcoming_block = random.choice(list(blocks.values()))
-        self.upcoming_block = test_block  # Remove when code is working
+        self.upcoming_block = random.choice(list(blocks.values()))
+        # self.upcoming_block = test_block  # Remove when code is working
 
     def user_input_left(self, event):
         """
