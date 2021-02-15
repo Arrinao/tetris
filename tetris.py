@@ -187,5 +187,4 @@ class TetrisGame:
         self.current_block = rotate
 
 
-
 run_gui()
