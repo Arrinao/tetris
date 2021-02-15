@@ -2,7 +2,7 @@ import random
 import time
 import tkinter
 
-game_speed = 500
+game_speed = 300
 rec_x = rec_y = 35
 width = 10
 height = 20
