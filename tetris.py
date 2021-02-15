@@ -49,9 +49,9 @@ class TetrisGUI:
         Draws the board of rectangles on top of the canvas
         """
         x_gap = 0
-        for x in range(10):
+        for x in range(width):
             y_gap = 0
-            for y in range(20):
+            for y in range(height):
                 self.canvas.create_rectangle(
                     x_gap,
                     y_gap,
@@ -117,18 +117,7 @@ class TetrisGUI:
 
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = [
-            (0, 20),
-            (1, 20),
-            (2, 20),
-            (3, 20),
-            (4, 20),
-            (5, 20),
-            (6, 20),
-            (7, 20),
-            (8, 20),
-            (9, 20),
-        ]
+        self.landed_blocks = []
         self.previous_block = None
         self.current_block = None
         self.upcoming_block = None
