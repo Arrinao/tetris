@@ -165,6 +165,8 @@ class TetrisGame:
         """
         left = []
         for (x, y) in self.current_block:
+            if x == 0:
+                return
             left.append((x - 1, y))
         self.current_block = left
 
@@ -174,6 +176,8 @@ class TetrisGame:
         """
         right = []
         for (x, y) in self.current_block:
+            if x == 9:
+                return
             right.append((x + 1, y))
         self.current_block = right
 
