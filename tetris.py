@@ -25,15 +25,15 @@ def run_gui():
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
     tetris_gui.tetris_game.new_block()
 
-    root.bind("<Left>", lambda event: tetris_gui.tetris_game.user_input_left(event))
-    root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right(event))
+    root.bind("<Left>", lambda event: tetris_gui.left_mediator(event))
+    root.bind("<Right>", lambda event: tetris_gui.right_mediator(event))
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
     tetris_gui.block_mediator()
     root.mainloop()
 
-    tetris_gui.tetris_game.block_rotator()
+    # stetris_gui.tetris_game.block_rotator()
 
 
 class TetrisGUI:
@@ -99,8 +99,19 @@ class TetrisGUI:
         simulate the blocks moving downwards on the canvas
         """
         self.tetris_game.block_mover()
+
         self.draw_block()
+
         self.canvas.after(game_speed, self.block_mediator)
+
+    def left_mediator(self, event):
+        self.tetris_game.user_input_left()
+        self.draw_block()
+
+    def right_mediator(self, event):
+        self.tetris_game.user_input_right()
+        self.draw_block()
+
 
 
 class TetrisGame:
@@ -147,22 +158,20 @@ class TetrisGame:
         self.upcoming_block = random.choice(list(blocks.values()))
         # self.upcoming_block = test_block  # Remove when code is working
 
-    def user_input_left(self, event):
+    def user_input_left(self):
         """
         Moves the current block to the left on the canvas
         """
         left = []
-        print("Going left!")
         for (x, y) in self.current_block:
             left.append((x - 1, y))
         self.current_block = left
 
-    def user_input_right(self, event):
+    def user_input_right(self):
         """
         Moves the current block to the right on the canvas
         """
         right = []
-        print("Going right!")
         for (x, y) in self.current_block:
             right.append((x + 1, y))
         self.current_block = right
@@ -189,7 +198,6 @@ class TetrisGame:
         for (x, y) in self.current_block:
             rotate.append((y, x))
         self.current_block = rotate
-
 
 
 run_gui()
