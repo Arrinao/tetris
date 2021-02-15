@@ -25,15 +25,16 @@ def run_gui():
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
     tetris_gui.tetris_game.new_block()
 
-    root.bind("<Left>", lambda event: tetris_gui.left_mediator(event))
-    root.bind("<Right>", lambda event: tetris_gui.right_mediator(event))
+    root.bind("<Left>", tetris_gui.left_mediator)
+    root.bind("<Right>", tetris_gui.right_mediator)
+    root.bind("<Up>", tetris_gui.tetris_game.block_rotator)
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
     tetris_gui.block_mediator()
     root.mainloop()
 
-    # stetris_gui.tetris_game.block_rotator()
+
 
 
 class TetrisGUI:
