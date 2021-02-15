@@ -25,8 +25,8 @@ def run_gui():
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
     tetris_gui.tetris_game.new_block()
 
-    root.bind("<Left>", lambda event: tetris_gui.tetris_game.user_input_left())
-    root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right())
+    root.bind("<Left>", lambda event: tetris_gui.tetris_game.user_input_left(event))
+    root.bind("<Right>", lambda event: tetris_gui.tetris_game.user_input_right(event))
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
@@ -68,18 +68,28 @@ class TetrisGUI:
 
         current_block_draw = self.tetris_game.current_block
 
-        self.canvas.delete('currblock')
-
+        self.canvas.delete("currblock")
 
         for x, y in current_block_draw:
             self.canvas.create_rectangle(
-                x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, tags='currblock', fill=RED)  # TODO: Find way to assign whole block to a variable so it
+                x * rec_x,
+                y * rec_y,
+                x * rec_x + rec_x,
+                y * rec_x + rec_x,
+                tags="currblock",
+                fill=RED,
+            )  # TODO: Find way to assign whole block to a variable so it
             # can be deleted
 
         for x, y in self.tetris_game.landed_blocks:
             self.canvas.create_rectangle(
-                x * rec_x, y * rec_y, x * rec_x + rec_x, y * rec_x + rec_x, tags='landblock', fill=BLUE)
-
+                x * rec_x,
+                y * rec_y,
+                x * rec_x + rec_x,
+                y * rec_x + rec_x,
+                tags="landblock",
+                fill=BLUE,
+            )
 
     def block_mediator(self):
         """
@@ -99,7 +109,18 @@ y = 0
 
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = [(6, 10)]
+        self.landed_blocks = [
+            (0, 20),
+            (1, 20),
+            (2, 20),
+            (3, 20),
+            (4, 20),
+            (5, 20),
+            (6, 20),
+            (7, 20),
+            (8, 20),
+            (9, 20),
+        ]
         self.previous_block = None
         self.current_block = None
         self.upcoming_block = None
@@ -135,7 +156,7 @@ class TetrisGame:
         left = []
         print("Going left!")
         for (x, y) in self.current_block:
-            left.append((x + 1, y))
+            left.append((x - 1, y))
         self.current_block = left
 
     def user_input_right(self, event):
