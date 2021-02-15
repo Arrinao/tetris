@@ -176,13 +176,9 @@ class TetrisGame:
         ) or any(y + 1 == height for (x, y) in self.current_block):
             for coord in self.current_block:
                 self.landed_blocks.append(coord)
-            # print(self.landed_blocks)
             self.new_block()
         else:
             self.current_block = [(x, y + 1) for x, y in self.current_block]
-            return self.current_block
-            for block in self.current_block:  # TODO: Remove this for loop when
-                print(block[0], block[1])  # everything works
 
     def block_rotator(self, event):
         rotate = []
