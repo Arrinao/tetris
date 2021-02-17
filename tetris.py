@@ -1,11 +1,12 @@
 import random
 import time
 import tkinter
+import collections
 
 game_speed = 300
 rec_x = rec_y = 35
 game_width = 10
-game_height = 20
+game_height = 15
 BLACK = "#000000"
 BLUE = "#0029ff"
 RED = "#ff1700"
@@ -19,11 +20,14 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    tetris_canvas = tkinter.Canvas(root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0)
+    tetris_canvas = tkinter.Canvas(
+        root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0
+    )
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
     tetris_gui.tetris_game.new_block()
+    tetris_gui.tetris_game.full_line_clear()
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
@@ -36,8 +40,6 @@ def run_gui():
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) INSERT LATER
     root.mainloop()
-
-
 
 
 class TetrisGUI:
@@ -117,7 +119,6 @@ class TetrisGUI:
         self.draw_block()
 
 
-
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
@@ -182,6 +183,8 @@ class TetrisGame:
         ) or any(y + 1 == game_height for (x, y) in self.current_block):
             for coord in self.current_block:
                 self.landed_blocks.append(coord)
+            print(self.landed_blocks)
+            self.full_line_clear()
             self.new_block()
         else:
             self.current_block = [(x, y + 1) for x, y in self.current_block]
@@ -191,6 +194,18 @@ class TetrisGame:
         for (x, y) in self.current_block:
             rotate.append((y, x))
         self.current_block = rotate
+
+    def full_line_clear(self):
+        y_coordinates = [y for (x, y) in self.landed_blocks]
+        coordinates_counter = collections.Counter(y_coordinates)
+        print(coordinates_counter)
+        for y_line in range(game_height):  # TODO: should this be reversed?
+            count = coordinates_counter[y_line]
+            if count == game_width:
+                # TODO: root.after() here
+                self.landed_blocks = [
+                    (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
+                ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
 
 
 run_gui()
