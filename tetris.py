@@ -15,13 +15,14 @@ GREY = "#666666"
 D_GREY = "#383838"
 
 
-
 def run_gui():
 
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    tetris_canvas = tkinter.Canvas(root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0)
+    tetris_canvas = tkinter.Canvas(
+        root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0
+    )
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
@@ -39,7 +40,6 @@ def run_gui():
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) INSERT LATER
     root.mainloop()
-
 
 
 class TetrisGUI:
@@ -117,7 +117,6 @@ class TetrisGUI:
     def right_mediator(self, event):
         self.tetris_game.user_input_right()
         self.draw_block()
-
 
 
 class TetrisGame:
@@ -200,11 +199,13 @@ class TetrisGame:
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
         print(coordinates_counter)
-        for y_line in range(game_height):   # TODO: should this be reversed?
+        for y_line in range(game_height):  # TODO: should this be reversed?
             count = coordinates_counter[y_line]
             if count == game_width:
                 # TODO: root.after() here
-                self.landed_blocks = [(a, b+1) for (a, b) in self.landed_blocks if b < y_line] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
-            
+                self.landed_blocks = [
+                    (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
+                ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
+
 
 run_gui()
