@@ -67,9 +67,9 @@ class TetrisGUI:
                     fill=D_GREY,
                     outline=GREY,
                 )
-                y_gap += 35
+                y_gap += square_size
 
-            x_gap += 35
+            x_gap += square_size
 
     def draw_block(self):
         """
