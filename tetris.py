@@ -55,20 +55,21 @@ class TetrisGUI:
         """
         Draws the board of rectangles on top of the canvas
         """
-        x = 0
+        x_gap = 0
         for x in range(game_width):
-            y = 0
+            y_gap = 0
             for y in range(game_height):
                 self.canvas.create_rectangle(
-                    x,
-                    y,
-                    x + square_size,
-                    y + square_size,
+                    x_gap,
+                    y_gap,
+                    x_gap + square_size,
+                    y_gap + square_size,
                     fill=D_GREY,
                     outline=GREY,
                 )
-                y += square_size
-            x += square_size
+                y_gap += 35
+
+            x_gap += 35
 
     def draw_block(self):
         """
