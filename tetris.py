@@ -200,7 +200,8 @@ class TetrisGame:
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
         print(coordinates_counter)
-        for y_line, count in coordinates_counter.items():
+        for y_line in range(game_height):   # TODO: should this be reversed?
+            count = coordinates_counter[y_line]
             if count == game_width:
                 #root.after() here
                 self.landed_blocks = [(a, b+1) for (a, b) in self.landed_blocks if b < y_line] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
@@ -220,4 +221,3 @@ class TetrisGame:
     #                    new_landed_blocks.append((x, y))
     #            self.landed_blocks = new_landed_blocks
 run_gui()
-
