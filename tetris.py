@@ -202,10 +202,22 @@ class TetrisGame:
         print(coordinates_counter)
         for y_line, count in coordinates_counter.items():
             if count == game_width:
-                self.landed_blocks = [(a, b) for (a, b) in self.landed_blocks if b != y_line]
-                time.sleep(0.5)
+                #root.after() here
                 self.landed_blocks = [(a, b+1) for (a, b) in self.landed_blocks if b < y_line] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
             
 
+            
+    #def full_line_clear(self):
+    #    counter = collections.Counter([y for x, y in self.landed_blocks])
+    #    print(counter)
+    #    for line_y in range(game_height):
+    #        if counter[line_y] == game_width:
+    #            new_landed_blocks = []
+    #            for x, y in self.landed_blocks:
+    #                if (x, y)[1] < line_y:
+    #                    new_landed_blocks.append((x, y+1))   # move down
+    #                elif (x, y)[1] > line_y:
+    #                    new_landed_blocks.append((x, y))
+    #            self.landed_blocks = new_landed_blocks
 run_gui()
 
