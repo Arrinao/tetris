@@ -1,10 +1,9 @@
 import random
-import time
 import tkinter
 import collections
 
 game_speed = 300
-rec_x = rec_y = 35
+square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
@@ -21,7 +20,10 @@ def run_gui():
     root.resizable(False, False)
 
     tetris_canvas = tkinter.Canvas(
-        root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0
+        root,
+        width=square_size * game_width,
+        height=square_size * game_height,
+        highlightthickness=0,
     )
     tetris_canvas.grid()
 
@@ -38,7 +40,7 @@ def run_gui():
     tetris_gui.block_mediator()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
-    # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) INSERT LATER
+    # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
     root.mainloop()
 
 
@@ -60,8 +62,8 @@ class TetrisGUI:
                 self.canvas.create_rectangle(
                     x_gap,
                     y_gap,
-                    x_gap + rec_x,
-                    y_gap + rec_y,
+                    x_gap + square_size,
+                    y_gap + square_size,
                     fill=D_GREY,
                     outline=GREY,
                 )
@@ -74,29 +76,15 @@ class TetrisGUI:
         Draws the different shapes on the board
         """
 
-        current_block_draw = self.tetris_game.current_block
-
         self.canvas.delete("block")
-
-        for x, y in current_block_draw:
+        for x, y in self.tetris_game.current_block + self.tetris_game.landed_blocks:
             self.canvas.create_rectangle(
-                x * rec_x,
-                y * rec_y,
-                x * rec_x + rec_x,
-                y * rec_x + rec_x,
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
                 tags="block",
                 fill=RED,
-            )  # TODO: Find way to assign whole block to a variable so it
-            # can be deleted
-
-        for x, y in self.tetris_game.landed_blocks:
-            self.canvas.create_rectangle(
-                x * rec_x,
-                y * rec_y,
-                x * rec_x + rec_x,
-                y * rec_x + rec_x,
-                tags="block",
-                fill=BLUE,
             )
 
     def block_mediator(self):
@@ -105,9 +93,7 @@ class TetrisGUI:
         simulate the blocks moving downwards on the canvas
         """
         self.tetris_game.block_mover()
-
         self.draw_block()
-
         self.canvas.after(game_speed, self.block_mediator)
 
     def left_mediator(self, event):
@@ -133,7 +119,6 @@ class TetrisGame:
         Chooses a random block from "blocks" and assigns it to
         self.current_block
         """
-        test_block = [(x, y)]
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
