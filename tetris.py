@@ -29,7 +29,6 @@ def run_gui():
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
     tetris_gui.tetris_game.new_block()
-    tetris_gui.tetris_game.full_line_clear()
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
@@ -108,17 +107,16 @@ class TetrisGUI:
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
-        self.previous_block = None
         self.current_block = None
         self.upcoming_block = None
 
     def new_block(self):
-        x = int(game_width / 2)
-        y = 0
         """
         Chooses a random block from "blocks" and assigns it to
         self.current_block
         """
+        x = int(game_width / 2)
+        y = 0
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -130,12 +128,9 @@ class TetrisGame:
         }
         if self.upcoming_block is None:
             self.current_block = random.choice(list(blocks.values()))
-            # self.current_block = test_block  # Remove when code is working
         else:
             self.current_block = self.upcoming_block
-        self.previous_block = self.current_block
         self.upcoming_block = random.choice(list(blocks.values()))
-        # self.upcoming_block = test_block  # Remove when code is working
 
     def user_input_left(self):
         """
@@ -184,7 +179,7 @@ class TetrisGame:
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
         print(coordinates_counter)
-        for y_line in range(game_height):  # TODO: should this be reversed?
+        for y_line in range(game_height):
             count = coordinates_counter[y_line]
             if count == game_width:
                 # TODO: root.after() here
