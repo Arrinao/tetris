@@ -119,7 +119,16 @@ class TetrisGUI:
         self.draw_block()
 
 
-
+color_chart = {
+    1: "turquoise",
+    2: "yellow green",
+    3: "yellow",
+    4: "gold",
+    5: "orange",
+    6: "dark orange",
+    7: "red2",
+    8: "red4",
+}
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
@@ -153,6 +162,10 @@ class TetrisGame:
         self.upcoming_block = random.choice(list(blocks.values()))
         # self.upcoming_block = test_block  # Remove when code is working
 
+    def square_color(self):
+        k = {(coord, random.choice(list(color_chart.values()))) for coord in self.landed_blocks}
+        print(k)
+
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
@@ -185,6 +198,7 @@ class TetrisGame:
             for coord in self.current_block:
                 self.landed_blocks.append(coord)
             print(self.landed_blocks)
+            self.square_color()
             self.full_line_clear()
             self.new_block()
         else:
@@ -193,7 +207,8 @@ class TetrisGame:
     def block_rotator(self, event):
         rotate = []
         for (x, y) in self.current_block:
-            rotate.append((y, x))
+            if self.current_block == 'I':
+                rotate.append((y, x))
         self.current_block = rotate
 
     def full_line_clear(self):
