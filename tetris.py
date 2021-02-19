@@ -1,10 +1,9 @@
 import random
-import time
 import tkinter
 import collections
 
 game_speed = 300
-rec_x = rec_y = 35
+square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
@@ -21,7 +20,12 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    tetris_canvas = tkinter.Canvas(root, width=rec_x * game_width, height=rec_x * game_height, highlightthickness=0)
+    tetris_canvas = tkinter.Canvas(
+        root,
+        width=square_size * game_width,
+        height=square_size * game_height,
+        highlightthickness=0,
+    )
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
@@ -37,9 +41,8 @@ def run_gui():
     tetris_gui.block_mediator()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
-    # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) INSERT LATER
+    # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
     root.mainloop()
-
 
 
 class TetrisGUI:
@@ -60,43 +63,29 @@ class TetrisGUI:
                 self.canvas.create_rectangle(
                     x_gap,
                     y_gap,
-                    x_gap + rec_x,
-                    y_gap + rec_y,
+                    x_gap + square_size,
+                    y_gap + square_size,
                     fill=D_GREY,
                     outline=GREY,
                 )
-                y_gap += 35
+                y_gap += square_size
 
-            x_gap += 35
+            x_gap += square_size
 
     def draw_block(self):
         """
         Draws the different shapes on the board
         """
 
-        current_block_draw = self.tetris_game.current_block
-
         self.canvas.delete("block")
-
-        for x, y in current_block_draw:
+        for x, y in self.tetris_game.current_block + self.tetris_game.landed_blocks:
             self.canvas.create_rectangle(
-                x * rec_x,
-                y * rec_y,
-                x * rec_x + rec_x,
-                y * rec_x + rec_x,
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
                 tags="block",
                 fill=RED,
-            )  # TODO: Find way to assign whole block to a variable so it
-            # can be deleted
-
-        for x, y in self.tetris_game.landed_blocks:
-            self.canvas.create_rectangle(
-                x * rec_x,
-                y * rec_y,
-                x * rec_x + rec_x,
-                y * rec_x + rec_x,
-                tags="block",
-                fill=BLUE,
             )
 
     def block_mediator(self):
@@ -105,9 +94,7 @@ class TetrisGUI:
         simulate the blocks moving downwards on the canvas
         """
         self.tetris_game.block_mover()
-
         self.draw_block()
-
         self.canvas.after(game_speed, self.block_mediator)
 
     def left_mediator(self, event):
@@ -132,18 +119,16 @@ color_chart = {
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
-        self.previous_block = None
         self.current_block = None
         self.upcoming_block = None
 
     def new_block(self):
-        x = int(game_width / 2)
-        y = 0
         """
         Chooses a random block from "blocks" and assigns it to
         self.current_block
         """
-        test_block = [(x, y)]
+        x = int(game_width / 2)
+        y = 0
         blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
@@ -155,12 +140,9 @@ class TetrisGame:
         }
         if self.upcoming_block is None:
             self.current_block = random.choice(list(blocks.values()))
-            # self.current_block = test_block  # Remove when code is working
         else:
             self.current_block = self.upcoming_block
-        self.previous_block = self.current_block
         self.upcoming_block = random.choice(list(blocks.values()))
-        # self.upcoming_block = test_block  # Remove when code is working
 
     def square_color(self):
         k = {(coord, random.choice(list(color_chart.values()))) for coord in self.landed_blocks}
@@ -215,24 +197,13 @@ class TetrisGame:
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
         print(coordinates_counter)
-        for y_line in range(game_height):   # TODO: should this be reversed?
+        for y_line in range(game_height):
             count = coordinates_counter[y_line]
             if count == game_width:
-                #root.after() here
-                self.landed_blocks = [(a, b+1) for (a, b) in self.landed_blocks if b < y_line] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
-            
+                # TODO: root.after() here
+                self.landed_blocks = [
+                    (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
+                ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
 
-            
-    #def full_line_clear(self):
-    #    counter = collections.Counter([y for x, y in self.landed_blocks])
-    #    print(counter)
-    #    for line_y in range(game_height):
-    #        if counter[line_y] == game_width:
-    #            new_landed_blocks = []
-    #            for x, y in self.landed_blocks:
-    #                if (x, y)[1] < line_y:
-    #                    new_landed_blocks.append((x, y+1))   # move down
-    #                elif (x, y)[1] > line_y:
-    #                    new_landed_blocks.append((x, y))
-    #            self.landed_blocks = new_landed_blocks
+
 run_gui()
