@@ -127,7 +127,8 @@ class TetrisGame:
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
         if self.upcoming_block is None:
-            self.current_block = random.choice(list(blocks.values()))
+            self.current_block_shape = random.choice(list(blocks.keys()))
+            self.current_block_center = (x, y)
         else:
             self.current_block = self.upcoming_block
         self.upcoming_block = random.choice(list(blocks.values()))
