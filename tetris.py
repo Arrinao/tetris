@@ -117,7 +117,7 @@ class TetrisGame:
         """
         x = int(game_width / 2)
         y = 0
-        blocks = {
+        self.blocks = {
             "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
             "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
             "O": [(x - 1, y), (x, y), (x - 1, y + 1), (x, y + 1)],
@@ -127,11 +127,27 @@ class TetrisGame:
             "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
         }
         if self.upcoming_block is None:
-            self.current_block_shape = random.choice(list(blocks.keys()))
+            self.current_block_shape = random.choice(list(self.blocks.keys()))
             self.current_block_center = (x, y)
         else:
             self.current_block = self.upcoming_block
-        self.upcoming_block = random.choice(list(blocks.values()))
+        self.upcoming_block = random.choice(list(self.blocks.keys()))
+        self.current_block = self.get_current_block()
+
+    def get_current_block(self):
+        (x, y) = self.current_block_center
+        if self.current_block_shape == 'I':
+            return [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+        if self.current_block_shape == 'L_rev':
+            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+        if self.current_block_shape == 'O':
+            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+        if self.current_block_shape == 'E':
+            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+        if self.current_block_shape == 'Z':
+            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+        if self.current_block_shape == 'Z_rev':
+            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
 
     def user_input_left(self):
         """
