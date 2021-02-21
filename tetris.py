@@ -177,10 +177,8 @@ class TetrisGame:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
-    def block_rotator(self):
-        rotate = []
-        for (x, y) in self.current_block:
-            rotate.append((y, x))
+    def block_rotator(self, event):
+        print("TODO: should rotate")
         self.current_block = rotate
 
     def full_line_clear(self):
