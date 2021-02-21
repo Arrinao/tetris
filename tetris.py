@@ -118,10 +118,9 @@ class TetrisGame:
         y = 0
         if self.upcoming_block_shape is None:
             self.current_block_shape = random.choice(shapes_name)
-            self.current_block_center = (x, y)
         else:
             self.current_block_shape = self.upcoming_block_shape
-            self.current_block_center = (x, y)
+        self.current_block_center = (x, y)
         self.upcoming_block_shape = random.choice(shapes_name)
 
     def get_current_block(self):
@@ -146,7 +145,7 @@ class TetrisGame:
         Moves the current block to the left on the canvas
         """
         x, y = self.current_block_center
-        if x == 0:
+        if any(x == 0 for x, y in self.get_current_block()):
             return
         self.current_block_center = (x-1, y)
 
@@ -155,7 +154,7 @@ class TetrisGame:
         Moves the current block to the right on the canvas
         """
         x, y = self.current_block_center
-        if x == 9:
+        if any(x == 9 for x, y in self.get_current_block()):
             return
         self.current_block_center = (x+1, y)
 
