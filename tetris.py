@@ -116,7 +116,7 @@ class TetrisGame:
         """
         x = int(game_width / 2)
         y = 0
-        if self.upcoming_block is None:
+        if self.upcoming_block_shape is None:
             self.current_block_shape = random.choice(shapes_name)
             self.current_block_center = (x, y)
         else:
