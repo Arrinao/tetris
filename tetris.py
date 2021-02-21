@@ -108,6 +108,8 @@ class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
         self.upcoming_block_shape = None
+        self.upcoming_block_center = None
+        self.current_block_center = None
 
     def new_block(self):
         """
