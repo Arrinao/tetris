@@ -12,7 +12,8 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
-shape_names = ['I', 'L', 'L_rev', 'O', 'E', 'Z', 'Z_rev']
+shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+
 
 def run_gui():
 
@@ -76,7 +77,9 @@ class TetrisGUI:
         """
 
         self.canvas.delete("block")
-        for x, y in self.tetris_game.get_current_block() + self.tetris_game.landed_blocks:
+        for x, y in (
+            self.tetris_game.get_current_block() + self.tetris_game.landed_blocks
+        ):
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
@@ -127,19 +130,19 @@ class TetrisGame:
 
     def get_current_block(self):
         (x, y) = self.current_block_center
-        if self.current_block_shape == 'I':
+        if self.current_block_shape == "I":
             return [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
-        if self.current_block_shape == 'L':
+        if self.current_block_shape == "L":
             return [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
-        if self.current_block_shape == 'L_rev':
+        if self.current_block_shape == "L_rev":
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
-        if self.current_block_shape == 'O':
+        if self.current_block_shape == "O":
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
-        if self.current_block_shape == 'E':
+        if self.current_block_shape == "E":
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
-        if self.current_block_shape == 'Z':
+        if self.current_block_shape == "Z":
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
-        if self.current_block_shape == 'Z_rev':
+        if self.current_block_shape == "Z_rev":
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
 
     def user_input_left(self):
@@ -149,16 +152,16 @@ class TetrisGame:
         if any(x == 0 for x, y in self.get_current_block()):
             return
         x, y = self.current_block_center
-        self.current_block_center = (x-1, y)
+        self.current_block_center = (x - 1, y)
 
     def user_input_right(self):
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width-1 for x, y in self.get_current_block()):
+        if any(x == game_width - 1 for x, y in self.get_current_block()):
             return
         x, y = self.current_block_center
-        self.current_block_center = (x+1, y)
+        self.current_block_center = (x + 1, y)
 
     def block_mover(self):
         """
