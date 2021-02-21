@@ -76,7 +76,7 @@ class TetrisGUI:
         """
 
         self.canvas.delete("block")
-        for x, y in self.tetris_game.current_block + self.tetris_game.landed_blocks:
+        for x, y in self.tetris_game.get_current_block() + self.tetris_game.landed_blocks:
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
@@ -107,7 +107,7 @@ class TetrisGUI:
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
-        self.upcoming_block = None
+        self.upcoming_block_shape = None
 
     def new_block(self):
         """
@@ -123,7 +123,6 @@ class TetrisGame:
             self.current_block_shape = self.upcoming_block_shape
             self.current_block_center = (x, y)
         self.upcoming_block_shape = random.choice(shapes_name)
-        self.current_block = self.get_current_block()
 
     def get_current_block(self):
         (x, y) = self.current_block_center
@@ -146,40 +145,37 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        left = []
-        for (x, y) in self.current_block:
-            if x == 0:
-                return
-            left.append((x - 1, y))
-        self.current_block = left
+        x, y = self.current_block_center
+        if x == 0:
+            return
+        self.current_block_center = (x-1, y)
 
     def user_input_right(self):
         """
         Moves the current block to the right on the canvas
         """
-        right = []
-        for (x, y) in self.current_block:
-            if x == 9:
-                return
-            right.append((x + 1, y))
-        self.current_block = right
+        x, y = self.current_block_center
+        if x == 9:
+            return
+        self.current_block_center = (x+1, y)
 
     def block_mover(self):
         """
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.landed_blocks for (x, y) in self.current_block
-        ) or any(y + 1 == game_height for (x, y) in self.current_block):
-            for coord in self.current_block:
+            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block()
+        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
+            for coord in self.get_current_block():
                 self.landed_blocks.append(coord)
             print(self.landed_blocks)
             self.full_line_clear()
             self.new_block()
         else:
-            self.current_block = [(x, y + 1) for x, y in self.current_block]
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
 
-    def block_rotator(self, event):
+    def block_rotator(self):
         rotate = []
         for (x, y) in self.current_block:
             rotate.append((y, x))
