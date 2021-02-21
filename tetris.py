@@ -12,7 +12,7 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
-shapes_name = ['I', 'L', 'L_rev', 'O', 'E', 'Z', 'Z_rev']
+shape_names = ['I', 'L', 'L_rev', 'O', 'E', 'Z', 'Z_rev']
 
 def run_gui():
 
@@ -108,6 +108,8 @@ class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
         self.upcoming_block_shape = None
+        self.upcoming_block_center = None
+        self.current_block_center = None
 
     def new_block(self):
         """
@@ -144,18 +146,18 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        x, y = self.current_block_center
         if any(x == 0 for x, y in self.get_current_block()):
             return
+        x, y = self.current_block_center
         self.current_block_center = (x-1, y)
 
     def user_input_right(self):
         """
         Moves the current block to the right on the canvas
         """
-        x, y = self.current_block_center
-        if any(x == 9 for x, y in self.get_current_block()):
+        if any(x == game_width-1 for x, y in self.get_current_block()):
             return
+        x, y = self.current_block_center
         self.current_block_center = (x+1, y)
 
     def block_mover(self):
@@ -174,11 +176,8 @@ class TetrisGame:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
-    def block_rotator(self):
-        rotate = []
-        for (x, y) in self.current_block:
-            rotate.append((y, x))
-        self.current_block = rotate
+    def block_rotator(self, event):
+        print("TODO: should rotate")
 
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
