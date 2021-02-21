@@ -157,7 +157,7 @@ class TetrisGame:
         Moves the current block to the right on the canvas
         """
         x, y = self.current_block_center
-        if x == 9:
+        if any(x == game_width-1 for x, y in self.get_current_block()):
             return
         self.current_block_center = (x+1, y)
 
