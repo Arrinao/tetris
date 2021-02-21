@@ -176,10 +176,11 @@ class TetrisGame:
             self.current_block_center = (x, y + 1)
 
     def block_rotator(self):
-        rotate = []
-        for (x, y) in self.current_block:
-            rotate.append((y, x))
-        self.current_block = rotate
+        print('rotate')
+        #rotate = []
+        #for (x, y) in self.current_block:
+        #    rotate.append((y, x))
+        #self.current_block = rotate
 
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
