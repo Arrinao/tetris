@@ -12,7 +12,7 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
-shapes_name = ['I', 'L', 'L_rev', 'O', 'E', 'Z', 'Z_rev']
+shape_names = ['I', 'L', 'L_rev', 'O', 'E', 'Z', 'Z_rev']
 
 def run_gui():
 
