@@ -120,7 +120,8 @@ class TetrisGame:
             self.current_block_shape = random.choice(shapes_name)
             self.current_block_center = (x, y)
         else:
-            self.current_block = self.upcoming_block_shape
+            self.current_block_shape = self.upcoming_block_shape
+            self.current_block_center = (x, y)
         self.upcoming_block_shape = random.choice(shapes_name)
         self.current_block = self.get_current_block()
 
