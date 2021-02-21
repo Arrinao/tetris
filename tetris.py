@@ -147,9 +147,9 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        x, y = self.current_block_center
         if any(x == 0 for x, y in self.get_current_block()):
             return
+        x, y = self.current_block_center
         self.current_block_center = (x-1, y)
 
     def user_input_right(self):
