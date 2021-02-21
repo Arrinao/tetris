@@ -12,7 +12,7 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
-
+shapes_name = ['I', 'L', 'L_rev', 'O', 'E', 'Z', 'Z_rev']
 
 def run_gui():
 
@@ -107,7 +107,6 @@ class TetrisGUI:
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
-        self.current_block = None
         self.upcoming_block = None
 
     def new_block(self):
@@ -117,27 +116,20 @@ class TetrisGame:
         """
         x = int(game_width / 2)
         y = 0
-        self.blocks = {
-            "L": [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
-            "L_rev": [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y)],
-            "O": [(x - 1, y), (x, y), (x - 1, y + 1), (x, y + 1)],
-            "E": [(x, y), (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)],
-            "Z": [(x - 1, y), (x, y), (x, y + 1), (x - 1, y + 1)],
-            "Z_rev": [(x + 1, y), (x, y), (x, y + 1), (x - 1, y + 1)],
-            "I": [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-        }
         if self.upcoming_block is None:
-            self.current_block_shape = random.choice(list(self.blocks.keys()))
+            self.current_block_shape = random.choice(shapes_name)
             self.current_block_center = (x, y)
         else:
-            self.current_block = self.upcoming_block
-        self.upcoming_block = random.choice(list(self.blocks.keys()))
+            self.current_block = self.upcoming_block_shape
+        self.upcoming_block_shape = random.choice(shapes_name)
         self.current_block = self.get_current_block()
 
     def get_current_block(self):
         (x, y) = self.current_block_center
         if self.current_block_shape == 'I':
             return [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+        if self.current_block_shape == 'L':
+            return [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
         if self.current_block_shape == 'L_rev':
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
         if self.current_block_shape == 'O':
