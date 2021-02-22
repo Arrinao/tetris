@@ -170,7 +170,6 @@ class TetrisGame:
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             for coord in self.get_current_block():
                 self.landed_blocks.append(coord)
-            print(self.landed_blocks)
             self.full_line_clear()
             self.new_block()
         else:
@@ -183,7 +182,6 @@ class TetrisGame:
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
-        print(coordinates_counter)
         for y_line in range(game_height):
             count = coordinates_counter[y_line]
             if count == game_width:
