@@ -119,13 +119,11 @@ class TetrisGame:
         Chooses a random block from "blocks" and assigns it to
         self.current_block
         """
-        x = int(game_width / 2)
-        y = 0
         if self.upcoming_block_shape is None:
             self.current_block_shape = random.choice(shape_names)
         else:
             self.current_block_shape = self.upcoming_block_shape
-        self.current_block_center = (x, y)
+        self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
 
     def get_current_block(self):
