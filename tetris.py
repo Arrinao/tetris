@@ -129,8 +129,8 @@ class TetrisGame:
     def get_current_block(self):
         (x, y) = self.current_block_center
         if self.current_block_shape == "I":
-            self.I = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)], [(x, y-3), (x, y-2), (x, y-1), (x, y)]]
-            return self.I[self.index]
+            I = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)], [(x, y-3), (x, y-2), (x, y-1), (x, y)]]
+            return I[self.index % len(I)]
         if self.current_block_shape == "L":
             self.L = [[(x-1, y), (x,y), (x+1, y), (x+1, y+1)], [(x-1,y), (x,y), (x,y-1), (x, y-2)], [(x, y-1), (x, y), (x+1, y), (x+2, y)], [(x, y), (x+1, y), (x, y+1), (x, y+2)]]
             return self.L[self.index]
