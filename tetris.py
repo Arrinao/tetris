@@ -13,6 +13,10 @@ GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 
 def run_gui():
 
@@ -77,7 +81,11 @@ class TetrisGUI:
 
         self.canvas.delete("block")
         for x, y in (
+<<<<<<< HEAD
             self.tetris_game.get_current_block(self.tetris_game.index) + self.tetris_game.landed_blocks
+=======
+            self.tetris_game.get_current_block() + self.tetris_game.landed_blocks
+>>>>>>> origin/main
         ):
             self.canvas.create_rectangle(
                 x * square_size,
@@ -112,7 +120,6 @@ class TetrisGame:
         self.upcoming_block_shape = None
         self.current_block_shape = None
         self.current_block_center = None
-
 
     def new_block(self):
         """
