@@ -126,7 +126,7 @@ class TetrisGame:
         self.upcoming_block_shape = random.choice(shape_names)
         self.index = 0
 
-    def get_current_block(self, index):
+    def get_current_block(self):
         (x, y) = self.current_block_center
         if self.current_block_shape == "I":
             self.I = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)], [(x, y-3), (x, y-2), (x, y-1), (x, y)]]
