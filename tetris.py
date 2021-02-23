@@ -187,21 +187,6 @@ class TetrisGame:
 
     def block_rotator(self, event):
         self.index += 1
-        self.index %= 4
-        if self.current_block_shape == "I":
-            return self.get_current_block[self.index]
-        if self.current_block_shape == "L":
-            return self.get_current_block[self.index]
-        if self.current_block_shape == "L_rev":
-            return self.get_current_block[self.index]
-        if self.current_block_shape == "O":
-            return
-        if self.current_block_shape == "E":
-            return self.get_current_block[self.index]
-        if self.current_block_shape == "Z":
-            return self.get_current_block[self.index]
-        if self.current_block_shape == "Z_rev":
-            return self.get_current_block[self.index]
 
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
