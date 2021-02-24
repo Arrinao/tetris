@@ -112,6 +112,7 @@ class TetrisGame:
         self.upcoming_block_shape = None
         self.current_block_shape = None
         self.current_block_center = None
+        new_block()
 
     def new_block(self):
         """
@@ -122,7 +123,7 @@ class TetrisGame:
             self.current_block_shape = random.choice(shape_names)
         else:
             self.current_block_shape = self.upcoming_block_shape
-        self.current_block_center = (int(game_width / 2), -2)
+        self.current_block_center = (int(game_width / 2), 8)
         self.upcoming_block_shape = random.choice(shape_names)
         self.index = 0
 
@@ -132,10 +133,10 @@ class TetrisGame:
             I = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)], [(x, y-3), (x, y-2), (x, y-1), (x, y)]]
             return I[self.index % len(I)]
         if self.current_block_shape == "L":
-            L = [[(x-1, y), (x,y), (x+1, y), (x+1, y+1)], [(x-1,y), (x,y), (x,y-1), (x, y-2)], [(x, y-1), (x, y), (x+1, y), (x+2, y)], [(x, y), (x+1, y), (x, y+1), (x, y+2)]]
+            L = [[(x-1, y), (x,y), (x+1, y), (x+1, y-1)], [(x,y), (x-1,y), (x-1,y-1), (x-1,y-2)], [(x, y), (x, y-1), (x+1, y-1), (x+2, y-1)], [(x, y-1), (x+1, y-1), (x+1, y), (x+1,y+1)]]
             return L[self.index % len(L)]
         if self.current_block_shape == "L_rev":
-            L_rev = [[(x-1, y), (x, y), (x+1, y), (x+1, y+1)], [(x,y+1), (x,y), (x,y-1), (x-1, y-1)], [(x-1, y), (x,y), (x+1,y),(x+1,y-1)], [(x+1,y+1), (x,y+1), (x,y), (x,y-1)]]
+            L_rev = [[(x-1, y), (x,y), (x+1, y), (x+1, y+1)], [(x-1,y), (x,y), (x,y-1), (x, y-2)], [(x-1, y), (x,y), (x+1,y),(x+1,y-1)], [(x+1,y+1), (x,y+1), (x,y), (x,y-1)]]
             return L_rev[self.index % len(L_rev)]
         if self.current_block_shape == "O":
             O = [[(x - 1, y), (x, y), (x, y-1), (x-1, y-1)]]
@@ -154,7 +155,7 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for x, y in self.get_current_block):
+        if any(x == 0 for x, y in self.get_current_block()):
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
@@ -164,7 +165,7 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_current_block):
+        if any(x == game_width - 1 for x, y in self.get_current_block()):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
@@ -174,18 +175,20 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block) or any(y + 1 == game_height for (x, y) in self.get_current_block):
-            for coord in self.get_current_block(self.index):
+            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block()) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
+            for coord in self.get_current_block():
                 self.landed_blocks.append(coord)
             print(self.landed_blocks)
             self.full_line_clear()
             self.new_block()
         else:
             x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
+            self.current_block_center = (x, y)
 
     def block_rotator(self, event):
         self.index += 1
+        if self.index > 4:
+            self.index = 1
 
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
