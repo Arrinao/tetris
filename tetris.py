@@ -15,7 +15,6 @@ D_GREY = "#383838"
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
-
 def run_gui():
 
     root = tkinter.Tk()
@@ -119,6 +118,8 @@ color_chart = {
     7: "red2",
     8: "red4",
 }
+
+
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
@@ -156,7 +157,10 @@ class TetrisGame:
             return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
 
     def square_color(self):
-        k = {(coord, random.choice(list(color_chart.values()))) for coord in self.landed_blocks}
+        k = {
+            (coord, random.choice(list(color_chart.values())))
+            for coord in self.landed_blocks
+        }
         print(k)
 
     def user_input_left(self):
