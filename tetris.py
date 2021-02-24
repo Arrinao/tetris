@@ -30,7 +30,6 @@ def run_gui():
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
     tetris_gui.tetris_game.new_block()
-    tetris_gui.tetris_game.full_line_clear()
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
