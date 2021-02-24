@@ -157,7 +157,7 @@ class TetrisGame:
         if self.current_block_shape == "E":
             E = [
                 [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
-                [(x, y), (x + 1, y), (x, y - 1), (x, y + 1)],
+                [(x, y), (x + 1, y), (x, y - 1), (x, y - 2)],
                 [(x - 1, y), (x, y), (x + 1, y), (x, y + 1)],
                 [(x, y), (x - 1, y), (x, y - 1), (x, y + 1)],
             ]
