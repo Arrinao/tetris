@@ -132,7 +132,7 @@ class TetrisGame:
         if self.current_block_shape == "I":
             I = [
                 [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-                [(x, y - 3), (x, y - 2), (x, y - 1), (x, y)],
+                [(x, y - 2), (x, y - 1), (x, y), (x, y+1)],
             ]
             return I[self.index % len(I)]
         if self.current_block_shape == "L":
@@ -157,21 +157,21 @@ class TetrisGame:
         if self.current_block_shape == "E":
             E = [
                 [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
-                [(x, y), (x + 1, y), (x, y - 1), (x, y - 2)],
-                [(x - 1, y), (x, y), (x + 1, y), (x, y + 1)],
+                [(x, y-1), (x, y), (x+1, y), (x, y + 1)],
+                [(x-1, y), (x, y), (x + 1, y), (x, y+1)],
                 [(x, y), (x - 1, y), (x, y - 1), (x, y + 1)],
             ]
             return E[self.index % len(E)]
         if self.current_block_shape == "Z":
             Z = [
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
-                [(x - 1, y + 1), (x - 1, y), (x, y), (x + 1, y - 1)],
+                [(x - 1, y-1), (x, y-1), (x, y), (x + 1, y)],
+                [(x, y), (x, y-1), (x+1, y-1), (x+1, y - 2)],
             ]
             return Z[self.index % len(Z)]
         if self.current_block_shape == "Z_rev":
             Z_rev = [
-                [(x + 1, y), (x, y), (x, y + 1), (x - 1, y + 1)],
-                [(x, y + 1), (x, y), (x - 1, y), (x - 1, y - 1)],
+                [(x + 1, y-1), (x, y-1), (x, y), (x - 1, y)],
+                [(x, y), (x, y-1), (x - 1, y-1), (x - 1, y - 2)],
             ]
             return Z_rev[self.index % len(Z_rev)]
 
