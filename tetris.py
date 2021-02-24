@@ -29,7 +29,6 @@ def run_gui():
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
-    tetris_gui.tetris_game.new_block()
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
@@ -111,8 +110,7 @@ class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
         self.upcoming_block_shape = None
-        self.current_block_shape = None
-        self.current_block_center = None
+        self.new_block()
 
     def new_block(self):
         """
