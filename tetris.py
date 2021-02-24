@@ -77,7 +77,7 @@ class TetrisGUI:
 
         self.canvas.delete("block")
         for x, y in (
-            self.tetris_game.get_current_block(self.tetris_game.index) + self.tetris_game.landed_blocks
+            self.tetris_game.get_current_block() + self.tetris_game.landed_blocks
         ):
             self.canvas.create_rectangle(
                 x * square_size,
@@ -132,23 +132,23 @@ class TetrisGame:
             I = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)], [(x, y-3), (x, y-2), (x, y-1), (x, y)]]
             return I[self.index % len(I)]
         if self.current_block_shape == "L":
-            self.L = [[(x-1, y), (x,y), (x+1, y), (x+1, y+1)], [(x-1,y), (x,y), (x,y-1), (x, y-2)], [(x, y-1), (x, y), (x+1, y), (x+2, y)], [(x, y), (x+1, y), (x, y+1), (x, y+2)]]
-            return self.L[self.index]
+            L = [[(x-1, y), (x,y), (x+1, y), (x+1, y+1)], [(x-1,y), (x,y), (x,y-1), (x, y-2)], [(x, y-1), (x, y), (x+1, y), (x+2, y)], [(x, y), (x+1, y), (x, y+1), (x, y+2)]]
+            return L[self.index % len(L)]
         if self.current_block_shape == "L_rev":
-            self.L_rev = [[(x-1, y), (x, y), (x+1, y), (x+1, y+1)], [(x,y+1), (x,y), (x,y-1), (x-1, y-1)], [(x-1, y), (x,y), (x+1,y),(x+1,y-1)], [(x+1,y+1), (x,y+1), (x,y), (x,y-1)]]
-            return self.L_rev[self.index]
+            L_rev = [[(x-1, y), (x, y), (x+1, y), (x+1, y+1)], [(x,y+1), (x,y), (x,y-1), (x-1, y-1)], [(x-1, y), (x,y), (x+1,y),(x+1,y-1)], [(x+1,y+1), (x,y+1), (x,y), (x,y-1)]]
+            return L_rev[self.index % len(L_rev)]
         if self.current_block_shape == "O":
-            self.O = [[(x - 1, y), (x, y), (x, y-1), (x-1, y-1)]]
-            return self.O[0]
+            O = [[(x - 1, y), (x, y), (x, y-1), (x-1, y-1)]]
+            return O[0]
         if self.current_block_shape == "E":
-            self.E = [[(x-1, y), (x, y), (x+1,y), (x,y-1)], [(x,y), (x+1,y), (x,y-1), (x,y+1)], [(x-1, y), (x, y), (x+1,y), (x,y+1)], [(x,y), (x-1,y), (x,y-1), (x,y+1)]]
-            return self.E[self.index]
+            E = [[(x-1, y), (x, y), (x+1,y), (x,y-1)], [(x,y), (x+1,y), (x,y-1), (x,y+1)], [(x-1, y), (x, y), (x+1,y), (x,y+1)], [(x,y), (x-1,y), (x,y-1), (x,y+1)]]
+            return E[self.index % len(E)]
         if self.current_block_shape == "Z":
-            self.Z = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)], [(x-1, y+1), (x-1, y), (x, y), (x + 1, y-1)]]
-            return self.Z[self.index]
+            Z = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)], [(x-1, y+1), (x-1, y), (x, y), (x + 1, y-1)]]
+            return Z[self.index % len(Z)]
         if self.current_block_shape == "Z_rev":
-            self.Z_rev = [[(x+1, y), (x, y), (x, y+1), (x-1, y+1)], [(x, y+1), (x, y), (x-1, y), (x-1, y-1)]]
-            return self.Z_rev[self.index]
+            Z_rev = [[(x+1, y), (x, y), (x, y+1), (x-1, y+1)], [(x, y+1), (x, y), (x-1, y), (x-1, y-1)]]
+            return Z_rev[self.index % len(Z_rev)]
 
     def user_input_left(self):
         """
@@ -174,8 +174,8 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block(self.index)
-        ) or any(y + 1 == game_height for (x, y) in self.get_current_block(self.index)):
+            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block
+        ) or any(y + 1 == game_height for (x, y) in self.get_current_block):
             for coord in self.get_current_block(self.index):
                 self.landed_blocks.append(coord)
             print(self.landed_blocks)
