@@ -154,7 +154,7 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for x, y in self.get_current_block(self.index)):
+        if any(x == 0 for x, y in self.get_current_block):
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
@@ -164,7 +164,7 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_current_block(self.index)):
+        if any(x == game_width - 1 for x, y in self.get_current_block):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
@@ -174,8 +174,7 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block
-        ) or any(y + 1 == game_height for (x, y) in self.get_current_block):
+            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block) or any(y + 1 == game_height for (x, y) in self.get_current_block):
             for coord in self.get_current_block(self.index):
                 self.landed_blocks.append(coord)
             print(self.landed_blocks)
