@@ -112,7 +112,7 @@ class TetrisGame:
         self.upcoming_block_shape = None
         self.current_block_shape = None
         self.current_block_center = None
-        new_block()
+
 
     def new_block(self):
         """
