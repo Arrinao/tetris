@@ -120,10 +120,10 @@ class TetrisGame:
         self.current_block
         """
         if self.upcoming_block_shape is None:
-            self.current_block_shape = "L_rev"
+            self.current_block_shape = random.choice(shape_names)
         else:
             self.current_block_shape = self.upcoming_block_shape
-        self.current_block_center = (int(game_width / 2), 8)
+        self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
         self.index = 0
 
@@ -145,10 +145,10 @@ class TetrisGame:
             return L[self.index % len(L)]
         if self.current_block_shape == "L_rev":
             L_rev = [
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)],
-                [(x, y + 1), (x + 1, y + 1), (x + 1, y), (x + 1, y - 1)],
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)],
-                [(x + 1, y + 1), (x, y + 1), (x, y), (x, y - 1)],
+                [(x - 1, y-1), (x, y-1), (x + 1, y-1), (x+1, y)],
+                [(x, y), (x + 1, y), (x + 1, y-1), (x + 1, y - 2)],
+                [(x, y-1), (x, y), (x + 1, y), (x + 2, y)],
+                [(x + 1, y - 1), (x, y - 1), (x, y), (x, y + 1)],
             ]
             return L_rev[self.index % len(L_rev)]
         if self.current_block_shape == "O":
@@ -207,7 +207,7 @@ class TetrisGame:
             self.new_block()
         else:
             x, y = self.current_block_center
-            self.current_block_center = (x, y)
+            self.current_block_center = (x, y+1)
 
     def block_rotator(self, event):
         self.index += 1
