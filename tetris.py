@@ -220,7 +220,6 @@ class TetrisGame:
         Rotates the current block
         '''
         self.index += 1
-        return self.get_current_block()
         
 
     def full_line_clear(self):
