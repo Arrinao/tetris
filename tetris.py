@@ -111,7 +111,6 @@ class TetrisGUI:
 
     def rotate_mediator(self, event):
         self.tetris_game.block_rotator()
-        print('kurva')
         self.draw_block()
 
 class TetrisGame:
