@@ -106,7 +106,6 @@ class TetrisGUI:
         self.tetris_game.user_input_right()
         self.draw_block()
 
-
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
@@ -223,6 +222,7 @@ class TetrisGame:
                 self.landed_blocks = [
                     (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
                 ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
+                
 
 
 run_gui()
