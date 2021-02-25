@@ -12,6 +12,9 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
+YELLOW = '#ffd343'
+PURPLE = '7e1e9c'
+
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
@@ -33,7 +36,7 @@ def run_gui():
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
-    root.bind("<Up>", tetris_gui.tetris_game.block_rotator)
+    root.bind("<Up>", tetris_gui.rotate_mediator)
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
@@ -106,6 +109,10 @@ class TetrisGUI:
         self.tetris_game.user_input_right()
         self.draw_block()
 
+    def rotate_mediator(self, event):
+        self.tetris_game.block_rotator()
+        print('kurva')
+        self.draw_block()
 
 class TetrisGame:
     def __init__(self):
@@ -179,7 +186,7 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for x, y in self.get_current_block()):
+        if any(x == 0 for (x, y) in self.get_current_block()) or any((x-1, y) in self.landed_blocks for x, y in self.get_current_block()):
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
@@ -188,7 +195,7 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_current_block()):
+        if any(x == game_width - 1 for x, y in self.get_current_block()) or any((x+1, y) in self.landed_blocks for x, y in self.get_current_block()):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
@@ -209,8 +216,13 @@ class TetrisGame:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
-    def block_rotator(self, event):
+    def block_rotator(self):
+        '''
+        Rotates the current block
+        '''
         self.index += 1
+        return self.get_current_block()
+        
 
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
@@ -223,6 +235,7 @@ class TetrisGame:
                 self.landed_blocks = [
                     (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
                 ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
+
 
 
 run_gui()
