@@ -222,12 +222,8 @@ class TetrisGame:
         Rotates the current block
         """
         self.rotate_counter += 1
-        if any(x <= -1 for (x, y) in self.get_current_block()) or any(
-            (x - 1, y) in self.landed_blocks for x, y in self.get_current_block()
-        ):
-            self.rotate_counter -= 1
-        if any(x >= game_width for x, y in self.get_current_block()) or any(
-            (x + 1, y) in self.landed_blocks for x, y in self.get_current_block()
+        if any(x <= -1 or x >= game_width for (x, y) in self.get_current_block()) or any(
+            (x, y) in self.landed_blocks for x, y in self.get_current_block()
         ):
             self.rotate_counter -= 1
 
