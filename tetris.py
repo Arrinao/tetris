@@ -12,6 +12,9 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
+YELLOW = "#ffd343"
+PURPLE = "7e1e9c"
+
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
@@ -29,11 +32,10 @@ def run_gui():
     tetris_canvas.grid()
 
     tetris_gui = TetrisGUI(game_speed, tetris_canvas)
-    tetris_gui.tetris_game.new_block()
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
-    root.bind("<Up>", tetris_gui.tetris_game.block_rotator)
+    root.bind("<Up>", tetris_gui.rotate_mediator)
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
@@ -106,6 +108,10 @@ class TetrisGUI:
         self.tetris_game.user_input_right()
         self.draw_block()
 
+    def rotate_mediator(self, event):
+        self.tetris_game.block_rotator()
+        self.draw_block()
+
 
 color_chart = {
     1: "turquoise",
@@ -123,8 +129,7 @@ class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
         self.upcoming_block_shape = None
-        self.current_block_shape = None
-        self.current_block_center = None
+        self.new_block()
 
     def new_block(self):
         """
@@ -137,23 +142,55 @@ class TetrisGame:
             self.current_block_shape = self.upcoming_block_shape
         self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
+        self.rotate_counter = 0
 
     def get_current_block(self):
         (x, y) = self.current_block_center
         if self.current_block_shape == "I":
-            return [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+            I = [
+                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
+                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
+            ]
+            return I[self.rotate_counter % len(I)]
         if self.current_block_shape == "L":
-            return [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
+            L = [
+                [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
+                [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
+                [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
+            ]
+            return L[self.rotate_counter % len(L)]
         if self.current_block_shape == "L_rev":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            L_rev = [
+                [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
+                [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
+                [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
+                [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
+            ]
+            return L_rev[self.rotate_counter % len(L_rev)]
         if self.current_block_shape == "O":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            O = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+            return O[0]
         if self.current_block_shape == "E":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            E = [
+                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
+                [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
+                [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
+                [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
+            ]
+            return E[self.rotate_counter % len(E)]
         if self.current_block_shape == "Z":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            Z = [
+                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
+                [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
+            ]
+            return Z[self.rotate_counter % len(Z)]
         if self.current_block_shape == "Z_rev":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            Z_rev = [
+                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
+            ]
+            return Z_rev[self.rotate_counter % len(Z_rev)]
 
     def square_color(self):
         k = {
@@ -166,7 +203,9 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for x, y in self.get_current_block()):
+        if any(x == 0 for (x, y) in self.get_current_block()) or any(
+            (x - 1, y) in self.landed_blocks for x, y in self.get_current_block()
+        ):
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
@@ -175,7 +214,9 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_current_block()):
+        if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
+            (x + 1, y) in self.landed_blocks for x, y in self.get_current_block()
+        ):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
@@ -189,7 +230,6 @@ class TetrisGame:
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             for coord in self.get_current_block():
                 self.landed_blocks.append(coord)
-            print(self.landed_blocks)
             self.square_color()
             self.full_line_clear()
             self.new_block()
@@ -197,13 +237,26 @@ class TetrisGame:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
-    def block_rotator(self, event):
-        print("TODO: should rotate")
+    def block_rotator(self):
+        """
+        Rotates the current block
+        """
+        self.rotate_counter += 1
+        # if any(x <= -1 or x >= game_width for (x, y) in self.get_current_block()) or any(
+        #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
+        # ):
+        if any(
+            x not in range(game_width) or (x, y) in self.landed_blocks
+            for (x, y) in self.get_current_block()
+        ):
+            self.rotate_counter -= 1
 
     def full_line_clear(self):
+        """
+        Clears the line once it's fully populated with blocks
+        """
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
-        print(coordinates_counter)
         for y_line in range(game_height):
             count = coordinates_counter[y_line]
             if count == game_width:
