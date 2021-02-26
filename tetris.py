@@ -222,9 +222,7 @@ class TetrisGame:
         Rotates the current block
         """
         self.rotate_counter += 1
-        if any(x <= -1 or x >= game_width for (x, y) in self.get_current_block()) or any(
-            (x, y) in self.landed_blocks for x, y in self.get_current_block()
-        ):
+        if any(x not in range(game_width) or (x, y) in self.landed_blocks for (x, y) in self.get_current_block()):
             self.rotate_counter -= 1
 
     def full_line_clear(self):
