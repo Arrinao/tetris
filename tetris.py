@@ -12,6 +12,9 @@ RED = "#ff1700"
 GREEN = "#05ff00"
 GREY = "#666666"
 D_GREY = "#383838"
+YELLOW = "#ffd343"
+PURPLE = "7e1e9c"
+
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
@@ -32,7 +35,7 @@ def run_gui():
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
-    root.bind("<Up>", tetris_gui.tetris_game.block_rotator)
+    root.bind("<Up>", tetris_gui.rotate_mediator)
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
@@ -105,6 +108,10 @@ class TetrisGUI:
         self.tetris_game.user_input_right()
         self.draw_block()
 
+    def rotate_mediator(self, event):
+        self.tetris_game.block_rotator()
+        self.draw_block()
+
 
 class TetrisGame:
     def __init__(self):
@@ -123,29 +130,63 @@ class TetrisGame:
             self.current_block_shape = self.upcoming_block_shape
         self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
+        self.rotate_counter = 0
 
     def get_current_block(self):
         (x, y) = self.current_block_center
         if self.current_block_shape == "I":
-            return [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+            I = [
+                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
+                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
+            ]
+            return I[self.rotate_counter % len(I)]
         if self.current_block_shape == "L":
-            return [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
+            L = [
+                [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
+                [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
+                [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
+            ]
+            return L[self.rotate_counter % len(L)]
         if self.current_block_shape == "L_rev":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            L_rev = [
+                [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
+                [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
+                [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
+                [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
+            ]
+            return L_rev[self.rotate_counter % len(L_rev)]
         if self.current_block_shape == "O":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            O = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+            return O[0]
         if self.current_block_shape == "E":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            E = [
+                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
+                [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
+                [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
+                [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
+            ]
+            return E[self.rotate_counter % len(E)]
         if self.current_block_shape == "Z":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            Z = [
+                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
+                [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
+            ]
+            return Z[self.rotate_counter % len(Z)]
         if self.current_block_shape == "Z_rev":
-            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y + 1)]
+            Z_rev = [
+                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
+            ]
+            return Z_rev[self.rotate_counter % len(Z_rev)]
 
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for x, y in self.get_current_block()):
+        if any(x == 0 for (x, y) in self.get_current_block()) or any(
+            (x - 1, y) in self.landed_blocks for x, y in self.get_current_block()
+        ):
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
@@ -154,7 +195,9 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_current_block()):
+        if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
+            (x + 1, y) in self.landed_blocks for x, y in self.get_current_block()
+        ):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
@@ -174,8 +217,11 @@ class TetrisGame:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
-    def block_rotator(self, event):
-        print("TODO: should rotate")
+    def block_rotator(self):
+        """
+        Rotates the current block
+        """
+        self.rotate_counter += 1
 
     def full_line_clear(self):
         y_coordinates = [y for (x, y) in self.landed_blocks]
