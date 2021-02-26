@@ -146,8 +146,8 @@ class TetrisGame:
             L = [
                 [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
                 [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
-                [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x - 1, y)],
-                [(x, y - 1), (x + 1, y - 1), (x + 1, y), (x + 1, y + 1)],
+                [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
             ]
             return L[self.rotate_counter % len(L)]
         if self.current_block_shape == "L_rev":
