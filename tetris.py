@@ -139,7 +139,7 @@ class TetrisGame:
         if self.current_block_shape == "I":
             I = [
                 [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-                [(x, y + 1), (x, y), (x, y - 1), (x, y - 2)],
+                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
             ]
             return I[self.rotate_counter % len(I)]
         if self.current_block_shape == "L":
