@@ -138,17 +138,17 @@ class TetrisGame:
         if self.current_block_shape == "I":
             I = [
                 [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
+                [(x, y + 1), (x, y), (x, y-1), (x, y - 2)],
             ]
-            return I[self.index % len(I)]
-        if self.current_block_shape == "L":
+            return I[self.rotate_counter % len(I)]
+        if self.current_block_shape == 'L':
             L = [
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)],
-                [(x + 1, y), (x, y), (x, y - 1), (x, y - 2)],
-                [(x, y), (x, y - 1), (x + 1, y - 1), (x + 2, y - 1)],
-                [(x, y - 1), (x + 1, y - 1), (x + 1, y), (x + 1, y + 1)],
+                [(x+1, y-1), (x-1, y), (x, y), (x + 1, y)],
+                [(x, y-2), (x, y - 1), (x, y), (x+1, y)],
+                [(x-1, y), (x, y), (x + 1, y), (x+1, y + 1)],
+                [(x-1, y - 1),  (x, y - 1), (x, y), (x, y + 1)],
             ]
-            return L[self.index % len(L)]
+            return L[self.rotate_counter % len(L)]
         if self.current_block_shape == "L_rev":
             L_rev = [
                 [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
@@ -156,7 +156,7 @@ class TetrisGame:
                 [(x, y - 1), (x, y), (x + 1, y), (x + 2, y)],
                 [(x + 1, y - 1), (x, y - 1), (x, y), (x, y + 1)],
             ]
-            return L_rev[self.index % len(L_rev)]
+            return L_rev[self.rotate_counter % len(L_rev)]
         if self.current_block_shape == "O":
             O = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
             return O[0]
@@ -167,19 +167,19 @@ class TetrisGame:
                 [(x - 1, y), (x, y), (x + 1, y), (x, y + 1)],
                 [(x, y), (x - 1, y), (x, y - 1), (x, y + 1)],
             ]
-            return E[self.index % len(E)]
+            return E[self.rotate_counter % len(E)]
         if self.current_block_shape == "Z":
             Z = [
                 [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
                 [(x, y), (x, y - 1), (x + 1, y - 1), (x + 1, y - 2)],
             ]
-            return Z[self.index % len(Z)]
+            return Z[self.rotate_counter % len(Z)]
         if self.current_block_shape == "Z_rev":
             Z_rev = [
                 [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
                 [(x, y), (x, y - 1), (x - 1, y - 1), (x - 1, y - 2)],
             ]
-            return Z_rev[self.index % len(Z_rev)]
+            return Z_rev[self.rotate_counter % len(Z_rev)]
 
     def user_input_left(self):
         """
@@ -219,7 +219,7 @@ class TetrisGame:
         '''
         Rotates the current block
         '''
-        self.index += 1
+        self.rotate_counter += 1
         
 
     def full_line_clear(self):
