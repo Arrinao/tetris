@@ -143,18 +143,18 @@ class TetrisGame:
             return I[self.rotate_counter % len(I)]
         if self.current_block_shape == 'L':
             L = [
-                [(x+1, y-1), (x-1, y), (x, y), (x + 1, y)],
-                [(x, y-2), (x, y - 1), (x, y), (x+1, y)],
-                [(x-1, y), (x, y), (x + 1, y), (x+1, y + 1)],
-                [(x-1, y - 1),  (x, y - 1), (x, y), (x, y + 1)],
+                [(x - 1, y+1), (x, y+1), (x + 1, y+1), (x + 1, y)],
+                [(x-1, y - 1), (x-1, y), (x-1, y + 1), (x, y + 1)],
+                [(x-1, y-1), (x, y-1), (x+1, y-1), (x-1, y)],
+                [(x, y-1), (x+1, y-1), (x+1, y), (x+1, y+1)]
             ]
             return L[self.rotate_counter % len(L)]
         if self.current_block_shape == "L_rev":
             L_rev = [
                 [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
-                [(x, y), (x + 1, y), (x + 1, y - 1), (x + 1, y - 2)],
-                [(x, y - 1), (x, y), (x + 1, y), (x + 2, y)],
-                [(x + 1, y - 1), (x, y - 1), (x, y), (x, y + 1)],
+                [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
+                [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
+                [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
             ]
             return L_rev[self.rotate_counter % len(L_rev)]
         if self.current_block_shape == "O":
@@ -163,21 +163,21 @@ class TetrisGame:
         if self.current_block_shape == "E":
             E = [
                 [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
-                [(x, y - 1), (x, y), (x + 1, y), (x, y + 1)],
-                [(x - 1, y), (x, y), (x + 1, y), (x, y + 1)],
-                [(x, y), (x - 1, y), (x, y - 1), (x, y + 1)],
+                [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
+                [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
+                [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
             ]
             return E[self.rotate_counter % len(E)]
         if self.current_block_shape == "Z":
             Z = [
                 [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
-                [(x, y), (x, y - 1), (x + 1, y - 1), (x + 1, y - 2)],
+                [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
             ]
             return Z[self.rotate_counter % len(Z)]
         if self.current_block_shape == "Z_rev":
             Z_rev = [
                 [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
-                [(x, y), (x, y - 1), (x - 1, y - 1), (x - 1, y - 2)],
+                [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
             ]
             return Z_rev[self.rotate_counter % len(Z_rev)]
 
