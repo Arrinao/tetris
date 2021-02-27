@@ -9,11 +9,14 @@ game_height = 15
 BLACK = "#000000"
 BLUE = "#0029ff"
 RED = "#ff1700"
-GREEN = "#05ff00"
+GREEN = "#00ff00"
 GREY = "#666666"
 D_GREY = "#383838"
 YELLOW = "#ffd343"
-PURPLE = "7e1e9c"
+PURPLE = "#9900FF"
+ORANGE = '#FF9900'
+PINK = '#FF00FF'
+TEAL = '#00FFFF'
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
@@ -88,7 +91,7 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=RED,
+                fill=self.tetris_game.block_color(),
             )
 
     def block_mediator(self):
@@ -233,6 +236,12 @@ class TetrisGame:
                 self.landed_blocks = [
                     (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
                 ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
+
+    def block_color(self):
+        color_list = [RED, BLUE, GREEN, YELLOW, PURPLE, ORANGE, PINK, TEAL]
+        color_chart = {shape: color for shape, color in zip(shape_names, color_list)}
+        return color_chart[self.current_block_shape]
+
 
 
 run_gui()
