@@ -127,18 +127,6 @@ class TetrisGUI:
         self.draw_block()
 
 
-color_chart = {
-    1: "turquoise",
-    2: "yellow green",
-    3: "yellow",
-    4: "gold",
-    5: "orange",
-    6: "dark orange",
-    7: "red2",
-    8: "red4",
-}
-
-
 class TetrisGame:
     def __init__(self):
         self.landed_blocks = []
@@ -206,13 +194,6 @@ class TetrisGame:
             ]
             return Z_rev[self.rotate_counter % len(Z_rev)]
 
-    def square_color(self):
-        k = {
-            (coord, random.choice(list(color_chart.values())))
-            for coord in self.landed_blocks
-        }
-        print(k)
-
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
@@ -244,7 +225,6 @@ class TetrisGame:
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             for coord in self.get_current_block():
                 self.landed_blocks.append(coord)
-            self.square_color()
             self.full_line_clear()
             self.new_block()
         else:
@@ -256,19 +236,8 @@ class TetrisGame:
         Rotates the current block
         """
         self.rotate_counter += 1
-        # if any(x <= -1 or x >= game_width for (x, y) in self.get_current_block()) or any(
-        #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
-        # ):
-        if any(
-            x not in range(game_width) or (x, y) in self.landed_blocks
-            for (x, y) in self.get_current_block()
-        ):
-            self.rotate_counter -= 1
 
     def full_line_clear(self):
-        """
-        Clears the line once it's fully populated with blocks
-        """
         y_coordinates = [y for (x, y) in self.landed_blocks]
         coordinates_counter = collections.Counter(y_coordinates)
         for y_line in range(game_height):
