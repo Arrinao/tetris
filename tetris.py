@@ -83,7 +83,18 @@ class TetrisGUI:
 
         self.canvas.delete("block")
         for x, y in (
-            self.tetris_game.get_current_block() + self.tetris_game.landed_blocks
+            self.tetris_game.get_current_block()
+        ):
+            self.canvas.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=self.tetris_game.block_color(),
+            )
+        for x, y in (
+            self.tetris_game.landed_blocks
         ):
             self.canvas.create_rectangle(
                 x * square_size,
