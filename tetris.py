@@ -190,7 +190,7 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block()
+            (x, y + 1) in self.coords for (x, y) in self.get_current_block()
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
@@ -205,7 +205,8 @@ class TetrisGame:
 
     def coord_extractor(self):
         for block in self.landed_blocks.values():
-            self.coords = [coord for coord in block]
+            for coord in block:
+                self.coords.append(coord)
         return self.coords
 
     def user_input_left(self):
