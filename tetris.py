@@ -221,7 +221,9 @@ class TetrisGame:
         #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
         # ):
         if any(
-            x not in range(game_width) or (x, y) in self.landed_blocks
+            x not in range(game_width)
+            or y >= game_height
+            or (x, y) in self.landed_blocks
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
