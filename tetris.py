@@ -204,10 +204,11 @@ class TetrisGame:
             self.current_block_center = (x, y + 1)
 
     def coord_extractor(self):
+        coords = []
         for block in self.landed_blocks.values():
             for coord in block:
-                self.coords.append(coord)
-        return self.coords
+                coords.append(coord)
+        return coords
 
     def user_input_left(self):
         """
