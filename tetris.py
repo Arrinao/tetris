@@ -121,7 +121,6 @@ class TetrisGame:
         self.landed_blocks = {}
         self.upcoming_block_shape = None
         self.new_block()
-        self.coords = []
 
     def new_block(self):
         """
@@ -190,7 +189,7 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.coords for (x, y) in self.get_current_block()
+            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
@@ -204,17 +203,18 @@ class TetrisGame:
             self.current_block_center = (x, y + 1)
 
     def coord_extractor(self):
+        coords = []
         for block in self.landed_blocks.values():
             for coord in block:
-                self.coords.append(coord)
-        return self.coords
+                coords.append(coord)
+        return coords
 
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
         """
         if any(x == 0 for (x, y) in self.get_current_block()) or any(
-            (x - 1, y) in self.landed_blocks.values() for x, y in self.get_current_block()
+            (x - 1, y) in self.coord_extractor() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
@@ -225,7 +225,7 @@ class TetrisGame:
         Moves the current block to the right on the canvas
         """
         if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
-            (x + 1, y) in self.landed_blocks.values() for x, y in self.get_current_block()
+            (x + 1, y) in self.coord_extractor() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
@@ -240,7 +240,7 @@ class TetrisGame:
         #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
         # ):
         if any(
-            x not in range(game_width) or (x, y) in self.landed_blocks.values()
+            x not in range(game_width) or (x, y) in self.coord_extractor()
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
