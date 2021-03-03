@@ -193,7 +193,7 @@ class TetrisGame:
 
     def user_input_right(self):
         """
-        Moves the current block to the right on the canvas
+        Moves the current block to the right on the canvas 
         """
         if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
             (x + 1, y) in self.landed_blocks for x, y in self.get_current_block()
@@ -226,8 +226,7 @@ class TetrisGame:
         #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
         # ):
         if any(
-            x not in range(game_width) or (x, y) in self.landed_blocks
-            for (x, y) in self.get_current_block()
+            x not in range(game_width) or y not in range(game_height) or (x, y) in self.landed_blocks for (x, y) in self.get_current_block() 
         ):
             self.rotate_counter -= 1
 
