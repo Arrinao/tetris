@@ -227,7 +227,7 @@ class TetrisGame:
         # ):
         if any(
             x not in range(game_width)
-            or y not in range(game_height)
+            or y >= game_height
             or (x, y) in self.landed_blocks
             for (x, y) in self.get_current_block()
         ):
