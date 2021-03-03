@@ -134,7 +134,6 @@ class TetrisGame:
         self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
         self.rotate_counter = 0
-        self.current_block_active = True
 
     def get_current_block(self):
         (x, y) = self.current_block_center
