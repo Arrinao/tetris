@@ -196,18 +196,18 @@ class TetrisGame:
             for coord in self.get_current_block():
 #               self.landed_blocks[self.current_block_shape]= coord   ##Doesn't work, only one coord is created :(
                 self.landed_blocks[self.current_block_shape].append(coord)
-            # self.full_line_clear()
+            self.full_line_clear()
             self.new_block()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
     def coord_extractor(self):
-        coords = []
+        self.coords = []
         for block in self.landed_blocks.values():
             for coord in block:
-                coords.append(coord)
-        return coords
+                self.coords.append(coord)
+        return self.coords
 
     def user_input_left(self):
         """
@@ -255,18 +255,17 @@ class TetrisGame:
         color_chart = {shape: color for shape, color in zip(shape_names, color_list)}
         return color_chart[self.current_block_shape]
 
-#    def full_line_clear(self):
-#        """
-#        Clears the line once it's fully populated with blocks
-#        """
-#        y_coordinates = [y for (x, y) in self.landed_blocks.values()]
-#        coordinates_counter = collections.Counter(y_coordinates)
-#        for y_line in range(game_height):
-#            count = coordinates_counter[y_line]
-#            if count == game_width:
-#                # TODO: root.after() here
-#                self.landed_blocks = [
-#                    (a, b + 1) for (a, b) in self.landed_blocks.values() if b < y_line
-#                ] + [(a, b) for (a, b) in self.landed_blocks.values() if b > y_line]
-
+    def full_line_clear(self):
+        """
+        Clears the line once it's fully populated with blocks
+        """
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        coordinates_counter = collections.Counter(y_coordinates)
+        for x_line in range(game_height):
+            count = coordinates_counter[x_line]
+            if count == game_width:
+                # TODO: root.after() here
+                self.coords = [
+                    (a, b + 1) for (a, b) in self.coord_extractor() if b < x_line
+                ] + [(a, b) for (a, b) in self.coord_extractor() if b > x_line]
 run_gui()
