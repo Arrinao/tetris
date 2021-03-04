@@ -93,7 +93,7 @@ class TetrisGUI:
                 tags="block",
                 fill=RED
             )
-        for x, y in list(self.tetris_game.coord_extractor()):
+        for x, y in list(self.tetris_game.color_logic()):
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
@@ -260,7 +260,7 @@ class TetrisGame:
         square_color = {color: values for color, values in zip(color_list, self.landed_blocks.values())}
         print(square_color)
 
-        
+
 
     def full_line_clear(self):
         """
