@@ -83,8 +83,17 @@ class TetrisGUI:
 
         self.canvas.delete("block")
         for x, y in (
-            self.tetris_game.get_current_block() + list(self.tetris_game.coord_extractor())
+            self.tetris_game.get_current_block()
         ):
+            self.canvas.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=RED
+            )
+        for x, y in list(self.tetris_game.coord_extractor()):
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
@@ -197,17 +206,19 @@ class TetrisGame:
 #               self.landed_blocks[self.current_block_shape]= coord   ##Doesn't work, only one coord is created :(
                 self.landed_blocks[self.current_block_shape].append(coord)
             self.full_line_clear()
+            self.square_color()
+            print(self.landed_blocks)
             self.new_block()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
     def coord_extractor(self):
-        self.coords = []
+        coords = []
         for block in self.landed_blocks.values():
             for coord in block:
-                self.coords.append(coord)
-        return self.coords
+                coords.append(coord)
+        return coords
 
     def user_input_left(self):
         """
@@ -245,15 +256,12 @@ class TetrisGame:
         ):
             self.rotate_counter -= 1
 
-    def full_line_clear(self):
-        """
-        Clears the line once it's fully populated with blocks
-        """
-
-    def block_color(self):
+    def color_logic(self):
         color_list = [RED, BLUE, GREEN, YELLOW, PURPLE, ORANGE, PINK, TEAL]
-        color_chart = {shape: color for shape, color in zip(shape_names, color_list)}
-        return color_chart[self.current_block_shape]
+        square_color = {color: values for color, values in zip(color_list, self.landed_blocks.values())}
+        print(square_color)
+
+        
 
     def full_line_clear(self):
         """
@@ -265,7 +273,7 @@ class TetrisGame:
             count = coordinates_counter[x_line]
             if count == game_width:
                 # TODO: root.after() here
-                self.coords = [
-                    (a, b + 1) for (a, b) in self.coord_extractor() if b < x_line
-                ] + [(a, b) for (a, b) in self.coord_extractor() if b > x_line]
+                for key in self.landed_blocks.keys():
+                    self.landed_blocks[key] = [(a, b+1) for (a, b) in self.landed_blocks[key] if b < x_line] + [(a, b) for (a, b) in self.landed_blocks[key] if b > x_line]
+
 run_gui()
