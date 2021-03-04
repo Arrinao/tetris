@@ -19,6 +19,8 @@ PINK = '#FF00FF'
 TEAL = '#00FFFF'
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+color_dict = {"L": YELLOW, "I": RED, "E": GREEN, "L_rev": BLUE, "Z": PURPLE, "Z_rev": TEAL, "O": ORANGE}
+
 
 
 def run_gui():
@@ -91,17 +93,20 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=RED
+                fill=color_dict[self.tetris_game.current_block_shape]
             )
-        for x, y in list(self.tetris_game.color_logic()):
-            self.canvas.create_rectangle(
-                x * square_size,
-                y * square_size,
-                x * square_size + square_size,
-                y * square_size + square_size,
-                tags="block",
-                fill=RED
-            )
+
+        for shape_letter, coords in self.tetris_game.landed_blocks.items():
+            color = color_dict[shape_letter]
+            for x, y in coords:
+                self.canvas.create_rectangle(
+                    x * square_size,
+                    y * square_size,
+                    x * square_size + square_size,
+                    y * square_size + square_size,
+                    tags="block",
+                    fill=color
+                )
 
     def block_mediator(self):
         """
@@ -205,7 +210,6 @@ class TetrisGame:
 #               self.landed_blocks[self.current_block_shape]= coord   ##Doesn't work, only one coord is created :(
                 self.landed_blocks[self.current_block_shape].append(coord)
             self.full_line_clear()
-            self.square_color()
             print(self.landed_blocks)
             self.new_block()
         else:
@@ -254,12 +258,6 @@ class TetrisGame:
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
-
-    def color_logic(self):
-        color_list = [RED, BLUE, GREEN, YELLOW, PURPLE, ORANGE, PINK, TEAL]
-        square_color = {color: values for color, values in zip(color_list, self.landed_blocks.values())}
-        print(square_color)
-
 
 
     def full_line_clear(self):
