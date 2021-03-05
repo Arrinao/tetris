@@ -192,7 +192,7 @@ class TetrisGame:
 
         return coords[self.rotate_counter % len(coords)]
 
-    def coord_extractor(self):
+    def get_landed_coords(self):
         coords = []
         for square in self.landed_blocks:
             coords.append(square[1])
