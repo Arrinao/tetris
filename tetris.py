@@ -203,7 +203,6 @@ class TetrisGame:
             (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             for coord in self.get_current_block():
-#               self.landed_blocks[self.current_block_shape]= coord   ##Doesn't work, only one coord is created :(
                 self.landed_blocks.append((self.current_block_shape, coord))
             self.full_line_clear()
             self.new_block()
