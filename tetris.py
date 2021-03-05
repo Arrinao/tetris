@@ -96,17 +96,17 @@ class TetrisGUI:
                 fill=color_dict[self.tetris_game.current_block_shape]
             )
 
-        for shape_letter, coords in self.tetris_game.landed_blocks.items():
+        for shape_letter, (x, y) in self.tetris_game.landed_blocks:
+            print(shape_letter, (x, y))
             color = color_dict[shape_letter]
-            for x, y in coords:
-                self.canvas.create_rectangle(
-                    x * square_size,
-                    y * square_size,
-                    x * square_size + square_size,
-                    y * square_size + square_size,
-                    tags="block",
-                    fill=color
-                )
+            self.canvas.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=color
+            )
 
     def block_mediator(self):
         """
@@ -132,7 +132,7 @@ class TetrisGUI:
 
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = {}
+        self.landed_blocks = []
         self.upcoming_block_shape = None
         self.new_block()
 
@@ -192,6 +192,12 @@ class TetrisGame:
 
         return coords[self.rotate_counter % len(coords)]
 
+    def coord_extractor(self):
+        coords = []
+        for square in self.landed_blocks:
+            coords.append(square[1])
+        return coords
+
     def block_mover(self):
         """
         Moves the current block downwards one square on the canvas
@@ -199,24 +205,14 @@ class TetrisGame:
         if any(
             (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
-            if self.current_block_shape not in self.landed_blocks:
-                self.landed_blocks[self.current_block_shape] = []
             for coord in self.get_current_block():
 #               self.landed_blocks[self.current_block_shape]= coord   ##Doesn't work, only one coord is created :(
-                self.landed_blocks[self.current_block_shape].append(coord)
+                self.landed_blocks.append((self.current_block_shape, coord))
             self.full_line_clear()
-            print(self.landed_blocks)
             self.new_block()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-
-    def coord_extractor(self):
-        coords = []
-        for block in self.landed_blocks.values():
-            for coord in block:
-                coords.append(coord)
-        return coords
 
     def user_input_left(self):
         """
@@ -267,7 +263,7 @@ class TetrisGame:
             count = coordinates_counter[x_line]
             if count == game_width:
                 # TODO: root.after() here
-                for key in self.landed_blocks.keys():
-                    self.landed_blocks[key] = [(a, b+1) for (a, b) in self.landed_blocks[key] if b < x_line] + [(a, b) for (a, b) in self.landed_blocks[key] if b > x_line]
+                self.landed_blocks = [(letter, (a, b)) for (letter, (a, b)) in self.landed_blocks if b > x_line] + [(letter, (a, b+1)) for (letter, (a, b)) in self.landed_blocks if b < x_line]
+
 
 run_gui()
