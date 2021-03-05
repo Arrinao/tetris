@@ -7,16 +7,16 @@ square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "#0029ff"
-RED = "#ff1700"
-GREEN = "#00ff00"
+BLUE = "RoyalBlue2"
+RED = "red2"
+GREEN = "lime green"
 GREY = "#666666"
 D_GREY = "#383838"
-YELLOW = "#ffd343"
+YELLOW = "gold"
 PURPLE = "#9900FF"
-ORANGE = '#FF9900'
+ORANGE = 'salmon1'
 PINK = '#FF00FF'
-TEAL = '#00FFFF'
+TEAL = 'pale turquoise'
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 color_dict = {"L": YELLOW, "I": RED, "E": GREEN, "L_rev": BLUE, "Z": PURPLE, "Z_rev": TEAL, "O": ORANGE}
@@ -97,7 +97,6 @@ class TetrisGUI:
             )
 
         for shape_letter, (x, y) in self.tetris_game.landed_blocks:
-            print(shape_letter, (x, y))
             color = color_dict[shape_letter]
             self.canvas.create_rectangle(
                 x * square_size,
