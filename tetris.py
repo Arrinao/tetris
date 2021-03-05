@@ -199,7 +199,7 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
+            (x, y + 1) in self.get_landed_coords() for (x, y) in self.get_current_block()
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             for coord in self.get_current_block():
                 self.landed_blocks.append((self.current_block_shape, coord))
@@ -214,7 +214,7 @@ class TetrisGame:
         Moves the current block to the left on the canvas
         """
         if any(x == 0 for (x, y) in self.get_current_block()) or any(
-            (x - 1, y) in self.coord_extractor() for x, y in self.get_current_block()
+            (x - 1, y) in self.get_landed_coords() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
@@ -225,7 +225,7 @@ class TetrisGame:
         Moves the current block to the right on the canvas
         """
         if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
-            (x + 1, y) in self.coord_extractor() for x, y in self.get_current_block()
+            (x + 1, y) in self.get_landed_coords() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
@@ -242,7 +242,7 @@ class TetrisGame:
         if any(
             x not in range(game_width)
             or y >= game_height
-            or (x, y) in self.coord_extractor()
+            or (x, y) in self.get_landed_coords()
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
@@ -252,7 +252,7 @@ class TetrisGame:
         """
         Clears the line once it's fully populated with blocks
         """
-        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        y_coordinates = [y for (x, y) in self.get_landed_coords()]
         coordinates_counter = collections.Counter(y_coordinates)
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
