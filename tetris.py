@@ -14,13 +14,20 @@ GREY = "#666666"
 D_GREY = "#383838"
 YELLOW = "gold"
 PURPLE = "#9900FF"
-ORANGE = 'salmon1'
-PINK = '#FF00FF'
-TEAL = 'pale turquoise'
+ORANGE = "salmon1"
+PINK = "#FF00FF"
+TEAL = "pale turquoise"
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
-color_dict = {"L": YELLOW, "I": RED, "E": GREEN, "L_rev": BLUE, "Z": PURPLE, "Z_rev": TEAL, "O": ORANGE}
-
+color_dict = {
+    "L": YELLOW,
+    "I": RED,
+    "E": GREEN,
+    "L_rev": BLUE,
+    "Z": PURPLE,
+    "Z_rev": TEAL,
+    "O": ORANGE,
+}
 
 
 def run_gui():
@@ -84,16 +91,14 @@ class TetrisGUI:
         """
 
         self.canvas.delete("block")
-        for x, y in (
-            self.tetris_game.get_current_block()
-        ):
+        for x, y in self.tetris_game.get_current_block():
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=color_dict[self.tetris_game.current_block_shape]
+                fill=color_dict[self.tetris_game.current_block_shape],
             )
 
         for shape_letter, (x, y) in self.tetris_game.landed_blocks:
@@ -104,7 +109,7 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=color
+                fill=color,
             )
 
     def block_mediator(self):
@@ -199,7 +204,8 @@ class TetrisGame:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.get_landed_coords() for (x, y) in self.get_current_block()
+            (x, y + 1) in self.get_landed_coords()
+            for (x, y) in self.get_current_block()
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             for coord in self.get_current_block():
                 self.landed_blocks.append((self.current_block_shape, coord))
@@ -247,7 +253,6 @@ class TetrisGame:
         ):
             self.rotate_counter -= 1
 
-
     def full_line_clear(self):
         """
         Clears the line once it's fully populated with blocks
@@ -258,7 +263,15 @@ class TetrisGame:
             count = coordinates_counter[x_line]
             if count == game_width:
                 # TODO: root.after() here
-                self.landed_blocks = [(letter, (a, b)) for (letter, (a, b)) in self.landed_blocks if b > x_line] + [(letter, (a, b+1)) for (letter, (a, b)) in self.landed_blocks if b < x_line]
+                self.landed_blocks = [
+                    (letter, (a, b))
+                    for (letter, (a, b)) in self.landed_blocks
+                    if b > x_line
+                ] + [
+                    (letter, (a, b + 1))
+                    for (letter, (a, b)) in self.landed_blocks
+                    if b < x_line
+                ]
 
 
 run_gui()
