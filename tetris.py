@@ -132,6 +132,9 @@ class TetrisGUI:
         self.tetris_game.block_rotator()
         self.draw_block()
 
+    def sidebar:
+        
+
 
 class TetrisGame:
     def __init__(self):
@@ -213,7 +216,6 @@ class TetrisGame:
                 self.landed_blocks[self.current_block_shape].append(
                     coord
                 )  # Can this be made into a dict comprehension somehow? Is it recommended?
-            print(self.landed_blocks)
             self.full_line_clear()
             self.new_block()
         else:
@@ -259,7 +261,7 @@ class TetrisGame:
         # ):
         if any(
             x not in range(game_width)
-            or (x, y) in self.coord_extractor()  # This is so hard to conceive by myself
+            or (x, y) in self.coord_extractor()  # This is so hard to conceive by myself is this an actual comprehension of some sort?
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
