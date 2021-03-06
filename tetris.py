@@ -7,13 +7,16 @@ square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "#0029ff"
-RED = "#ff1700"
-GREEN = "#05ff00"
+BLUE = "RoyalBlue2"
+RED = "red2"
+GREEN = "lime green"
 GREY = "#666666"
 D_GREY = "#383838"
-YELLOW = "#ffd343"
-PURPLE = "7e1e9c"
+YELLOW = "gold"
+PURPLE = "#9900FF"
+ORANGE = 'salmon1'
+PINK = '#FF00FF'
+TEAL = 'pale turquoise'
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
@@ -77,10 +80,10 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
-
+        color_dict = {"L": YELLOW, "I": RED, "E": GREEN, "L_rev": BLUE, "Z": PURPLE, "Z_rev": TEAL, "O": ORANGE}
         self.canvas.delete("block")
         for x, y in (
-            self.tetris_game.get_current_block() + self.tetris_game.coord_extractor()
+            self.tetris_game.get_current_block()
         ):
             self.canvas.create_rectangle(
                 x * square_size,
@@ -88,8 +91,19 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=RED,
+                fill=color_dict[self.tetris_game.current_block_shape]
             )
+
+        for letter, coord_list in self.tetris_game.landed_blocks.items():
+            for (x, y) in coord_list:
+                self.canvas.create_rectangle(
+                    x * square_size,
+                    y * square_size,
+                    x * square_size + square_size,
+                    y * square_size + square_size,
+                    tags="block",
+                    fill=color_dict[letter]
+                  )
 
     def block_mediator(self):
         """
@@ -190,7 +204,7 @@ class TetrisGame:
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
             for coord in self.get_current_block():
-                self.landed_blocks[self.current_block_shape].append(coord)
+                self.landed_blocks[self.current_block_shape].append(coord)      # Can this be made into a dict comprehension somehow? Is it recommended?
             print(self.landed_blocks)
             self.full_line_clear()
             self.new_block()
@@ -236,7 +250,7 @@ class TetrisGame:
         #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
         # ):
         if any(
-            x not in range(game_width) or (x, y) in self.coord_extractor()
+            x not in range(game_width) or (x, y) in self.coord_extractor() #This is so hard to conceive by myself
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
@@ -252,8 +266,7 @@ class TetrisGame:
             if count == game_width:
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
-                    #self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]}
+                    #self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]} #Why this doesn't work?
                     self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]
-                    print(coord_list) 
 
 run_gui()
