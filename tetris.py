@@ -80,7 +80,7 @@ class TetrisGUI:
 
         self.canvas.delete("block")
         for x, y in (
-            self.tetris_game.get_current_block() + self.tetris_game.landed_blocks
+            self.tetris_game.get_current_block() + self.tetris_game.coord_extractor()
         ):
             self.canvas.create_rectangle(
                 x * square_size,
@@ -115,7 +115,7 @@ class TetrisGUI:
 
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = []
+        self.landed_blocks = {}
         self.upcoming_block_shape = None
         self.new_block()
 
@@ -180,12 +180,30 @@ class TetrisGame:
             ]
             return Z_rev[self.rotate_counter % len(Z_rev)]
 
+    def block_mover(self):
+        """
+        Moves the current block downwards one square on the canvas
+        """
+        if any(
+            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
+        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
+            if self.current_block_shape not in self.landed_blocks:
+                self.landed_blocks[self.current_block_shape] = []
+            for coord in self.get_current_block():
+                self.landed_blocks[self.current_block_shape].append(coord)
+            print(self.landed_blocks)
+            self.full_line_clear()
+            self.new_block()
+        else:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
+
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
         """
         if any(x == 0 for (x, y) in self.get_current_block()) or any(
-            (x - 1, y) in self.landed_blocks for x, y in self.get_current_block()
+            (x - 1, y) in self.coord_extractor() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
@@ -196,26 +214,18 @@ class TetrisGame:
         Moves the current block to the right on the canvas
         """
         if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
-            (x + 1, y) in self.landed_blocks for x, y in self.get_current_block()
+            (x + 1, y) in self.coord_extractor() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
 
-    def block_mover(self):
-        """
-        Moves the current block downwards one square on the canvas
-        """
-        if any(
-            (x, y + 1) in self.landed_blocks for (x, y) in self.get_current_block()
-        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
-            for coord in self.get_current_block():
-                self.landed_blocks.append(coord)
-            self.full_line_clear()
-            self.new_block()
-        else:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
+    def coord_extractor(self):
+        coords = []
+        for coord in self.landed_blocks.values():
+            for (x, y) in coord:
+                coords.append((x, y))
+        return coords
 
     def block_rotator(self):
         """
@@ -226,7 +236,7 @@ class TetrisGame:
         #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
         # ):
         if any(
-            x not in range(game_width) or (x, y) in self.landed_blocks
+            x not in range(game_width) or (x, y) in self.coord_extractor()
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
@@ -235,15 +245,15 @@ class TetrisGame:
         """
         Clears the line once it's fully populated with blocks
         """
-        y_coordinates = [y for (x, y) in self.landed_blocks]
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
         for y_line in range(game_height):
             count = coordinates_counter[y_line]
             if count == game_width:
                 # TODO: root.after() here
-                self.landed_blocks = [
-                    (a, b + 1) for (a, b) in self.landed_blocks if b < y_line
-                ] + [(a, b) for (a, b) in self.landed_blocks if b > y_line]
-
+                for letter, coord_list in self.landed_blocks.items():
+                    #self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]}
+                    self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]
+                    print(coord_list) 
 
 run_gui()
