@@ -7,16 +7,16 @@ square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "RoyalBlue2"
+BLUE = "blue"
 RED = "red2"
-GREEN = "lime green"
+GREEN = "green2"
 GREY = "#666666"
-D_GREY = "#383838"
+D_GREY = "gray7"
 YELLOW = "gold"
 PURPLE = "#9900FF"
-ORANGE = "salmon1"
+ORANGE = "Orangered2"
 PINK = "#FF00FF"
-TEAL = "pale turquoise"
+TEAL = "paleturquoise3"
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
