@@ -19,6 +19,15 @@ PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+color_dict = {
+    "L": YELLOW,
+    "I": RED,
+    "E": GREEN,
+    "L_rev": BLUE,
+    "Z": PURPLE,
+    "Z_rev": TEAL,
+    "O": ORANGE,
+}
 
 
 def run_gui():
@@ -158,50 +167,64 @@ class TetrisGame:
     def get_current_block(self):
         (x, y) = self.current_block_center
         if self.current_block_shape == "I":
-            I = [
+            coords = [
                 [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
                 [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
             ]
-            return I[self.rotate_counter % len(I)]
         if self.current_block_shape == "L":
-            L = [
+            coords = [
                 [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
                 [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
                 [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
                 [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
             ]
-            return L[self.rotate_counter % len(L)]
         if self.current_block_shape == "L_rev":
-            L_rev = [
+            coords = [
                 [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
                 [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
                 [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
                 [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
             ]
-            return L_rev[self.rotate_counter % len(L_rev)]
         if self.current_block_shape == "O":
-            O = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
-            return O[0]
+            coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
         if self.current_block_shape == "E":
-            E = [
+            coords = [
                 [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
                 [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
                 [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
                 [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
             ]
-            return E[self.rotate_counter % len(E)]
         if self.current_block_shape == "Z":
-            Z = [
+            coords = [
                 [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
                 [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
             ]
-            return Z[self.rotate_counter % len(Z)]
         if self.current_block_shape == "Z_rev":
-            Z_rev = [
+            coords = [
                 [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
                 [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
             ]
-            return Z_rev[self.rotate_counter % len(Z_rev)]
+
+        return coords[self.rotate_counter % len(coords)]
+
+    def get_landed_coords(self):
+        return [coords for shape, coords in self.landed_blocks]
+
+    def block_mover(self):
+        """
+        Moves the current block downwards one square on the canvas
+        """
+        if any(
+            (x, y + 1) in self.get_landed_coords()
+            for (x, y) in self.get_current_block()
+        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
+            for coord in self.get_current_block():
+                self.landed_blocks.append((self.current_block_shape, coord))
+            self.full_line_clear()
+            self.new_block()
+        else:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
 
     def block_mover(self):
         """
@@ -261,6 +284,7 @@ class TetrisGame:
         # ):
         if any(
             x not in range(game_width)
+            or y >= game_height
             or (x, y) in self.coord_extractor()  # This is so hard to conceive by myself is this an actual comprehension of some sort?
             for (x, y) in self.get_current_block()
         ):
@@ -272,8 +296,8 @@ class TetrisGame:
         """
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
-        for y_line in range(game_height):
-            count = coordinates_counter[y_line]
+        for x_line in range(game_height):
+            count = coordinates_counter[x_line]
             if count == game_width:
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
