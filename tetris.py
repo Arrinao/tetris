@@ -144,7 +144,7 @@ class TetrisGUI:
 
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = {}
+        self.landed_blocks = {}   # e.g. {'L': [(1, 2), (3, 4)]}
         self.upcoming_block_shape = None
         self.new_block()
 
