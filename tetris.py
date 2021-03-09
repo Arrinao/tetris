@@ -135,7 +135,7 @@ class TetrisGUI:
 
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = {}   # e.g. {'L': [(1, 2), (3, 4)]}
+        self.landed_blocks = {}  # e.g. {'L': [(1, 2), (3, 4)]}
         self.upcoming_block_shape = None
         self.new_block()
 
@@ -223,7 +223,9 @@ class TetrisGame:
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
-            self.landed_blocks[self.current_block_shape].extend(self.get_current_block())
+            self.landed_blocks[self.current_block_shape].extend(
+                self.get_current_block()
+            )
             self.full_line_clear()
             self.new_block()
         else:
