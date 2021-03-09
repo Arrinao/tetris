@@ -27,9 +27,12 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    topbar = tkinter.Label(root)
-    topbar['bg'] = D_GREY
+    topbar = tkinter.Frame(root, bg=D_GREY, height=square_size*2, relief = 'ridge', borderwidth=1)
     topbar.grid(row=0, column=0, sticky='we')
+
+    topbar_next_block = tkinter.Label(topbar)
+    topbar_next_block.grid(column=2, columnspan=2, sticky='w')
+
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
@@ -291,10 +294,10 @@ class TetrisGame:
             if count == game_width:
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
-                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]} #Why this doesn't work?
+                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                     self.landed_blocks[letter] = [
-                        (a, b) for (a, b) in coord_list if b > y_line
-                    ] + [(a, b + 1) for (a, b) in coord_list if b < y_line]
+                        (a, b) for (a, b) in coord_list if b > x_line
+                    ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
 
 
 run_gui()
