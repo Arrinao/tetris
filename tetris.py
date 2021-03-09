@@ -141,9 +141,6 @@ class TetrisGUI:
         self.tetris_game.block_rotator()
         self.draw_block()
 
-    def sidebar:
-        
-
 
 class TetrisGame:
     def __init__(self):
