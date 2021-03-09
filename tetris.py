@@ -1,16 +1,17 @@
 import random
 import tkinter
 import collections
+from tkinter import ttk
 
 game_speed = 300
-square_size = 35
+square_size = 32
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "blue"
+BLUE = "Blue2"
 RED = "red2"
 GREEN = "green2"
-GREY = "#666666"
+GREY = "Gray24"
 D_GREY = "gray7"
 YELLOW = "gold"
 PURPLE = "#9900FF"
@@ -26,15 +27,18 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    tetris_canvas = tkinter.Canvas(
+    topbar = tkinter.Label(root)
+    topbar['bg'] = D_GREY
+    topbar.grid(row=0, column=0, sticky='we')
+    game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
         height=square_size * game_height,
         highlightthickness=0,
     )
-    tetris_canvas.grid()
+    game_canvas.grid()
 
-    tetris_gui = TetrisGUI(game_speed, tetris_canvas)
+    tetris_gui = TetrisGUI(game_speed, game_canvas)
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
@@ -132,8 +136,6 @@ class TetrisGUI:
         self.tetris_game.block_rotator()
         self.draw_block()
 
-    def sidebar:
-        
 
 
 class TetrisGame:
