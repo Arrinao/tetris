@@ -232,10 +232,7 @@ class TetrisGame:
         ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
-            for coord in self.get_current_block():
-                self.landed_blocks[self.current_block_shape].append(
-                    coord
-                )  # Can this be made into a dict comprehension somehow? Is it recommended?
+            self.landed_blocks[self.current_block_shape].extend(self.get_current_block())
             self.full_line_clear()
             self.new_block()
         else:
