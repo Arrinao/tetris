@@ -7,10 +7,10 @@ square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "blue"
+BLUE = "Blue2"
 RED = "red2"
 GREEN = "green2"
-GREY = "#666666"
+GREY = "Gray24"
 D_GREY = "gray7"
 YELLOW = "gold"
 PURPLE = "#9900FF"
@@ -19,15 +19,6 @@ PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
-color_dict = {
-    "L": YELLOW,
-    "I": RED,
-    "E": GREEN,
-    "L_rev": BLUE,
-    "Z": PURPLE,
-    "Z_rev": TEAL,
-    "O": ORANGE,
-}
 
 
 def run_gui():
