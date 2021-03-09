@@ -4,31 +4,22 @@ import collections
 from tkinter import ttk
 
 game_speed = 300
-square_size = 35
+square_size = 32
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "RoyalBlue2"
+BLUE = "Blue2"
 RED = "red2"
-GREEN = "lime green"
-GREY = "#666666"
-D_GREY = "#383838"
+GREEN = "green2"
+GREY = "Gray24"
+D_GREY = "gray7"
 YELLOW = "gold"
 PURPLE = "#9900FF"
-ORANGE = "salmon1"
+ORANGE = "Orangered2"
 PINK = "#FF00FF"
-TEAL = "pale turquoise"
+TEAL = "paleturquoise3"
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
-color_dict = {
-    "L": YELLOW,
-    "I": RED,
-    "E": GREEN,
-    "L_rev": BLUE,
-    "Z": PURPLE,
-    "Z_rev": TEAL,
-    "O": ORANGE,
-}
 
 
 def run_gui():
@@ -93,7 +84,15 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
-
+        color_dict = {
+            "L": YELLOW,
+            "I": RED,
+            "E": GREEN,
+            "L_rev": BLUE,
+            "Z": PURPLE,
+            "Z_rev": TEAL,
+            "O": ORANGE,
+        }
         self.canvas.delete("block")
         for x, y in self.tetris_game.get_current_block():
             self.canvas.create_rectangle(
@@ -105,16 +104,16 @@ class TetrisGUI:
                 fill=color_dict[self.tetris_game.current_block_shape],
             )
 
-        for shape_letter, (x, y) in self.tetris_game.landed_blocks:
-            color = color_dict[shape_letter]
-            self.canvas.create_rectangle(
-                x * square_size,
-                y * square_size,
-                x * square_size + square_size,
-                y * square_size + square_size,
-                tags="block",
-                fill=color,
-            )
+        for letter, coord_list in self.tetris_game.landed_blocks.items():
+            for (x, y) in coord_list:
+                self.canvas.create_rectangle(
+                    x * square_size,
+                    y * square_size,
+                    x * square_size + square_size,
+                    y * square_size + square_size,
+                    tags="block",
+                    fill=color_dict[letter],
+                )
 
     def block_mediator(self):
         """
@@ -137,10 +136,9 @@ class TetrisGUI:
         self.tetris_game.block_rotator()
         self.draw_block()
 
-
 class TetrisGame:
     def __init__(self):
-        self.landed_blocks = []
+        self.landed_blocks = {}  # e.g. {'L': [(1, 2), (3, 4)]}
         self.upcoming_block_shape = None
         self.new_block()
 
@@ -219,12 +217,30 @@ class TetrisGame:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
 
+    def block_mover(self):
+        """
+        Moves the current block downwards one square on the canvas
+        """
+        if any(
+            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
+        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
+            if self.current_block_shape not in self.landed_blocks:
+                self.landed_blocks[self.current_block_shape] = []
+            self.landed_blocks[self.current_block_shape].extend(
+                self.get_current_block()
+            )
+            self.full_line_clear()
+            self.new_block()
+        else:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
+
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
         """
         if any(x == 0 for (x, y) in self.get_current_block()) or any(
-            (x - 1, y) in self.get_landed_coords() for x, y in self.get_current_block()
+            (x - 1, y) in self.coord_extractor() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
@@ -235,11 +251,18 @@ class TetrisGame:
         Moves the current block to the right on the canvas
         """
         if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
-            (x + 1, y) in self.get_landed_coords() for x, y in self.get_current_block()
+            (x + 1, y) in self.coord_extractor() for x, y in self.get_current_block()
         ):
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
+
+    def coord_extractor(self):
+        coords = []
+        for coord in self.landed_blocks.values():
+            for (x, y) in coord:
+                coords.append((x, y))
+        return coords
 
     def block_rotator(self):
         """
@@ -252,7 +275,7 @@ class TetrisGame:
         if any(
             x not in range(game_width)
             or y >= game_height
-            or (x, y) in self.get_landed_coords()
+            or (x, y) in self.coord_extractor()
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
@@ -261,21 +284,17 @@ class TetrisGame:
         """
         Clears the line once it's fully populated with blocks
         """
-        y_coordinates = [y for (x, y) in self.get_landed_coords()]
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
                 # TODO: root.after() here
-                self.landed_blocks = [
-                    (letter, (a, b))
-                    for (letter, (a, b)) in self.landed_blocks
-                    if b > x_line
-                ] + [
-                    (letter, (a, b + 1))
-                    for (letter, (a, b)) in self.landed_blocks
-                    if b < x_line
-                ]
+                for letter, coord_list in self.landed_blocks.items():
+                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]} #Why this doesn't work?
+                    self.landed_blocks[letter] = [
+                        (a, b) for (a, b) in coord_list if b > y_line
+                    ] + [(a, b + 1) for (a, b) in coord_list if b < y_line]
 
 
 run_gui()
