@@ -28,8 +28,8 @@ def run_gui():
     root.resizable(False, False)
 
     topbar = tkinter.Label(root)
-    topbar['bg'] = D_GREY
-    topbar.grid(row=0, column=0, sticky='we')
+    topbar["bg"] = D_GREY
+    topbar.grid(row=0, column=0, sticky="we")
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
@@ -135,6 +135,7 @@ class TetrisGUI:
     def rotate_mediator(self, event):
         self.tetris_game.block_rotator()
         self.draw_block()
+
 
 class TetrisGame:
     def __init__(self):
