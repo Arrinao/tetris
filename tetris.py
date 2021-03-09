@@ -279,7 +279,7 @@ class TetrisGame:
         if any(
             x not in range(game_width)
             or y >= game_height
-            or (x, y) in self.coord_extractor()  # This is so hard to conceive by myself is this an actual comprehension of some sort?
+            or (x, y) in self.coord_extractor()
             for (x, y) in self.get_current_block()
         ):
             self.rotate_counter -= 1
