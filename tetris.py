@@ -7,27 +7,18 @@ square_size = 35
 game_width = 10
 game_height = 15
 BLACK = "#000000"
-BLUE = "RoyalBlue2"
+BLUE = "Blue2"
 RED = "red2"
-GREEN = "lime green"
-GREY = "#666666"
-D_GREY = "#383838"
+GREEN = "green2"
+GREY = "Gray24"
+D_GREY = "gray7"
 YELLOW = "gold"
 PURPLE = "#9900FF"
-ORANGE = "salmon1"
+ORANGE = "Orangered2"
 PINK = "#FF00FF"
-TEAL = "pale turquoise"
+TEAL = "paleturquoise3"
 
 shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
-color_dict = {
-    "L": YELLOW,
-    "I": RED,
-    "E": GREEN,
-    "L_rev": BLUE,
-    "Z": PURPLE,
-    "Z_rev": TEAL,
-    "O": ORANGE,
-}
 
 
 def run_gui():
@@ -89,7 +80,15 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
-
+        color_dict = {
+            "L": YELLOW,
+            "I": RED,
+            "E": GREEN,
+            "L_rev": BLUE,
+            "Z": PURPLE,
+            "Z_rev": TEAL,
+            "O": ORANGE,
+        }
         self.canvas.delete("block")
         for x, y in self.tetris_game.get_current_block():
             self.canvas.create_rectangle(
