@@ -294,8 +294,8 @@ class TetrisGame:
                 for letter, coord_list in self.landed_blocks.items():
                     # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]} #Why this doesn't work?
                     self.landed_blocks[letter] = [
-                        (a, b) for (a, b) in coord_list if b > y_line
-                    ] + [(a, b + 1) for (a, b) in coord_list if b < y_line]
+                        (a, b) for (a, b) in coord_list if b > x_line
+                    ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
 
 
 run_gui()
