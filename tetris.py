@@ -7,6 +7,7 @@ game_speed = 300
 square_size = 32
 game_width = 10
 game_height = 15
+sidebar_width = 100
 BLACK = "#000000"
 BLUE = "Blue2"
 RED = "red2"
@@ -27,11 +28,23 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    topbar = tkinter.Frame(root, bg=D_GREY, height=square_size*2, relief = 'ridge', borderwidth=1)
-    topbar.grid(row=0, column=0, sticky='we')
+    topbar = tkinter.Canvas(root, bg=D_GREY, height=square_size*2, width=square_size*game_width + sidebar_width, relief = 'ridge', borderwidth=1)
+    topbar.grid(columnspan=2)
 
-    topbar_next_block = tkinter.Label(topbar)
-    topbar_next_block.grid(column=2, columnspan=2, sticky='w')
+    sidebar = tkinter.Frame(root, bg=RED, width=sidebar_width, height=square_size*game_height)
+    sidebar.grid(row=1, column=1, sticky='nswe')
+
+    new_game_button = tkinter.Button(sidebar, text = 'test')
+    new_game_button.grid(sticky='n')
+
+    new_game_button2 = tkinter.Button(sidebar, text = 'test2fuck')
+    new_game_button2.grid(sticky='n')
+
+    new_game_button3 = tkinter.Button(sidebar, text = 'test3')
+    new_game_button3.grid(sticky='n')
+
+    print(dict(topbar))
+
 
     game_canvas = tkinter.Canvas(
         root,
@@ -39,7 +52,7 @@ def run_gui():
         height=square_size * game_height,
         highlightthickness=0,
     )
-    game_canvas.grid()
+    game_canvas.grid(row=1, sticky = 'w')
 
     tetris_gui = TetrisGUI(game_speed, game_canvas)
 
