@@ -28,20 +28,8 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    topbar = tkinter.Canvas(root, bg=D_GREY, height=square_size*2, width=square_size*game_width + sidebar_width, relief = 'ridge', borderwidth=1)
-    topbar.grid(columnspan=2)
-
-    sidebar = tkinter.Frame(root, bg=RED, width=sidebar_width, height=square_size*game_height)
-    sidebar.grid(row=1, column=1, sticky='nswe')
-
-    new_game_button = tkinter.Button(sidebar, text = 'test')
-    new_game_button.grid(sticky='n')
-
-    new_game_button2 = tkinter.Button(sidebar, text = 'test2fuck')
-    new_game_button2.grid(sticky='n')
-
-    new_game_button3 = tkinter.Button(sidebar, text = 'test3')
-    new_game_button3.grid(sticky='n')
+    topbar = tkinter.Canvas(root, bg=D_GREY, height=square_size*2, relief = 'ridge')
+    topbar.grid(row=0, columnspan=2, sticky='we')
 
     print(dict(topbar))
 
@@ -52,7 +40,20 @@ def run_gui():
         height=square_size * game_height,
         highlightthickness=0,
     )
-    game_canvas.grid(row=1, sticky = 'w')
+    game_canvas.grid(row=1, sticky='nswe')
+
+    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
+    sidebar.grid(row=1, column=1, sticky='nw')
+
+    new_game_button = tkinter.Button(sidebar, text = 'start')
+    new_game_button.grid(sticky='n')
+
+    new_game_button2 = tkinter.Button(sidebar, text = 'start')
+    new_game_button2.grid(sticky='n')
+
+    new_game_button3 = tkinter.Button(sidebar, text = 'start')
+    new_game_button3.grid(sticky='n')
+
 
     tetris_gui = TetrisGUI(game_speed, game_canvas)
 
@@ -311,6 +312,7 @@ class TetrisGame:
                     self.landed_blocks[letter] = [
                         (a, b) for (a, b) in coord_list if b > x_line
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
+
 
 
 run_gui()
