@@ -1,7 +1,7 @@
 import random
 import tkinter
 import collections
-from tkinter import ttk
+import time
 
 game_speed = 300
 square_size = 32
@@ -28,22 +28,32 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    topbar = tkinter.Canvas(root, bg=D_GREY, height=square_size*2, relief = 'ridge')
-    topbar.grid(row=0, columnspan=2, sticky='we')
-
-    print(dict(topbar))
-
-
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
         height=square_size * game_height,
         highlightthickness=0,
+        borderwidth=1
     )
     game_canvas.grid(row=1, sticky='nswe')
 
-    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
-    sidebar.grid(row=1, column=1, sticky='nw')
+    tetris_gui = TetrisGUI(game_speed, game_canvas)
+
+    topbar = tkinter.Frame(root, bg=D_GREY, height=square_size*2, relief = 'ridge')
+    topbar.grid(row=0, columnspan=2, sticky='we')
+    topbar.columnconfigure(0, weight=1)
+
+    topbar_time = tkinter.Label(topbar, bg=D_GREY, text=tetris_gui.timer(), font = 'digital-7', fg='orange', borderwidth=1)
+    topbar_time.grid(sticky='w', padx=10, row=0, column=0)
+
+    topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
+    topbar_score.grid(sticky='we', row=0, column=1)
+
+    topbar_next_block = tkinter.Label(topbar, bg=D_GREY, text='bar', font = 'digital-7', fg='orange', borderwidth=1)
+    topbar_next_block.grid(sticky='e', row=0, column=2)
+
+    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height) 
+    sidebar.grid(row=1, column=1, sticky='nsw')
 
     new_game_button = tkinter.Button(sidebar, text = 'start')
     new_game_button.grid(sticky='n')
@@ -53,9 +63,6 @@ def run_gui():
 
     new_game_button3 = tkinter.Button(sidebar, text = 'start')
     new_game_button3.grid(sticky='n')
-
-
-    tetris_gui = TetrisGUI(game_speed, game_canvas)
 
     root.bind("<Left>", tetris_gui.left_mediator)
     root.bind("<Right>", tetris_gui.right_mediator)
@@ -76,6 +83,7 @@ class TetrisGUI:
         self.canvas = canvas
         self.rect_size = 25
         self.tetris_game = TetrisGame()
+        self.start_time = time.time()
 
     def draw_board(self):
         """
@@ -152,6 +160,11 @@ class TetrisGUI:
     def rotate_mediator(self, event):
         self.tetris_game.block_rotator()
         self.draw_block()
+
+    def timer(self):
+        game_time = time.time() - self.start_time
+        return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
+
 
 class TetrisGame:
     def __init__(self):
@@ -312,6 +325,8 @@ class TetrisGame:
                     self.landed_blocks[letter] = [
                         (a, b) for (a, b) in coord_list if b > x_line
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
+
+
 
 
 
