@@ -37,22 +37,22 @@ def run_gui():
     )
     game_canvas.grid(row=1, sticky='nswe')
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas)
-
     topbar = tkinter.Frame(root, bg=D_GREY, height=square_size*2, relief = 'ridge')
     topbar.grid(row=0, columnspan=2, sticky='we')
     topbar.columnconfigure(0, weight=1)
 
+    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_next_block)
+
     topbar_time = tkinter.Label(topbar, bg=D_GREY, text=tetris_gui.timer(), font = 'digital-7', fg='orange', borderwidth=1)
-    topbar_time.grid(sticky='w', padx=10, row=0, column=0)
+    topbar_time.pack(side='left', padx=10)
 
     topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
-    topbar_score.grid(sticky='we', row=0, column=1)
+    topbar_score.pack(side='left', fill='x', expand=True)
 
-    topbar_next_block = tkinter.Label(topbar, bg=D_GREY, text='bar', font = 'digital-7', fg='orange', borderwidth=1)
-    topbar_next_block.grid(sticky='e', row=0, column=2)
+    topbar_next_block = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2)
+    topbar_next_block.pack(side='right')
 
-    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height) 
+    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
     sidebar.grid(row=1, column=1, sticky='nsw')
 
     new_game_button = tkinter.Button(sidebar, text = 'start')
@@ -78,9 +78,10 @@ def run_gui():
 
 
 class TetrisGUI:
-    def __init__(self, speed, canvas):
+    def __init__(self, speed, canvas, canvas_small):
         self.speed = speed
         self.canvas = canvas
+        self.canvas_small = canvas_small
         self.rect_size = 25
         self.tetris_game = TetrisGame()
         self.start_time = time.time()
@@ -164,6 +165,11 @@ class TetrisGUI:
     def timer(self):
         game_time = time.time() - self.start_time
         return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
+
+    def next_block(self):
+        for x in range(4):
+            for y in range(2):
+                self.canvas_small.create_rectangle(0, 0, square_size, square_size)
 
 
 class TetrisGame:
