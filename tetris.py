@@ -166,10 +166,22 @@ class TetrisGUI:
         game_time = time.time() - self.start_time
         return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
 
-    def next_block(self):
+    def next_block_canvas(self):
         for x in range(4):
+            x_gap = 0
             for y in range(2):
-                self.canvas_small.create_rectangle(0, 0, square_size, square_size)
+                y_gap = 0
+                self.canvas.create_rectangle(
+                    x_gap,
+                    y_gap,
+                    x_gap + square_size,
+                    y_gap + square_size,
+                    fill=D_GREY,
+                    outline=GREY,
+                )
+                y_gap += square_size
+
+            x_gap += square_size
 
 
 class TetrisGame:
