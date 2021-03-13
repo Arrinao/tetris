@@ -47,7 +47,7 @@ def run_gui():
     topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
     topbar_score.pack(side='left', fill='x', expand=True)
 
-    topbar_block = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2)
+    topbar_block = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2, highlightthickness=0)
     topbar_block.pack(side='right')
 
     sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
