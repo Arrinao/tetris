@@ -32,7 +32,6 @@ def run_gui():
         root,
         width=square_size * game_width,
         height=square_size * game_height,
-        highlightthickness=0,
     )
     game_canvas.grid(row=1, sticky='nswe')
 
@@ -40,16 +39,16 @@ def run_gui():
     topbar.grid(row=0, columnspan=2, sticky='we')
     topbar.columnconfigure(0, weight=1)
 
-    topbar_time = tkinter.Label(topbar, bg=D_GREY, text='placeholder', font = 'digital-7', fg='orange', borderwidth=1)
+    topbar_time = tkinter.Label(topbar, bg=D_GREY, text='00:00', font = 'digital-7', fg='orange', borderwidth=1)
     topbar_time.pack(side='left', padx=10)
 
     topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
     topbar_score.pack(side='left', fill='x', expand=True)
 
     topbar_board = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2, highlightthickness=0)
-    topbar_board.pack(side='right')
+    topbar_board.pack(side='right', expand=True)
 
-    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
+    sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky='nsw')
 
     new_game_button = tkinter.Button(sidebar, text = 'start')
@@ -70,6 +69,7 @@ def run_gui():
     tetris_gui.draw_board()
     tetris_gui.draw_block()
     tetris_gui.move_block()
+    tetris_gui.draw_small_board()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -167,9 +167,9 @@ class TetrisGUI:
 
     def draw_small_board(self):
         x_gap = 0
-        for x in range(game_width):
+        for x in range(4):
             y_gap = 0
-            for y in range(game_height):
+            for y in range(2):
                 self.canvas_small.create_rectangle(
                     x_gap,
                     y_gap,
@@ -180,7 +180,7 @@ class TetrisGUI:
                 )
                 y_gap += square_size
         x_gap += square_size
-
+        print('aaaa')
 
 
 class TetrisGame:
@@ -200,6 +200,7 @@ class TetrisGame:
             self.current_block_shape = self.upcoming_block_shape
         self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
+        self.upcoming_block_center = (2, 1)
         self.rotate_counter = 0
 
     def get_current_block(self):
