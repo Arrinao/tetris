@@ -49,7 +49,7 @@ def run_gui():
     topbar_board = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2, highlightthickness=0)
     topbar_board.pack(side='right')
 
-    sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
+    sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky='nsw')
 
     new_game_button = tkinter.Button(sidebar, text = 'start')
