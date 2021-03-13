@@ -33,7 +33,6 @@ def run_gui():
         width=square_size * game_width,
         height=square_size * game_height,
         highlightthickness=0,
-        borderwidth=1
     )
     game_canvas.grid(row=1, sticky='nswe')
 
