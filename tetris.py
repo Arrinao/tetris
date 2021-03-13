@@ -41,16 +41,14 @@ def run_gui():
     topbar.grid(row=0, columnspan=2, sticky='we')
     topbar.columnconfigure(0, weight=1)
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_next_block)
-
-    topbar_time = tkinter.Label(topbar, bg=D_GREY, text=tetris_gui.timer(), font = 'digital-7', fg='orange', borderwidth=1)
+    topbar_time = tkinter.Label(topbar, bg=D_GREY, text='placeholder', font = 'digital-7', fg='orange', borderwidth=1)
     topbar_time.pack(side='left', padx=10)
 
     topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
     topbar_score.pack(side='left', fill='x', expand=True)
 
-    topbar_next_block = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2)
-    topbar_next_block.pack(side='right')
+    topbar_block = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2)
+    topbar_block.pack(side='right')
 
     sidebar = tkinter.Frame(root, bg=D_GREY, height=square_size*game_height)
     sidebar.grid(row=1, column=1, sticky='nsw')
@@ -64,13 +62,15 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text = 'start')
     new_game_button3.grid(sticky='n')
 
-    root.bind("<Left>", tetris_gui.left_mediator)
-    root.bind("<Right>", tetris_gui.right_mediator)
-    root.bind("<Up>", tetris_gui.rotate_mediator)
+    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_block)
+
+    root.bind("<Left>", tetris_gui.move_block_left)
+    root.bind("<Right>", tetris_gui.move_block_right)
+    root.bind("<Up>", tetris_gui.rotate_block)
 
     tetris_gui.draw_board()
     tetris_gui.draw_block()
-    tetris_gui.block_mediator()
+    tetris_gui.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -110,7 +110,7 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
-        color_dict = {
+        self.color_dict = {
             "L": YELLOW,
             "I": RED,
             "E": GREEN,
@@ -127,7 +127,7 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=color_dict[self.tetris_game.current_block_shape],
+                fill=self.color_dict[self.tetris_game.current_block_shape],
             )
 
         for letter, coord_list in self.tetris_game.landed_blocks.items():
@@ -138,27 +138,27 @@ class TetrisGUI:
                     x * square_size + square_size,
                     y * square_size + square_size,
                     tags="block",
-                    fill=color_dict[letter],
+                    fill=self.color_dict[letter],
                 )
 
-    def block_mediator(self):
+    def move_block(self):
         """
         Has the responsibility to call block_mover() and draw_block() to
         simulate the blocks moving downwards on the canvas
         """
         self.tetris_game.block_mover()
         self.draw_block()
-        self.canvas.after(game_speed, self.block_mediator)
+        self.canvas.after(game_speed, self.move_block)
 
-    def left_mediator(self, event):
+    def move_block_left(self, event):
         self.tetris_game.user_input_left()
         self.draw_block()
 
-    def right_mediator(self, event):
+    def move_block_right(self, event):
         self.tetris_game.user_input_right()
         self.draw_block()
 
-    def rotate_mediator(self, event):
+    def rotate_block(self, event):
         self.tetris_game.block_rotator()
         self.draw_block()
 
@@ -166,12 +166,12 @@ class TetrisGUI:
         game_time = time.time() - self.start_time
         return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
 
-    def next_block_canvas(self):
-        for x in range(4):
-            x_gap = 0
-            for y in range(2):
-                y_gap = 0
-                self.canvas.create_rectangle(
+    def draw_small_board(self):
+        x_gap = 0
+        for x in range(game_width):
+            y_gap = 0
+            for y in range(game_height):
+                self.canvas_small.create_rectangle(
                     x_gap,
                     y_gap,
                     x_gap + square_size,
@@ -180,8 +180,8 @@ class TetrisGUI:
                     outline=GREY,
                 )
                 y_gap += square_size
+        x_gap += square_size
 
-            x_gap += square_size
 
 
 class TetrisGame:
