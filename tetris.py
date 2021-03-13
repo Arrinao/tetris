@@ -36,7 +36,7 @@ def run_gui():
     )
     game_canvas.grid(row=1, sticky='nswe')
 
-    topbar = tkinter.Frame(root, bg=D_GREY, height=square_size*2, relief = 'ridge')
+    topbar = tkinter.Frame(root, bg=D_GREY, relief = 'ridge')
     topbar.grid(row=0, columnspan=2, sticky='we')
     topbar.columnconfigure(0, weight=1)
 
