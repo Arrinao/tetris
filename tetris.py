@@ -62,7 +62,7 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text = 'start')
     new_game_button3.grid(sticky='n')
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_block)
+    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_board)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
