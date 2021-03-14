@@ -246,12 +246,12 @@ class TetrisGame:
         """
         Moves the current block downwards one square on the canvas
         """
-        if any(
-            (x, y + 1) in self.get_landed_coords()
-            for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center)
-        ) or any(y + 1 == game_height for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center)):
-            for coord in self.get_block_shape(self.current_block_shape, self.current_block_center):
-                self.landed_blocks.append((self.current_block_shape, coord))
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center)) or any(y + 1 == game_height for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center)):
+            if self.current_block_shape not in self.landed_blocks:
+                self.landed_blocks[self.current_block_shape] = []
+            self.landed_blocks[self.current_block_shape].extend(
+                self.get_block_shape(self.current_block_shape, self.current_block_center)
+            )
             self.full_line_clear()
             self.new_block()
         else:
