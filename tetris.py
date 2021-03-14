@@ -119,6 +119,7 @@ class TetrisGUI:
             "O": ORANGE,
         }
         self.canvas.delete("block")
+        self.canvas_small.delete('block')
         for x, y in self.tetris_game.get_block_shape(self.tetris_game.current_block_shape, self.tetris_game.current_block_center):
             self.canvas.create_rectangle(
                 x * square_size,
