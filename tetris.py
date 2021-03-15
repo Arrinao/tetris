@@ -140,7 +140,7 @@ class TetrisGUI:
                     fill=self.color_dict[letter],
                 )
 
-        for x, y in self.tetris_game.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, None):
+        for x, y in self.tetris_game.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
             self.canvas_small.create_rectangle(
                     x * square_size,
                     y * square_size,
@@ -237,7 +237,7 @@ class TetrisGame:
                 [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
             ]
 
-        return coords[self.rotate_counter % len(coords)]
+        return coords[rotate_counter % len(coords)]
 
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
