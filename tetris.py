@@ -28,12 +28,12 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    game_canvas = tkinter.Canvas(
+    game_board = tkinter.Canvas(
         root,
         width=square_size * game_width,
         height=square_size * game_height,
     )
-    game_canvas.grid(row=1, sticky='nswe')
+    game_board.grid(row=1, sticky='nswe')
 
     topbar = tkinter.Frame(root, bg=D_GREY, relief = 'ridge')
     topbar.grid(row=0, columnspan=2, sticky='we')
@@ -59,16 +59,19 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text = 'start')
     new_game_button3.grid(sticky='n')
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_board)
+    tetris_gui = TetrisGUI(game_speed, game_board)
+
+    main_board = Board(game_board, GREY, game_width, game_height, random.choice(shape_names), (int(game_width / 2), -2), 0)
+    small_board = Board(topbar_board, D_GREY, square_size*4, square_size*2, random.choice(shape_names), (2, 1), 0)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    tetris_gui.draw_board(game_canvas, game_width, game_height, GREY)
-    tetris_gui.draw_board(topbar_board, 4, 2, D_GREY)
-    tetris_gui.draw_block()
-    tetris_gui.move_block()
+    main_board.draw_board()
+    small_board.draw_board()
+    main_board.draw_block()
+    main_board.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -76,79 +79,78 @@ def run_gui():
 
 
 class TetrisGUI:
-    def __init__(self, speed, canvas, canvas_small):
+    def __init__(self, speed, canvas):
         self.speed = speed
         self.canvas = canvas
-        self.canvas_small = canvas_small
         self.rect_size = 25
         self.tetris_game = TetrisGame()
         self.start_time = time.time()
 
-    def draw_board(self, canvas, width, height, outline_color):
-        """
-        Draws the board of rectangles on top of the canvas
-        """
-        x_gap = 0
-        for x in range(width):
-            y_gap = 0
-            for y in range(height):
-                canvas.create_rectangle(
-                    x_gap,
-                    y_gap,
-                    x_gap + square_size,
-                    y_gap + square_size,
-                    fill=D_GREY,
-                    outline=outline_color,
-                )
-                y_gap += square_size
+    #def draw_board(self, canvas, width, height, outline_color):
+    #    """
+    #    Draws the board of rectangles on top of the canvas
+    #    """
+    #    x_gap = 0
+    #    for x in range(width):
+    #        y_gap = 0
+    #        for y in range(height):
+    #            canvas.create_rectangle(
+    #                x_gap,
+    #                y_gap,
+    #                x_gap + square_size,
+    #                y_gap + square_size,
+    #                fill=D_GREY,
+    #                outline=outline_color,
+    #            )
+    #            y_gap += square_size
+    #
+    #        x_gap += square_size
 
-            x_gap += square_size
-
-    def draw_block(self):
-        """
-        Draws the different shapes on the board
-        """
-        self.color_dict = {
-            "L": YELLOW,
-            "I": RED,
-            "E": GREEN,
-            "L_rev": BLUE,
-            "Z": PURPLE,
-            "Z_rev": TEAL,
-            "O": ORANGE,
-        }
-        self.canvas.delete("block")
-        self.canvas_small.delete('block')
-        for x, y in self.tetris_game.get_block_shape(self.tetris_game.current_block_shape, self.tetris_game.current_block_center, self.tetris_game.rotate_counter):
-            self.canvas.create_rectangle(
-                x * square_size,
-                y * square_size,
-                x * square_size + square_size,
-                y * square_size + square_size,
-                tags="block",
-                fill=self.color_dict[self.tetris_game.current_block_shape],
-            )
-
-        for letter, coord_list in self.tetris_game.landed_blocks.items():
-            for (x, y) in coord_list:
-                self.canvas.create_rectangle(
-                    x * square_size,
-                    y * square_size,
-                    x * square_size + square_size,
-                    y * square_size + square_size,
-                    tags="block",
-                    fill=self.color_dict[letter],
-                )
-
-        for x, y in self.tetris_game.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
-            self.canvas_small.create_rectangle(
-                    x * square_size,
-                    y * square_size,
-                    x * square_size + square_size,
-                    y * square_size + square_size,
-                    tags="block",
-                    fill=self.color_dict[self.tetris_game.upcoming_block_shape],
-            )
+    #def draw_block(self):
+    #    """
+    #    Draws the different shapes on the board
+    #    """
+    #    self.color_dict = {
+    #        "L": YELLOW,
+    #        "I": RED,
+    #        "E": GREEN,
+    #        "L_rev": BLUE,
+    #        "Z": PURPLE,
+    #        "Z_rev": TEAL,
+    #        "O": ORANGE,
+    #    }
+    #    self.canvas.delete("block")
+    #    self.canvas_small.delete('block')
+    #    for x, y in self.tetris_game.get_block_shape(self.tetris_game.current_block_shape, self.tetris_game.current_block_center, self.tetris_game.rotate_counter):
+    #        self.canvas.create_rectangle(
+    #            x * square_size,
+    #            y * square_size,
+    #            x * square_size + square_size,
+    #            y * square_size + square_size,
+    #            tags="block",
+    #            fill=self.color_dict[self.tetris_game.current_block_shape],
+    #        )
+    #
+    #    for letter, coord_list in self.tetris_game.landed_blocks.items():
+    #        for (x, y) in coord_list:
+    #            self.canvas.create_rectangle(
+    #                x * square_size,
+    #                y * square_size,
+    #                x * square_size + square_size,
+    #                y * square_size + square_size,
+    #                tags="block",
+    #                fill=self.color_dict[letter],
+    #            )
+    #
+    #    for x, y in self.tetris_game.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
+    #        self.canvas_small.create_rectangle(
+    #                x * square_size,
+    #                y * square_size,
+    #                x * square_size + square_size,
+    #                y * square_size + square_size,
+    #                tags="block",
+    #                fill=self.color_dict[self.tetris_game.upcoming_block_shape],
+    #        )
 
     def move_block(self):
         """
@@ -196,48 +198,48 @@ class TetrisGame:
         self.upcoming_block_center = (2, 1)
         self.rotate_counter = 0
 
-    def get_block_shape(self, block_shape, block_center, rotate_counter):
-        (x, y) = block_center
-        if block_shape == "I":
-            coords = [
-                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
-            ]
-        if block_shape == "L":
-            coords = [
-                [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
-                [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
-                [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
-                [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
-            ]
-        if block_shape == "L_rev":
-            coords = [
-                [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
-                [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
-                [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
-                [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
-            ]
-        if block_shape == "O":
-            coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
-        if block_shape == "E":
-            coords = [
-                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
-                [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
-                [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
-                [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
-            ]
-        if block_shape == "Z":
-            coords = [
-                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
-                [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
-            ]
-        if block_shape == "Z_rev":
-            coords = [
-                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
-                [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
-            ]
-
-        return coords[rotate_counter % len(coords)]
+    #def get_block_shape(self, block_shape, block_center, rotate_counter):
+    #    (x, y) = block_center
+    #    if block_shape == "I":
+    #        coords = [
+    #            [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
+    #            [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
+    #        ]
+    #    if block_shape == "L":
+    #        coords = [
+    #            [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
+    #            [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
+    #            [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
+    #            [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
+    #        ]
+    #    if block_shape == "L_rev":
+    #        coords = [
+    #            [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
+    #            [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
+    #            [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
+    #            [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
+    #        ]
+    #    if block_shape == "O":
+    #        coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+    #    if block_shape == "E":
+    #        coords = [
+    #            [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
+    #            [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
+    #            [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
+    #            [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
+    #        ]
+    #    if block_shape == "Z":
+    #        coords = [
+    #            [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
+    #            [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
+    #        ]
+    #    if block_shape == "Z_rev":
+    #        coords = [
+    #            [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
+    #            [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
+    #        ]
+    #
+    #    return coords[rotate_counter % len(coords)]
 
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
@@ -320,6 +322,125 @@ class TetrisGame:
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
 
 
+class Board:
+    def __init__(self, canvas, outline_color, width, height, block_shape, block_center, rotate_counter):
+        self.canvas = canvas
+        self.outline_color = outline_color
+        self.width = width
+        self.height = height
+        self.block_shape = block_shape
+        self.block_center = block_center
+        self.rotate_counter = rotate_counter
+
+    def draw_board(self):
+        """
+        Draws the board of rectangles on top of the canvas
+        """
+        x_gap = 0
+        for x in range(self.width):
+            y_gap = 0
+            for y in range(self.height):
+                self.canvas.create_rectangle(
+                    x_gap,
+                    y_gap,
+                    x_gap + square_size,
+                    y_gap + square_size,
+                    fill=D_GREY,
+                    outline=self.outline_color,
+                )
+                y_gap += square_size
+
+            x_gap += square_size
+
+    def draw_block(self, landed_blocks):
+        """
+        Draws the different shapes on the board
+        """
+        self.color_dict = {
+            "L": YELLOW,
+            "I": RED,
+            "E": GREEN,
+            "L_rev": BLUE,
+            "Z": PURPLE,
+            "Z_rev": TEAL,
+            "O": ORANGE,
+        }
+        self.canvas.delete("block")
+        self.canvas_small.delete('block')
+
+        for x, y in self.get_block_shape(self.tetris_game.current_block_shape, self.tetris_game.current_block_center, self.tetris_game.rotate_counter):
+            self.canvas.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=self.color_dict[self.tetris_game.current_block_shape],
+            )
+
+        for letter, coord_list in self.tetris_game.landed_blocks.items():
+            for (x, y) in coord_list:
+                self.canvas.create_rectangle(
+                    x * square_size,
+                    y * square_size,
+                    x * square_size + square_size,
+                    y * square_size + square_size,
+                    tags="block",
+                    fill=self.color_dict[letter],
+                )
+
+        for x, y in self.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
+            self.canvas_small.create_rectangle(
+                    x * square_size,
+                    y * square_size,
+                    x * square_size + square_size,
+                    y * square_size + square_size,
+                    tags="block",
+                    fill=self.color_dict[self.tetris_game.upcoming_block_shape],
+            )
+
+    def get_block_shape(self, block_shape, block_center, rotate_counter):
+        (x, y) = block_center
+        if block_shape == "I":
+            coords = [
+                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
+                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
+            ]
+        if block_shape == "L":
+            coords = [
+                [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
+                [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
+                [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
+            ]
+        if block_shape == "L_rev":
+            coords = [
+                [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
+                [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
+                [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
+                [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
+            ]
+        if block_shape == "O":
+            coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+        if block_shape == "E":
+            coords = [
+                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
+                [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
+                [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
+                [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
+            ]
+        if block_shape == "Z":
+            coords = [
+                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
+                [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
+            ]
+        if block_shape == "Z_rev":
+            coords = [
+                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
+                [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
+            ]
+
+        return coords[rotate_counter % len(coords)]
 
 
 
