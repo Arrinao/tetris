@@ -79,9 +79,9 @@ def run_gui():
 
 
 class TetrisGUI:
-    def __init__(self, speed, canvas):
+    def __init__(self, speed, main_board):
         self.speed = speed
-        self.canvas = canvas
+        self.main_board = main_board
         self.rect_size = 25
         self.tetris_game = TetrisGame()
         self.start_time = time.time()
