@@ -28,12 +28,12 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    game_board = tkinter.Canvas(
+    main_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
         height=square_size * game_height,
     )
-    game_board.grid(row=1, sticky='nswe')
+    main_canvas.grid(row=1, sticky='nswe')
 
     topbar = tkinter.Frame(root, bg=D_GREY, relief = 'ridge')
     topbar.grid(row=0, columnspan=2, sticky='we')
@@ -44,8 +44,8 @@ def run_gui():
     topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
     topbar_score.pack(side='left', fill='x', expand=True)
 
-    topbar_board = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2, highlightthickness=0)
-    topbar_board.pack(side='right', expand=True)
+    topbar_canvas = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2, highlightthickness=0)
+    topbar_canvas.pack(side='right', expand=True)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky='nsw')
@@ -59,19 +59,19 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text = 'start')
     new_game_button3.grid(sticky='n')
 
-    tetris_gui = TetrisGUI(game_speed, game_board)
+    tetris_gui = TetrisGUI(game_speed, main_canvas)
 
-    main_board = Board(game_board, GREY, game_width, game_height, random.choice(shape_names), (int(game_width / 2), -2), 0)
-    small_board = Board(topbar_board, D_GREY, square_size*4, square_size*2, random.choice(shape_names), (2, 1), 0)
+    main_board = Board(main_canvas, GREY, game_width, game_height, random.choice(shape_names), (int(game_width / 2), -2), 0)
+    topbar_board = Board(topbar_canvas, D_GREY, square_size*4, square_size*2, random.choice(shape_names), (2, 1), 0)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    main_board.draw_board()
-    small_board.draw_board()
-    main_board.draw_block()
-    main_board.move_block()
+    #main_board.draw_board()
+    #topbar_board.draw_board()
+    #main_board.draw_block()
+    #main_board.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -158,20 +158,20 @@ class TetrisGUI:
         simulate the blocks moving downwards on the canvas
         """
         self.tetris_game.current_block_mover()
-        self.draw_block()
+        self.main_board.draw_block(self.tetris_game.landed_blocks)
         self.canvas.after(game_speed, self.move_block)
 
     def move_block_left(self, event):
         self.tetris_game.user_input_left()
-        self.draw_block()
+        self.main_board.draw_block(self.tetris_game.landed_blocks)
 
     def move_block_right(self, event):
         self.tetris_game.user_input_right()
-        self.draw_block()
+        self.main_board.draw_block(self.tetris_game.landed_blocks)
 
     def rotate_block(self, event):
         self.tetris_game.block_rotator()
-        self.draw_block()
+        self.main_board.draw_block(self.tetris_game.landed_blocks)
 
     def timer(self):
         game_time = time.time() - self.start_time
