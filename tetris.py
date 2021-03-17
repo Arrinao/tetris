@@ -68,10 +68,10 @@ def run_gui():
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    #main_board.draw_board()
-    #topbar_board.draw_board()
+    main_board.draw_board()
+    topbar_board.draw_board()
     #main_board.draw_block()
-    #main_board.move_block()
+    tetris_gui.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -388,16 +388,6 @@ class Board:
                     tags="block",
                     fill=self.color_dict[letter],
                 )
-
-        for x, y in self.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
-            self.canvas_small.create_rectangle(
-                    x * square_size,
-                    y * square_size,
-                    x * square_size + square_size,
-                    y * square_size + square_size,
-                    tags="block",
-                    fill=self.color_dict[self.tetris_game.upcoming_block_shape],
-            )
 
     def get_block_shape(self, block_shape, block_center, rotate_counter):
         (x, y) = block_center
