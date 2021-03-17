@@ -86,72 +86,6 @@ class TetrisGUI:
         self.tetris_game = TetrisGame()
         self.start_time = time.time()
 
-    #def draw_board(self, canvas, width, height, outline_color):
-    #    """
-    #    Draws the board of rectangles on top of the canvas
-    #    """
-    #    x_gap = 0
-    #    for x in range(width):
-    #        y_gap = 0
-    #        for y in range(height):
-    #            canvas.create_rectangle(
-    #                x_gap,
-    #                y_gap,
-    #                x_gap + square_size,
-    #                y_gap + square_size,
-    #                fill=D_GREY,
-    #                outline=outline_color,
-    #            )
-    #            y_gap += square_size
-    #
-    #        x_gap += square_size
-
-    #def draw_block(self):
-    #    """
-    #    Draws the different shapes on the board
-    #    """
-    #    self.color_dict = {
-    #        "L": YELLOW,
-    #        "I": RED,
-    #        "E": GREEN,
-    #        "L_rev": BLUE,
-    #        "Z": PURPLE,
-    #        "Z_rev": TEAL,
-    #        "O": ORANGE,
-    #    }
-    #    self.canvas.delete("block")
-    #    self.canvas_small.delete('block')
-    #    for x, y in self.tetris_game.get_block_shape(self.tetris_game.current_block_shape, self.tetris_game.current_block_center, self.tetris_game.rotate_counter):
-    #        self.canvas.create_rectangle(
-    #            x * square_size,
-    #            y * square_size,
-    #            x * square_size + square_size,
-    #            y * square_size + square_size,
-    #            tags="block",
-    #            fill=self.color_dict[self.tetris_game.current_block_shape],
-    #        )
-    #
-    #    for letter, coord_list in self.tetris_game.landed_blocks.items():
-    #        for (x, y) in coord_list:
-    #            self.canvas.create_rectangle(
-    #                x * square_size,
-    #                y * square_size,
-    #                x * square_size + square_size,
-    #                y * square_size + square_size,
-    #                tags="block",
-    #                fill=self.color_dict[letter],
-    #            )
-    #
-    #    for x, y in self.tetris_game.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
-    #        self.canvas_small.create_rectangle(
-    #                x * square_size,
-    #                y * square_size,
-    #                x * square_size + square_size,
-    #                y * square_size + square_size,
-    #                tags="block",
-    #                fill=self.color_dict[self.tetris_game.upcoming_block_shape],
-    #        )
-
     def move_block(self):
         """
         Has the responsibility to call current_block_mover() and draw_block() to
@@ -197,113 +131,6 @@ class TetrisGame:
         self.upcoming_block_shape = random.choice(shape_names)
         self.upcoming_block_center = (2, 1)
         self.rotate_counter = 0
-
-    #def get_block_shape(self, block_shape, block_center, rotate_counter):
-    #    (x, y) = block_center
-    #    if block_shape == "I":
-    #        coords = [
-    #            [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-    #            [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
-    #        ]
-    #    if block_shape == "L":
-    #        coords = [
-    #            [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
-    #            [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
-    #            [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
-    #            [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
-    #        ]
-    #    if block_shape == "L_rev":
-    #        coords = [
-    #            [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
-    #            [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
-    #            [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
-    #            [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
-    #        ]
-    #    if block_shape == "O":
-    #        coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
-    #    if block_shape == "E":
-    #        coords = [
-    #            [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
-    #            [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
-    #            [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
-    #            [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
-    #        ]
-    #    if block_shape == "Z":
-    #        coords = [
-    #            [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
-    #            [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
-    #        ]
-    #    if block_shape == "Z_rev":
-    #        coords = [
-    #            [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
-    #            [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
-    #        ]
-    #
-    #    return coords[rotate_counter % len(coords)]
-
-    def get_landed_coords(self):
-        return [coords for shape, coords in self.landed_blocks]
-
-    def current_block_mover(self):
-        """
-        Moves the current block downwards one square on the canvas
-        """
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(y + 1 == game_height for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)):
-            if self.current_block_shape not in self.landed_blocks:
-                self.landed_blocks[self.current_block_shape] = []
-            self.landed_blocks[self.current_block_shape].extend(
-                self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
-            )
-            self.full_line_clear()
-            self.new_block()
-        else:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
-
-    def user_input_left(self):
-        """
-        Moves the current block to the left on the canvas
-        """
-        if any(x == 0 for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
-            (x - 1, y) in self.coord_extractor() for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
-        ):
-            return
-        x, y = self.current_block_center
-        self.current_block_center = (x - 1, y)
-
-    def user_input_right(self):
-        """
-        Moves the current block to the right on the canvas
-        """
-        if any(x == game_width - 1 for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
-            (x + 1, y) in self.coord_extractor() for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
-        ):
-            return
-        x, y = self.current_block_center
-        self.current_block_center = (x + 1, y)
-
-    def coord_extractor(self):
-        coords = []
-        for coord in self.landed_blocks.values():
-            for (x, y) in coord:
-                coords.append((x, y))
-        return coords
-
-    def block_rotator(self):
-        """
-        Rotates the current block
-        """
-        self.rotate_counter += 1
-        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
-        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
-        # ):
-        if any(
-            x not in range(game_width)
-            or y >= game_height
-            or (x, y) in self.coord_extractor()
-            for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
-        ):
-            self.rotate_counter -= 1
 
     def full_line_clear(self):
         """
@@ -431,6 +258,70 @@ class Board:
             ]
 
         return coords[rotate_counter % len(coords)]
+
+    def get_landed_coords(self):
+        return [coords for shape, coords in self.landed_blocks]
+
+    def current_block_mover(self):
+        """
+        Moves the current block downwards one square on the canvas
+        """
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(y + 1 == game_height for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)):
+            if self.current_block_shape not in self.landed_blocks:
+                self.landed_blocks[self.current_block_shape] = []
+            self.landed_blocks[self.current_block_shape].extend(
+                self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+            )
+            self.full_line_clear()
+            self.new_block()
+        else:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
+
+    def user_input_left(self):
+        """
+        Moves the current block to the left on the canvas
+        """
+        if any(x == 0 for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
+            (x - 1, y) in self.coord_extractor() for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+        ):
+            return
+        x, y = self.current_block_center
+        self.current_block_center = (x - 1, y)
+
+    def user_input_right(self):
+        """
+        Moves the current block to the right on the canvas
+        """
+        if any(x == game_width - 1 for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
+            (x + 1, y) in self.coord_extractor() for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+        ):
+            return
+        x, y = self.current_block_center
+        self.current_block_center = (x + 1, y)
+
+    def coord_extractor(self):
+        coords = []
+        for coord in self.landed_blocks.values():
+            for (x, y) in coord:
+                coords.append((x, y))
+        return coords
+
+    def block_rotator(self):
+        """
+        Rotates the current block
+        """
+        self.rotate_counter += 1
+        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
+        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+        # ):
+        if any(
+            x not in range(game_width)
+            or y >= game_height
+            or (x, y) in self.coord_extractor()
+            for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+        ):
+            self.rotate_counter -= 1
 
 
 
