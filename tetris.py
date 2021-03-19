@@ -33,31 +33,41 @@ def run_gui():
         width=square_size * game_width,
         height=square_size * game_height,
     )
-    game_canvas.grid(row=1, sticky='nswe')
+    game_canvas.grid(row=1, sticky="nswe")
 
-    topbar = tkinter.Frame(root, bg=D_GREY, relief = 'ridge')
-    topbar.grid(row=0, columnspan=2, sticky='we')
+    topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
+    topbar.grid(row=0, columnspan=2, sticky="we")
 
-    topbar_time = tkinter.Label(topbar, bg=D_GREY, text='00:00', font = 'digital-7', fg='orange', borderwidth=1)
-    topbar_time.pack(side='left', padx=10)
+    topbar_time = tkinter.Label(
+        topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
+    )
+    topbar_time.pack(side="left", padx=10)
 
-    topbar_score = tkinter.Label(topbar, bg=D_GREY, text='foo', font = 'digital-7', fg='orange', borderwidth=1)
-    topbar_score.pack(side='left', fill='x', expand=True)
+    topbar_score = tkinter.Label(
+        topbar, bg=D_GREY, text="foo", font="digital-7", fg="orange", borderwidth=1
+    )
+    topbar_score.pack(side="left", fill="x", expand=True)
 
-    topbar_board = tkinter.Canvas(topbar, bg=D_GREY, width = square_size*4, height = square_size*2, highlightthickness=0)
-    topbar_board.pack(side='right', expand=True)
+    topbar_board = tkinter.Canvas(
+        topbar,
+        bg=D_GREY,
+        width=square_size * 4,
+        height=square_size * 2,
+        highlightthickness=0,
+    )
+    topbar_board.pack(side="right", expand=True)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
-    sidebar.grid(row=1, column=1, sticky='nsw')
+    sidebar.grid(row=1, column=1, sticky="nsw")
 
-    new_game_button = tkinter.Button(sidebar, text = 'start')
-    new_game_button.grid(sticky='n')
+    new_game_button = tkinter.Button(sidebar, text="start")
+    new_game_button.grid(sticky="n")
 
-    new_game_button2 = tkinter.Button(sidebar, text = 'start')
-    new_game_button2.grid(sticky='n')
+    new_game_button2 = tkinter.Button(sidebar, text="start")
+    new_game_button2.grid(sticky="n")
 
-    new_game_button3 = tkinter.Button(sidebar, text = 'start')
-    new_game_button3.grid(sticky='n')
+    new_game_button3 = tkinter.Button(sidebar, text="start")
+    new_game_button3.grid(sticky="n")
 
     tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_board)
 
@@ -118,8 +128,12 @@ class TetrisGUI:
             "O": ORANGE,
         }
         self.canvas.delete("block")
-        self.canvas_small.delete('block')
-        for x, y in self.tetris_game.get_block_shape(self.tetris_game.current_block_shape, self.tetris_game.current_block_center, self.tetris_game.rotate_counter):
+        self.canvas_small.delete("block")
+        for x, y in self.tetris_game.get_block_shape(
+            self.tetris_game.current_block_shape,
+            self.tetris_game.current_block_center,
+            self.tetris_game.rotate_counter,
+        ):
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
@@ -140,14 +154,18 @@ class TetrisGUI:
                     fill=self.color_dict[letter],
                 )
 
-        for x, y in self.tetris_game.get_block_shape(self.tetris_game.upcoming_block_shape, self.tetris_game.upcoming_block_center, 0):
+        for x, y in self.tetris_game.get_block_shape(
+            self.tetris_game.upcoming_block_shape,
+            self.tetris_game.upcoming_block_center,
+            0,
+        ):
             self.canvas_small.create_rectangle(
-                    x * square_size,
-                    y * square_size,
-                    x * square_size + square_size,
-                    y * square_size + square_size,
-                    tags="block",
-                    fill=self.color_dict[self.tetris_game.upcoming_block_shape],
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=self.color_dict[self.tetris_game.upcoming_block_shape],
             )
 
     def move_block(self):
@@ -246,11 +264,25 @@ class TetrisGame:
         """
         Moves the current block downwards one square on the canvas
         """
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(y + 1 == game_height for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)):
+        if any(
+            (x, y + 1) in self.coord_extractor()
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ) or any(
+            y + 1 == game_height
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ):
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
             self.landed_blocks[self.current_block_shape].extend(
-                self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+                self.get_block_shape(
+                    self.current_block_shape,
+                    self.current_block_center,
+                    self.rotate_counter,
+                )
             )
             self.full_line_clear()
             self.new_block()
@@ -262,8 +294,16 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
-            (x - 1, y) in self.coord_extractor() for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+        if any(
+            x == 0
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ) or any(
+            (x - 1, y) in self.coord_extractor()
+            for x, y in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
         ):
             return
         x, y = self.current_block_center
@@ -273,8 +313,16 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
-            (x + 1, y) in self.coord_extractor() for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+        if any(
+            x == game_width - 1
+            for x, y in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ) or any(
+            (x + 1, y) in self.coord_extractor()
+            for x, y in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
         ):
             return
         x, y = self.current_block_center
@@ -299,7 +347,9 @@ class TetrisGame:
             x not in range(game_width)
             or y >= game_height
             or (x, y) in self.coord_extractor()
-            for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
         ):
             self.rotate_counter -= 1
 
@@ -318,9 +368,6 @@ class TetrisGame:
                     self.landed_blocks[letter] = [
                         (a, b) for (a, b) in coord_list if b > x_line
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
-
-
-
 
 
 run_gui()
