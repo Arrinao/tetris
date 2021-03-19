@@ -1,12 +1,13 @@
 import random
 import tkinter
 import collections
-from tkinter import ttk
+import time
 
 game_speed = 300
 square_size = 32
 game_width = 10
 game_height = 15
+sidebar_width = 100
 BLACK = "#000000"
 BLUE = "Blue2"
 RED = "red2"
@@ -27,26 +28,57 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    topbar = tkinter.Label(root)
-    topbar["bg"] = D_GREY
-    topbar.grid(row=0, column=0, sticky="we")
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
         height=square_size * game_height,
+    )
+    game_canvas.grid(row=1, sticky="nswe")
+
+    topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
+    topbar.grid(row=0, columnspan=2, sticky="we")
+
+    topbar_time = tkinter.Label(
+        topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
+    )
+    topbar_time.pack(side="left", padx=10)
+
+    topbar_score = tkinter.Label(
+        topbar, bg=D_GREY, text="foo", font="digital-7", fg="orange", borderwidth=1
+    )
+    topbar_score.pack(side="left", fill="x", expand=True)
+
+    topbar_board = tkinter.Canvas(
+        topbar,
+        bg=D_GREY,
+        width=square_size * 4,
+        height=square_size * 2,
         highlightthickness=0,
     )
-    game_canvas.grid()
+    topbar_board.pack(side="right", expand=True)
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas)
+    sidebar = tkinter.Frame(root, bg=D_GREY)
+    sidebar.grid(row=1, column=1, sticky="nsw")
 
-    root.bind("<Left>", tetris_gui.left_mediator)
-    root.bind("<Right>", tetris_gui.right_mediator)
-    root.bind("<Up>", tetris_gui.rotate_mediator)
+    new_game_button = tkinter.Button(sidebar, text="start")
+    new_game_button.grid(sticky="n")
 
-    tetris_gui.draw_board()
+    new_game_button2 = tkinter.Button(sidebar, text="start")
+    new_game_button2.grid(sticky="n")
+
+    new_game_button3 = tkinter.Button(sidebar, text="start")
+    new_game_button3.grid(sticky="n")
+
+    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_board)
+
+    root.bind("<Left>", tetris_gui.move_block_left)
+    root.bind("<Right>", tetris_gui.move_block_right)
+    root.bind("<Up>", tetris_gui.rotate_block)
+
+    tetris_gui.draw_board(game_canvas, game_width, game_height, GREY)
+    tetris_gui.draw_board(topbar_board, 4, 2, D_GREY)
     tetris_gui.draw_block()
-    tetris_gui.block_mediator()
+    tetris_gui.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -54,27 +86,29 @@ def run_gui():
 
 
 class TetrisGUI:
-    def __init__(self, speed, canvas):
+    def __init__(self, speed, canvas, canvas_small):
         self.speed = speed
         self.canvas = canvas
+        self.canvas_small = canvas_small
         self.rect_size = 25
         self.tetris_game = TetrisGame()
+        self.start_time = time.time()
 
-    def draw_board(self):
+    def draw_board(self, canvas, width, height, outline_color):
         """
         Draws the board of rectangles on top of the canvas
         """
         x_gap = 0
-        for x in range(game_width):
+        for x in range(width):
             y_gap = 0
-            for y in range(game_height):
-                self.canvas.create_rectangle(
+            for y in range(height):
+                canvas.create_rectangle(
                     x_gap,
                     y_gap,
                     x_gap + square_size,
                     y_gap + square_size,
                     fill=D_GREY,
-                    outline=GREY,
+                    outline=outline_color,
                 )
                 y_gap += square_size
 
@@ -84,7 +118,7 @@ class TetrisGUI:
         """
         Draws the different shapes on the board
         """
-        color_dict = {
+        self.color_dict = {
             "L": YELLOW,
             "I": RED,
             "E": GREEN,
@@ -94,14 +128,19 @@ class TetrisGUI:
             "O": ORANGE,
         }
         self.canvas.delete("block")
-        for x, y in self.tetris_game.get_current_block():
+        self.canvas_small.delete("block")
+        for x, y in self.tetris_game.get_block_shape(
+            self.tetris_game.current_block_shape,
+            self.tetris_game.current_block_center,
+            self.tetris_game.rotate_counter,
+        ):
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=color_dict[self.tetris_game.current_block_shape],
+                fill=self.color_dict[self.tetris_game.current_block_shape],
             )
 
         for letter, coord_list in self.tetris_game.landed_blocks.items():
@@ -112,29 +151,47 @@ class TetrisGUI:
                     x * square_size + square_size,
                     y * square_size + square_size,
                     tags="block",
-                    fill=color_dict[letter],
+                    fill=self.color_dict[letter],
                 )
 
-    def block_mediator(self):
+        for x, y in self.tetris_game.get_block_shape(
+            self.tetris_game.upcoming_block_shape,
+            self.tetris_game.upcoming_block_center,
+            0,
+        ):
+            self.canvas_small.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=self.color_dict[self.tetris_game.upcoming_block_shape],
+            )
+
+    def move_block(self):
         """
-        Has the responsibility to call block_mover() and draw_block() to
+        Has the responsibility to call current_block_mover() and draw_block() to
         simulate the blocks moving downwards on the canvas
         """
-        self.tetris_game.block_mover()
+        self.tetris_game.current_block_mover()
         self.draw_block()
-        self.canvas.after(game_speed, self.block_mediator)
+        self.canvas.after(game_speed, self.move_block)
 
-    def left_mediator(self, event):
+    def move_block_left(self, event):
         self.tetris_game.user_input_left()
         self.draw_block()
 
-    def right_mediator(self, event):
+    def move_block_right(self, event):
         self.tetris_game.user_input_right()
         self.draw_block()
 
-    def rotate_mediator(self, event):
+    def rotate_block(self, event):
         self.tetris_game.block_rotator()
         self.draw_block()
+
+    def timer(self):
+        game_time = time.time() - self.start_time
+        return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
 
 
 class TetrisGame:
@@ -154,81 +211,78 @@ class TetrisGame:
             self.current_block_shape = self.upcoming_block_shape
         self.current_block_center = (int(game_width / 2), -2)
         self.upcoming_block_shape = random.choice(shape_names)
+        self.upcoming_block_center = (2, 1)
         self.rotate_counter = 0
 
-    def get_current_block(self):
-        (x, y) = self.current_block_center
-        if self.current_block_shape == "I":
+    def get_block_shape(self, block_shape, block_center, rotate_counter):
+        (x, y) = block_center
+        if block_shape == "I":
             coords = [
                 [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
                 [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
             ]
-        if self.current_block_shape == "L":
+        if block_shape == "L":
             coords = [
                 [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y)],
                 [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1)],
                 [(x + 1, y - 1), (x, y - 1), (x - 1, y - 1), (x - 1, y)],
                 [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x, y - 1)],
             ]
-        if self.current_block_shape == "L_rev":
+        if block_shape == "L_rev":
             coords = [
                 [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
                 [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
                 [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
                 [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
             ]
-        if self.current_block_shape == "O":
+        if block_shape == "O":
             coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
-        if self.current_block_shape == "E":
+        if block_shape == "E":
             coords = [
                 [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
                 [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
                 [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
                 [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
             ]
-        if self.current_block_shape == "Z":
+        if block_shape == "Z":
             coords = [
                 [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
                 [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
             ]
-        if self.current_block_shape == "Z_rev":
+        if block_shape == "Z_rev":
             coords = [
                 [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
                 [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
             ]
 
-        return coords[self.rotate_counter % len(coords)]
+        return coords[rotate_counter % len(coords)]
 
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
 
-    def block_mover(self):
+    def current_block_mover(self):
         """
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.get_landed_coords()
-            for (x, y) in self.get_current_block()
-        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
-            for coord in self.get_current_block():
-                self.landed_blocks.append((self.current_block_shape, coord))
-            self.full_line_clear()
-            self.new_block()
-        else:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
-
-    def block_mover(self):
-        """
-        Moves the current block downwards one square on the canvas
-        """
-        if any(
-            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_current_block()
-        ) or any(y + 1 == game_height for (x, y) in self.get_current_block()):
+            (x, y + 1) in self.coord_extractor()
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ) or any(
+            y + 1 == game_height
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ):
             if self.current_block_shape not in self.landed_blocks:
                 self.landed_blocks[self.current_block_shape] = []
             self.landed_blocks[self.current_block_shape].extend(
-                self.get_current_block()
+                self.get_block_shape(
+                    self.current_block_shape,
+                    self.current_block_center,
+                    self.rotate_counter,
+                )
             )
             self.full_line_clear()
             self.new_block()
@@ -240,8 +294,16 @@ class TetrisGame:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for (x, y) in self.get_current_block()) or any(
-            (x - 1, y) in self.coord_extractor() for x, y in self.get_current_block()
+        if any(
+            x == 0
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ) or any(
+            (x - 1, y) in self.coord_extractor()
+            for x, y in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
         ):
             return
         x, y = self.current_block_center
@@ -251,8 +313,16 @@ class TetrisGame:
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_current_block()) or any(
-            (x + 1, y) in self.coord_extractor() for x, y in self.get_current_block()
+        if any(
+            x == game_width - 1
+            for x, y in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
+        ) or any(
+            (x + 1, y) in self.coord_extractor()
+            for x, y in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
         ):
             return
         x, y = self.current_block_center
@@ -270,14 +340,16 @@ class TetrisGame:
         Rotates the current block
         """
         self.rotate_counter += 1
-        # if any(x <= -1 or x >= game_width for (x, y) in self.get_current_block()) or any(
-        #    (x, y) in self.landed_blocks for x, y in self.get_current_block()
+        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)) or any(
+        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
         # ):
         if any(
             x not in range(game_width)
             or y >= game_height
             or (x, y) in self.coord_extractor()
-            for (x, y) in self.get_current_block()
+            for (x, y) in self.get_block_shape(
+                self.current_block_shape, self.current_block_center, self.rotate_counter
+            )
         ):
             self.rotate_counter -= 1
 
@@ -292,7 +364,7 @@ class TetrisGame:
             if count == game_width:
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
-                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > y_line] + [(a, b+1) for (a, b) in coord_list if b < y_line]} #Why this doesn't work?
+                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                     self.landed_blocks[letter] = [
                         (a, b) for (a, b) in coord_list if b > x_line
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
