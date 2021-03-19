@@ -59,10 +59,10 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text = 'start')
     new_game_button3.grid(sticky='n')
 
-    tetris_gui = TetrisGUI(game_speed, main_canvas)
+    main_board = Board(main_canvas, GREY, game_width, game_height, random.choice(shape_names), (int(game_width / 2), -2), 0, {})
+    topbar_board = Board(topbar_canvas, D_GREY, square_size*4, square_size*2, random.choice(shape_names), (2, 1), 0, None)
 
-    main_board = Board(main_canvas, GREY, game_width, game_height, random.choice(shape_names), (int(game_width / 2), -2), 0)
-    topbar_board = Board(topbar_canvas, D_GREY, square_size*4, square_size*2, random.choice(shape_names), (2, 1), 0)
+    tetris_gui = TetrisGUI(game_speed, main_board)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
@@ -83,7 +83,6 @@ class TetrisGUI:
         self.speed = speed
         self.main_board = main_board
         self.rect_size = 25
-        self.tetris_game = TetrisGame()
         self.start_time = time.time()
 
     def move_block(self):
@@ -91,7 +90,7 @@ class TetrisGUI:
         Has the responsibility to call current_block_mover() and draw_block() to
         simulate the blocks moving downwards on the canvas
         """
-        self.tetris_game.current_block_mover()
+        self.main_board.current_block_mover()
         self.main_board.draw_block(self.tetris_game.landed_blocks)
         self.canvas.after(game_speed, self.move_block)
 
@@ -111,46 +110,8 @@ class TetrisGUI:
         game_time = time.time() - self.start_time
         return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
 
-
-class TetrisGame:
-    def __init__(self):
-        self.landed_blocks = {}  # e.g. {'L': [(1, 2), (3, 4)]}
-        self.upcoming_block_shape = None
-        self.new_block()
-
-    def new_block(self):
-        """
-        Chooses a random block from "blocks" and assigns it to
-        self.current_block
-        """
-        if self.upcoming_block_shape is None:
-            self.current_block_shape = random.choice(shape_names)
-        else:
-            self.current_block_shape = self.upcoming_block_shape
-        self.current_block_center = (int(game_width / 2), -2)
-        self.upcoming_block_shape = random.choice(shape_names)
-        self.upcoming_block_center = (2, 1)
-        self.rotate_counter = 0
-
-    def full_line_clear(self):
-        """
-        Clears the line once it's fully populated with blocks
-        """
-        y_coordinates = [y for (x, y) in self.coord_extractor()]
-        coordinates_counter = collections.Counter(y_coordinates)
-        for x_line in range(game_height):
-            count = coordinates_counter[x_line]
-            if count == game_width:
-                # TODO: root.after() here
-                for letter, coord_list in self.landed_blocks.items():
-                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
-                    self.landed_blocks[letter] = [
-                        (a, b) for (a, b) in coord_list if b > x_line
-                    ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
-
-
 class Board:
-    def __init__(self, canvas, outline_color, width, height, block_shape, block_center, rotate_counter):
+    def __init__(self, canvas, outline_color, width, height, block_shape, block_center, rotate_counter, landed_blocks):
         self.canvas = canvas
         self.outline_color = outline_color
         self.width = width
@@ -158,6 +119,8 @@ class Board:
         self.block_shape = block_shape
         self.block_center = block_center
         self.rotate_counter = rotate_counter
+        self.landed_blocks = {}  # e.g. {'L': [(1, 2), (3, 4)]}
+        #self.new_block()
 
     def draw_board(self):
         """
@@ -322,6 +285,39 @@ class Board:
             for (x, y) in self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
         ):
             self.rotate_counter -= 1
+
+    #def new_block(self):
+    #    """
+    #    Chooses a random block from "blocks" and assigns it to
+    #    self.current_block
+    #    """
+    #    if self.upcoming_block_shape is None:
+    #        self.current_block_shape = random.choice(shape_names)
+    #    else:
+    #        self.current_block_shape = self.upcoming_block_shape
+    #    self.current_block_center = (int(game_width / 2), -2)
+    #    self.upcoming_block_shape = random.choice(shape_names)
+    #    self.upcoming_block_center = (2, 1)
+    #    self.rotate_counter = 0
+
+    
+
+    def full_line_clear(self):
+        """
+        Clears the line once it's fully populated with blocks
+        """
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        coordinates_counter = collections.Counter(y_coordinates)
+        for x_line in range(game_height):
+            count = coordinates_counter[x_line]
+            if count == game_width:
+                # TODO: root.after() here
+                for letter, coord_list in self.landed_blocks.items():
+                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
+                    self.landed_blocks[letter] = [
+                        (a, b) for (a, b) in coord_list if b > x_line
+                    ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
+
 
 
 
