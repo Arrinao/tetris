@@ -69,15 +69,16 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_canvas)
-    main_board = Board(game_canvas, game_width, game_height, GREY)
-    small_board = Board(topbar_canvas, 4, 2, D_GREY)
+    tetris_gui = TetrisGUI(game_speed, game_canvas)
+    main_board = Board(game_canvas, game_width, game_height, GREY, (int(game_width / 2), -2))
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1))
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    tetris_gui.draw_block() ### What is the difference beween putting a function call here
+    main_board.draw_block() ### What is the difference beween putting a function call here
+    small_board.draw_block()
     tetris_gui.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
@@ -85,29 +86,32 @@ def run_gui():
     root.mainloop()
 
 class Board:
-    def __init__(self, canvas, width, height, outline):
+    def __init__(self, canvas, width, height, outline_color, block_center):
         self.canvas = canvas
         self.width = width
         self.height = height
-        self.outline = outline
+        self.outline_color = outline_color
         self.landed_blocks = {}
         self.new_block()  ###what is the difference between putting a function call here
+        self.block_center = block_center
+        self.current_block_shape = random.choice(shape_names)
+        self.rotate_counter = 0
 
-    def draw_board(self, canvas, width, height, outline_color):
+    def draw_board(self):
         """
         Draws the board of rectangles on top of the canvas
         """
         x_gap = 0
-        for x in range(width):
+        for x in range(self.width):
             y_gap = 0
-            for y in range(height):
-                canvas.create_rectangle(
+            for y in range(self.height):
+                self.canvas.create_rectangle(
                     x_gap,
                     y_gap,
                     x_gap + square_size,
                     y_gap + square_size,
                     fill=D_GREY,
-                    outline=outline_color,
+                    outline=self.outline_color,
                 )
                 y_gap += square_size
 
