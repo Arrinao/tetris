@@ -91,7 +91,12 @@ class Board:
         self.current_block_center = current_block_center
         self.current_block_shape = random.choice(shape_names)
         self.rotate_counter = 0
+        self.draw_board()
         self.draw_block()
+        print(self.outline_color)
+        print(current_block_center)
+        print(width)
+        print(height)
 
     def draw_board(self):
         """
