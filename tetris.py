@@ -77,8 +77,6 @@ def run_gui():
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    tetris_gui.move_block()
-
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
     root.mainloop()
@@ -154,20 +152,6 @@ class Board:
                     fill=self.color_dict[letter],
                 )
 
-    def new_block(self):
-        """
-        Chooses a random block from "blocks" and assigns it to
-        self.current_block
-        """
-        if self.upcoming_block_shape is None:
-            self.current_block_shape = random.choice(shape_names)
-        else:
-            self.current_block_shape = self.upcoming_block_shape
-        self.current_block_center = (int(game_width / 2), -2)
-        self.upcoming_block_shape = random.choice(shape_names)
-        self.upcoming_block_center = (2, 1)
-        self.rotate_counter = 0
-
     def get_block_shape(self, block_shape, block_center, rotate_counter):
         (x, y) = block_center
         if block_shape == "I":
@@ -239,7 +223,6 @@ class Board:
                 )
             )
             self.full_line_clear()
-            self.new_block()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
