@@ -344,7 +344,7 @@ class TetrisGUI:
         self.canvas = canvas
         self.canvas_small = canvas_small
         self.rect_size = 25
-        self.main_board = 
+        self.main_board = Board(canvas, game_width, game_height, GREY)
         self.start_time = time.time()
 
     def move_block(self):
