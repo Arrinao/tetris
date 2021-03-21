@@ -48,14 +48,14 @@ def run_gui():
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
-    topbar_board = tkinter.Canvas(
+    topbar_canvas = tkinter.Canvas(
         topbar,
         bg=D_GREY,
         width=square_size * 4,
         height=square_size * 2,
         highlightthickness=0,
     )
-    topbar_board.pack(side="right", expand=True)
+    topbar_canvas.pack(side="right", expand=True)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
@@ -69,30 +69,29 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_board)
+    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_canvas)
+    main_board = Board(game_canvas, game_width, game_height, GREY)
+    small_board = Board(topbar_canvas, 4, 2, D_GREY)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    tetris_gui.draw_board(game_canvas, game_width, game_height, GREY)
-    tetris_gui.draw_board(topbar_board, 4, 2, D_GREY)
-    tetris_gui.draw_block()
+    tetris_gui.draw_block() ### What is the difference beween putting a function call here
     tetris_gui.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
     root.mainloop()
 
-
-class TetrisGUI:
-    def __init__(self, speed, canvas, canvas_small):
-        self.speed = speed
+class Board:
+    def __init__(self, canvas, width, height, outline):
         self.canvas = canvas
-        self.canvas_small = canvas_small
-        self.rect_size = 25
-        self.tetris_game = TetrisGame()
-        self.start_time = time.time()
+        self.width = width
+        self.height = height
+        self.outline = outline
+        self.landed_blocks = {}
+        self.new_block()  ###what is the difference between putting a function call here
 
     def draw_board(self, canvas, width, height, outline_color):
         """
@@ -129,10 +128,10 @@ class TetrisGUI:
         }
         self.canvas.delete("block")
         self.canvas_small.delete("block")
-        for x, y in self.tetris_game.get_block_shape(
-            self.tetris_game.current_block_shape,
-            self.tetris_game.current_block_center,
-            self.tetris_game.rotate_counter,
+        for x, y in self.get_block_shape(
+            self.current_block_shape,
+            self.current_block_center,
+            self.rotate_counter,
         ):
             self.canvas.create_rectangle(
                 x * square_size,
@@ -140,10 +139,10 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=self.color_dict[self.tetris_game.current_block_shape],
+                fill=self.color_dict[self.current_block_shape],
             )
 
-        for letter, coord_list in self.tetris_game.landed_blocks.items():
+        for letter, coord_list in self.landed_blocks.items():
             for (x, y) in coord_list:
                 self.canvas.create_rectangle(
                     x * square_size,
@@ -154,9 +153,9 @@ class TetrisGUI:
                     fill=self.color_dict[letter],
                 )
 
-        for x, y in self.tetris_game.get_block_shape(
-            self.tetris_game.upcoming_block_shape,
-            self.tetris_game.upcoming_block_center,
+        for x, y in self.get_block_shape(
+            self.upcoming_block_shape,
+            self.upcoming_block_center,
             0,
         ):
             self.canvas_small.create_rectangle(
@@ -165,40 +164,8 @@ class TetrisGUI:
                 x * square_size + square_size,
                 y * square_size + square_size,
                 tags="block",
-                fill=self.color_dict[self.tetris_game.upcoming_block_shape],
+                fill=self.color_dict[self.upcoming_block_shape],
             )
-
-    def move_block(self):
-        """
-        Has the responsibility to call current_block_mover() and draw_block() to
-        simulate the blocks moving downwards on the canvas
-        """
-        self.tetris_game.current_block_mover()
-        self.draw_block()
-        self.canvas.after(game_speed, self.move_block)
-
-    def move_block_left(self, event):
-        self.tetris_game.user_input_left()
-        self.draw_block()
-
-    def move_block_right(self, event):
-        self.tetris_game.user_input_right()
-        self.draw_block()
-
-    def rotate_block(self, event):
-        self.tetris_game.block_rotator()
-        self.draw_block()
-
-    def timer(self):
-        game_time = time.time() - self.start_time
-        return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
-
-
-class TetrisGame:
-    def __init__(self):
-        self.landed_blocks = {}  # e.g. {'L': [(1, 2), (3, 4)]}
-        self.upcoming_block_shape = None
-        self.new_block()
 
     def new_block(self):
         """
@@ -369,5 +336,40 @@ class TetrisGame:
                         (a, b) for (a, b) in coord_list if b > x_line
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
 
+
+
+class TetrisGUI:
+    def __init__(self, speed, canvas, canvas_small):
+        self.speed = speed
+        self.canvas = canvas
+        self.canvas_small = canvas_small
+        self.rect_size = 25
+        self.main_board = 
+        self.start_time = time.time()
+
+    def move_block(self):
+        """
+        Has the responsibility to call current_block_mover() and draw_block() to
+        simulate the blocks moving downwards on the canvas
+        """
+        self.board.current_block_mover()
+        self.draw_block()
+        self.canvas.after(game_speed, self.move_block)
+
+    def move_block_left(self, event):
+        self.board.user_input_left()
+        self.draw_block()
+
+    def move_block_right(self, event):
+        self.board.user_input_right()
+        self.draw_block()
+
+    def rotate_block(self, event):
+        self.board.block_rotator()
+        self.draw_block()
+
+    def timer(self):
+        game_time = time.time() - self.start_time
+        return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
 
 run_gui()
