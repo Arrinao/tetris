@@ -339,12 +339,10 @@ class Board:
 
 
 class TetrisGUI:
-    def __init__(self, speed, canvas, canvas_small):
+    def __init__(self, speed, main_board):
         self.speed = speed
-        self.canvas = canvas
-        self.canvas_small = canvas_small
         self.rect_size = 25
-        self.main_board = Board(canvas, game_width, game_height, GREY)
+        self.main_board = main_board
         self.start_time = time.time()
 
     def move_block(self):
