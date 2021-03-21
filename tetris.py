@@ -69,9 +69,9 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas)
-    main_board = Board(game_canvas, game_width, game_height, GREY, (int(game_width / 2), -2))
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1))
+    tetris_gui = TetrisGUI(game_speed, game_canvas, topbar_canvas)
+    main_board = Board(game_canvas, game_width, game_height, GREY)
+    small_board = Board(topbar_canvas, 4, 2, D_GREY)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
@@ -85,32 +85,29 @@ def run_gui():
     root.mainloop()
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, block_center):
+    def __init__(self, canvas, width, height, outline):
         self.canvas = canvas
         self.width = width
         self.height = height
-        self.outline_color = outline_color
+        self.outline = outline
         self.landed_blocks = {}
         self.new_block()  ###what is the difference between putting a function call here
-        self.block_shape = random.choice(shape_names)
-        self.block_center = block_center
-        self.rotate_counter = 0
 
-    def draw_board(self):
+    def draw_board(self, canvas, width, height, outline_color):
         """
         Draws the board of rectangles on top of the canvas
         """
         x_gap = 0
-        for x in range(self.width):
+        for x in range(width):
             y_gap = 0
-            for y in range(self.height):
-                self.canvas.create_rectangle(
+            for y in range(height):
+                canvas.create_rectangle(
                     x_gap,
                     y_gap,
                     x_gap + square_size,
                     y_gap + square_size,
                     fill=D_GREY,
-                    outline_color=self.outline_color,
+                    outline=outline_color,
                 )
                 y_gap += square_size
 
@@ -156,6 +153,20 @@ class Board:
                     fill=self.color_dict[letter],
                 )
 
+        for x, y in self.get_block_shape(
+            self.upcoming_block_shape,
+            self.upcoming_block_center,
+            0,
+        ):
+            self.canvas_small.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags="block",
+                fill=self.color_dict[self.upcoming_block_shape],
+            )
+
     def new_block(self):
         """
         Chooses a random block from "blocks" and assigns it to
@@ -165,6 +176,9 @@ class Board:
             self.current_block_shape = random.choice(shape_names)
         else:
             self.current_block_shape = self.upcoming_block_shape
+        self.current_block_center = (int(game_width / 2), -2)
+        self.upcoming_block_shape = random.choice(shape_names)
+        self.upcoming_block_center = (2, 1)
         self.rotate_counter = 0
 
     def get_block_shape(self, block_shape, block_center, rotate_counter):
