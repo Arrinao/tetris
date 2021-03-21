@@ -69,16 +69,14 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    tetris_gui = TetrisGUI(game_speed, game_canvas)
     main_board = Board(game_canvas, game_width, game_height, GREY, (int(game_width / 2), -2))
     small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1))
+    tetris_gui = TetrisGUI(game_speed, main_board)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
 
-    main_board.draw_block() ### What is the difference beween putting a function call here
-    small_board.draw_block()
     tetris_gui.move_block()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
@@ -86,16 +84,16 @@ def run_gui():
     root.mainloop()
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, block_center):
+    def __init__(self, canvas, width, height, outline_color, current_block_center):
         self.canvas = canvas
         self.width = width
         self.height = height
         self.outline_color = outline_color
         self.landed_blocks = {}
-        self.new_block()  ###what is the difference between putting a function call here
-        self.block_center = block_center
+        self.current_block_center = current_block_center
         self.current_block_shape = random.choice(shape_names)
         self.rotate_counter = 0
+        self.draw_block()
 
     def draw_board(self):
         """
@@ -131,7 +129,6 @@ class Board:
             "O": ORANGE,
         }
         self.canvas.delete("block")
-        self.canvas_small.delete("block")
         for x, y in self.get_block_shape(
             self.current_block_shape,
             self.current_block_center,
@@ -156,20 +153,6 @@ class Board:
                     tags="block",
                     fill=self.color_dict[letter],
                 )
-
-        for x, y in self.get_block_shape(
-            self.upcoming_block_shape,
-            self.upcoming_block_center,
-            0,
-        ):
-            self.canvas_small.create_rectangle(
-                x * square_size,
-                y * square_size,
-                x * square_size + square_size,
-                y * square_size + square_size,
-                tags="block",
-                fill=self.color_dict[self.upcoming_block_shape],
-            )
 
     def new_block(self):
         """
@@ -348,27 +331,28 @@ class TetrisGUI:
         self.rect_size = 25
         self.main_board = main_board
         self.start_time = time.time()
+        self.move_block()
 
     def move_block(self):
         """
         Has the responsibility to call current_block_mover() and draw_block() to
         simulate the blocks moving downwards on the canvas
         """
-        self.board.current_block_mover()
-        self.draw_block()
-        self.canvas.after(game_speed, self.move_block)
+        self.main_board.current_block_mover()
+        self.main_board.draw_block()
+        self.main_board.canvas.after(game_speed, self.move_block)
 
     def move_block_left(self, event):
-        self.board.user_input_left()
-        self.draw_block()
+        self.main_board.user_input_left()
+        self.main_board.draw_block()
 
     def move_block_right(self, event):
-        self.board.user_input_right()
-        self.draw_block()
+        self.main_board.user_input_right()
+        self.main_board.draw_block()
 
     def rotate_block(self, event):
-        self.board.block_rotator()
-        self.draw_block()
+        self.main_board.block_rotator()
+        self.main_board.draw_block()
 
     def timer(self):
         game_time = time.time() - self.start_time
