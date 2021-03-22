@@ -239,7 +239,7 @@ class Board:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
         self.draw_block()
-        self.canvas.after(game_speed, self.current_block_mover)
+        self.canvas.after(game_speed, self.current_block_mover, small_board)
 
 #    def move_block(self):
 #        """
