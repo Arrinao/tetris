@@ -69,8 +69,9 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    main_board = Board(game_canvas, game_width, game_height, GREY, (int(game_width / 2), -2))
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1))
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
+    main_board = Board(game_canvas, game_width, game_height, GREY, (int(game_width / 2), -2), small_board)
+
     tetris_gui = TetrisGUI(game_speed, main_board)
 
     root.bind("<Left>", tetris_gui.move_block_left)
@@ -82,7 +83,7 @@ def run_gui():
     root.mainloop()
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center):
+    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -92,11 +93,9 @@ class Board:
         self.current_block_shape = random.choice(shape_letter)
         self.rotate_counter = 0
         self.draw_board()
+        self.small_board = small_board
+        self.current_block_mover(small_board)
         self.draw_block()
-        print(self.outline_color)
-        print(current_block_center)
-        print(width)
-        print(height)
 
     def draw_board(self):
         """
@@ -210,7 +209,7 @@ class Board:
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
 
-    def current_block_mover(self):
+    def current_block_mover(self, small_board):
         """
         Moves the current block downwards one square on the canvas
         """
@@ -239,6 +238,17 @@ class Board:
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
+        self.draw_block()
+        self.canvas.after(game_speed, self.current_block_mover)
+
+#    def move_block(self):
+#        """
+#        Has the responsibility to call current_block_mover() and draw_block() to
+#        simulate the blocks moving downwards on the canvas
+#        """
+#        self.main_board.current_block_mover()
+#        self.main_board.draw_block()
+#        self.main_board.canvas.after(game_speed, self.move_block)
 
     def user_input_left(self):
         """
@@ -327,16 +337,6 @@ class TetrisGUI:
         self.rect_size = 25
         self.main_board = main_board
         self.start_time = time.time()
-        self.move_block()
-
-    def move_block(self):
-        """
-        Has the responsibility to call current_block_mover() and draw_block() to
-        simulate the blocks moving downwards on the canvas
-        """
-        self.main_board.current_block_mover()
-        self.main_board.draw_block()
-        self.main_board.canvas.after(game_speed, self.move_block)
 
     def move_block_left(self, event):
         self.main_board.user_input_left()
