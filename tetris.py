@@ -20,7 +20,7 @@ ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
-shape_names = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+shape_letter = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
 def run_gui():
@@ -89,7 +89,7 @@ class Board:
         self.outline_color = outline_color
         self.landed_blocks = {}
         self.current_block_center = current_block_center
-        self.current_block_shape = random.choice(shape_names)
+        self.current_block_shape = random.choice(shape_letter)
         self.rotate_counter = 0
         self.draw_board()
         self.draw_block()
@@ -156,6 +156,13 @@ class Board:
                     tags="block",
                     fill=self.color_dict[letter],
                 )
+
+    def new_block(self):
+        self.current_block_center = (int(game_width / 2), -2)
+        self.current_block_shape = random.choice(shape_letter)
+        self.rotate_counter = 0
+        self.get_block_shape(self.current_block_shape, self.current_block_center, self.rotate_counter)
+
 
     def get_block_shape(self, block_shape, block_center, rotate_counter):
         (x, y) = block_center
@@ -228,6 +235,7 @@ class Board:
                 )
             )
             self.full_line_clear()
+            self.new_block()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
