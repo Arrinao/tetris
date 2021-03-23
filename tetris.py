@@ -166,8 +166,7 @@ class Board:
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
         self.small_board.block_letter = random.choice(block_letter)
-        self.draw_block()
-        print(self.small_board.block_letter)
+        self.small_board.draw_block()
         self.rotate_counter = 0
         self.get_block_shape(self.block_letter, self.current_block_center, self.rotate_counter)
 
