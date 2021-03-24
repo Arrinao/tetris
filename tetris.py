@@ -94,9 +94,8 @@ class Board:
         self.current_block_center = current_block_center
         self.block_letter = random.choice(block_letter)
         self.rotate_counter = 0
-        self.draw_board()
         self.small_board = small_board
-
+        self.draw_board()
         self.draw_block()
 
     def draw_board(self):
@@ -154,17 +153,12 @@ class Board:
                     fill=self.color_dict[letter],
                 )
 
-    def letter_generator(self):
-        self.block_letter = random.choice(block_letter)
-        self.draw_block()
-
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
         self.small_board.block_letter = random.choice(block_letter)
         self.small_board.draw_block()
         self.rotate_counter = 0
-        self.get_block_shape()
 
 
     def get_block_shape(self):
