@@ -171,7 +171,7 @@ class Board:
         self.get_block_shape(self.block_letter, self.current_block_center, self.rotate_counter)
 
 
-    def get_block_shape(self, block_shape, block_center, rotate_counter):
+    def get_block_shape(self):
         (x, y) = block_center
         if block_shape == "I":
             coords = [
