@@ -133,11 +133,7 @@ class Board:
             "O": ORANGE,
         }
         self.canvas.delete("block")
-        for x, y in self.get_block_shape(
-            self.block_letter,
-            self.current_block_center,
-            self.rotate_counter,
-        ):
+        for x, y in self.get_block_shape():
             self.canvas.create_rectangle(
                 x * square_size,
                 y * square_size,
@@ -168,51 +164,51 @@ class Board:
         self.small_board.block_letter = random.choice(block_letter)
         self.small_board.draw_block()
         self.rotate_counter = 0
-        self.get_block_shape(self.block_letter, self.current_block_center, self.rotate_counter)
+        self.get_block_shape()
 
 
     def get_block_shape(self):
-        (x, y) = block_center
-        if block_shape == "I":
+        (x, y) = self.current_block_center
+        if self.block_letter == "I":
             coords = [
                 [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
                 [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
             ]
-        if block_shape == "L":
+        if self.block_letter == "L":
             coords = [
                 [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)],
                 [(x - 1, y - 2), (x - 1, y - 1), (x - 1, y), (x, y)],
                 [(x + 1, y - 2), (x, y - 2), (x - 1, y - 2), (x - 1, y - 1)],
                 [(x + 1, y), (x + 1, y - 1), (x + 1, y - 2), (x, y - 2)],
             ]
-        if block_shape == "L_rev":
+        if self.block_letter == "L_rev":
             coords = [
                 [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
                 [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
                 [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
                 [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
             ]
-        if block_shape == "O":
+        if self.block_letter == "O":
             coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
-        if block_shape == "E":
+        if self.block_letter == "E":
             coords = [
                 [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
                 [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
                 [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
                 [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
             ]
-        if block_shape == "Z":
+        if self.block_letter == "Z":
             coords = [
                 [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
                 [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
             ]
-        if block_shape == "Z_rev":
+        if self.block_letter == "Z_rev":
             coords = [
                 [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
                 [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
             ]
 
-        return coords[rotate_counter % len(coords)]
+        return coords[self.rotate_counter % len(coords)]
 
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
@@ -223,23 +219,15 @@ class Board:
         """
         if any(
             (x, y + 1) in self.coord_extractor()
-            for (x, y) in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for (x, y) in self.get_block_shape()
         ) or any(
             y + 1 == game_height
-            for (x, y) in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for (x, y) in self.get_block_shape()
         ):
             if self.block_letter not in self.landed_blocks:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(
-                self.get_block_shape(
-                    self.block_letter,
-                    self.current_block_center,
-                    self.rotate_counter,
-                )
+                self.get_block_shape()
             )
             self.full_line_clear()
             self.new_block()
@@ -264,14 +252,10 @@ class Board:
         """
         if any(
             x == 0
-            for (x, y) in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for (x, y) in self.get_block_shape()
         ) or any(
             (x - 1, y) in self.coord_extractor()
-            for x, y in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for x, y in self.get_block_shape()
         ):
             return
         x, y = self.current_block_center
@@ -283,14 +267,10 @@ class Board:
         """
         if any(
             x == game_width - 1
-            for x, y in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for x, y in self.get_block_shape()
         ) or any(
             (x + 1, y) in self.coord_extractor()
-            for x, y in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for x, y in self.get_block_shape()
         ):
             return
         x, y = self.current_block_center
@@ -308,16 +288,14 @@ class Board:
         Rotates the current block
         """
         self.rotate_counter += 1
-        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape(self.block_letter, self.current_block_center, self.rotate_counter)) or any(
-        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape(self.block_letter, self.current_block_center, self.rotate_counter)
+        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape()) or any(
+        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape()
         # ):
         if any(
             x not in range(game_width)
             or y >= game_height
             or (x, y) in self.coord_extractor()
-            for (x, y) in self.get_block_shape(
-                self.block_letter, self.current_block_center, self.rotate_counter
-            )
+            for (x, y) in self.get_block_shape()
         ):
             self.rotate_counter -= 1
 
