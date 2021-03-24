@@ -20,7 +20,7 @@ ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
-block_letter = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
 def run_gui():
@@ -74,7 +74,7 @@ def run_gui():
 
     main_board.current_block_mover()
 
-    tetris_gui = TetrisGUI(game_speed, main_board)
+    tetris_gui = TetrisGUI(main_board)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
@@ -92,7 +92,7 @@ class Board:
         self.outline_color = outline_color
         self.landed_blocks = {}
         self.current_block_center = current_block_center
-        self.block_letter = random.choice(block_letter)
+        self.block_letter = random.choice(block_letters)
         self.rotate_counter = 0
         self.small_board = small_board
         self.draw_board()
@@ -156,7 +156,7 @@ class Board:
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
-        self.small_board.block_letter = random.choice(block_letter)
+        self.small_board.block_letter = random.choice(block_letters)
         self.small_board.draw_block()
         self.rotate_counter = 0
 
@@ -231,15 +231,6 @@ class Board:
         self.draw_block()
         self.canvas.after(game_speed, self.current_block_mover)
 
-#    def move_block(self):
-#        """
-#        Has the responsibility to call current_block_mover() and draw_block() to
-#        simulate the blocks moving downwards on the canvas
-#        """
-#        self.main_board.current_block_mover()
-#        self.main_board.draw_block()
-#        self.main_board.canvas.after(game_speed, self.move_block)
-
     def user_input_left(self):
         """
         Moves the current block to the left on the canvas
@@ -310,11 +301,8 @@ class Board:
                     ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
 
 
-
 class TetrisGUI:
-    def __init__(self, speed, main_board):
-        self.speed = speed
-        self.rect_size = 25
+    def __init__(self, main_board):
         self.main_board = main_board
         self.start_time = time.time()
 
