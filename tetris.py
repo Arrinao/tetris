@@ -70,7 +70,14 @@ def run_gui():
     new_game_button3.grid(sticky="n")
 
     small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
-    main_board = Board(game_canvas, game_width, game_height, GREY, (int(game_width / 2), -2), small_board)
+    main_board = Board(
+        game_canvas,
+        game_width,
+        game_height,
+        GREY,
+        (int(game_width / 2), -2),
+        small_board,
+    )
 
     main_board.current_block_mover()
 
@@ -84,8 +91,11 @@ def run_gui():
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
     root.mainloop()
 
+
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
+    def __init__(
+        self, canvas, width, height, outline_color, current_block_center, small_board
+    ):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -160,7 +170,6 @@ class Board:
         self.small_board.draw_block()
         self.rotate_counter = 0
 
-
     def get_block_shape(self):
         (x, y) = self.current_block_center
         if self.block_letter == "I":
@@ -212,17 +221,11 @@ class Board:
         Moves the current block downwards one square on the canvas
         """
         if any(
-            (x, y + 1) in self.coord_extractor()
-            for (x, y) in self.get_block_shape()
-        ) or any(
-            y + 1 == game_height
-            for (x, y) in self.get_block_shape()
-        ):
+            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()
+        ) or any(y + 1 == game_height for (x, y) in self.get_block_shape()):
             if self.block_letter not in self.landed_blocks:
                 self.landed_blocks[self.block_letter] = []
-            self.landed_blocks[self.block_letter].extend(
-                self.get_block_shape()
-            )
+            self.landed_blocks[self.block_letter].extend(self.get_block_shape())
             self.full_line_clear()
             self.new_block()
         else:
@@ -235,12 +238,8 @@ class Board:
         """
         Moves the current block to the left on the canvas
         """
-        if any(
-            x == 0
-            for (x, y) in self.get_block_shape()
-        ) or any(
-            (x - 1, y) in self.coord_extractor()
-            for x, y in self.get_block_shape()
+        if any(x == 0 for (x, y) in self.get_block_shape()) or any(
+            (x - 1, y) in self.coord_extractor() for x, y in self.get_block_shape()
         ):
             return
         x, y = self.current_block_center
@@ -250,12 +249,8 @@ class Board:
         """
         Moves the current block to the right on the canvas
         """
-        if any(
-            x == game_width - 1
-            for x, y in self.get_block_shape()
-        ) or any(
-            (x + 1, y) in self.coord_extractor()
-            for x, y in self.get_block_shape()
+        if any(x == game_width - 1 for x, y in self.get_block_shape()) or any(
+            (x + 1, y) in self.coord_extractor() for x, y in self.get_block_shape()
         ):
             return
         x, y = self.current_block_center
@@ -321,5 +316,6 @@ class TetrisGUI:
     def timer(self):
         game_time = time.time() - self.start_time
         return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
+
 
 run_gui()
