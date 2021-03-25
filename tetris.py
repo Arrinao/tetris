@@ -97,13 +97,11 @@ def rotate_point(point, center):
     point_x, point_y = point
     a = point_x - x
     b = point_y - y
-    return (x-b, y+a)
+    return (x - b, y + a)
 
 
 class Board:
-    def __init__(
-        self, canvas, width, height, outline_color, current_block_center, small_board
-    ):
+    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -181,20 +179,17 @@ class Board:
     def get_block_shape(self):
         (x, y) = self.current_block_center
         if self.block_letter == "I":
-            coords = [
-                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
+            coords = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L":
-            coords = [
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L_rev":
-            coords = [
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
@@ -203,20 +198,17 @@ class Board:
             coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
 
         if self.block_letter == "E":
-            coords = [
-                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]]
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "Z":
-            coords = [
-                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]]
+            coords = [[(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "Z_rev":
-            coords = [
-                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
+            coords = [[(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         return coords[self.rotate_counter % len(coords)]
@@ -228,9 +220,9 @@ class Board:
         """
         Moves the current block downwards one square on the canvas
         """
-        if any(
-            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()
-        ) or any(y + 1 == game_height for (x, y) in self.get_block_shape()):
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+            y + 1 == game_height for (x, y) in self.get_block_shape()
+        ):
             if self.block_letter not in self.landed_blocks:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
@@ -280,9 +272,7 @@ class Board:
         #    (x, y) in self.landed_blocks for x, y in self.get_block_shape()
         # ):
         if any(
-            x not in range(game_width)
-            or y >= game_height
-            or (x, y) in self.coord_extractor()
+            x not in range(game_width) or y >= game_height or (x, y) in self.coord_extractor()
             for (x, y) in self.get_block_shape()
         ):
             self.rotate_counter -= 1
@@ -299,9 +289,9 @@ class Board:
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
                     # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
-                    self.landed_blocks[letter] = [
-                        (a, b) for (a, b) in coord_list if b > x_line
-                    ] + [(a, b + 1) for (a, b) in coord_list if b < x_line]
+                    self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
+                        (a, b + 1) for (a, b) in coord_list if b < x_line
+                    ]
 
 
 class TetrisGUI:
