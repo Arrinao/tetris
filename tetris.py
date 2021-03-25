@@ -92,6 +92,14 @@ def run_gui():
     root.mainloop()
 
 
+def rotate_point(point, center):
+    x, y = center
+    point_x, point_y = point
+    a = point_x - x
+    b = point_y - y
+    return (x-b, y+a)
+
+
 class Board:
     def __init__(
         self, canvas, width, height, outline_color, current_block_center, small_board
@@ -174,42 +182,42 @@ class Board:
         (x, y) = self.current_block_center
         if self.block_letter == "I":
             coords = [
-                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)],
-                [(x, y - 2), (x, y - 1), (x, y), (x, y + 1)],
-            ]
+                [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
         if self.block_letter == "L":
             coords = [
-                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)],
-                [(x - 1, y - 2), (x - 1, y - 1), (x - 1, y), (x, y)],
-                [(x + 1, y - 2), (x, y - 2), (x - 1, y - 2), (x - 1, y - 1)],
-                [(x + 1, y), (x + 1, y - 1), (x + 1, y - 2), (x, y - 2)],
-            ]
+                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
         if self.block_letter == "L_rev":
             coords = [
-                [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 1, y)],
-                [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1)],
-                [(x + 1, y + 1), (x, y + 1), (x - 1, y + 1), (x - 1, y)],
-                [(x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1)],
-            ]
+                [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
         if self.block_letter == "O":
             coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+
         if self.block_letter == "E":
             coords = [
-                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
-                [(x, y - 1), (x, y), (x, y + 1), (x + 1, y)],
-                [(x + 1, y), (x, y), (x - 1, y), (x, y + 1)],
-                [(x, y + 1), (x, y), (x, y - 1), (x - 1, y)],
-            ]
+                [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
         if self.block_letter == "Z":
             coords = [
-                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)],
-                [(x + 1, y - 1), (x + 1, y), (x, y), (x, y + 1)],
-            ]
+                [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
         if self.block_letter == "Z_rev":
             coords = [
-                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)],
-                [(x + 1, y + 1), (x + 1, y), (x, y), (x, y - 1)],
-            ]
+                [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         return coords[self.rotate_counter % len(coords)]
 
