@@ -189,7 +189,7 @@ class Board:
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L_rev":
-            coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
+            coords = [[(x - 1, y-1), (x-1, y), (x, y), (x + 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
