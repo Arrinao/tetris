@@ -39,7 +39,7 @@ def run_gui():
     topbar.grid(row=0, columnspan=2, sticky="we")
 
     topbar_time = tkinter.Label(
-        topbar, bg=D_GREY, text="huga", font="digital-7", fg="orange", borderwidth=1
+        topbar, bg=D_GREY, text="time", font="digital-7", fg="orange", borderwidth=1
     )
     topbar_time.pack(side="left", padx=10)
 
