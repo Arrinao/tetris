@@ -44,7 +44,7 @@ def run_gui():
     topbar_time.pack(side="left", padx=10)
 
     topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="foo", font="digital-7", fg="orange", borderwidth=1
+        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor = 'e'
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
@@ -69,7 +69,7 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, None)
     main_board = Board(
         game_canvas,
         game_width,
@@ -77,6 +77,7 @@ def run_gui():
         GREY,
         (int(game_width / 2), -2),
         small_board,
+        topbar_score
     )
 
     main_board.current_block_mover()
@@ -101,7 +102,7 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
+    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -111,8 +112,10 @@ class Board:
         self.block_letter = random.choice(block_letters)
         self.rotate_counter = 0
         self.small_board = small_board
+        self.topbar_score = topbar_score
         self.draw_board()
         self.draw_block()
+        self.initial_score = 0
 
     def draw_board(self):
         """
@@ -292,6 +295,11 @@ class Board:
                     self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
+                self.score()
+
+    def score(self):
+        self.initial_score += 10
+        self.topbar_score.config(text=self.initial_score)
 
 
 class TetrisGUI:
@@ -299,7 +307,7 @@ class TetrisGUI:
         self.main_board = main_board
         self.topbar_time = topbar_time
         self.start_time = time.time()
-        self.game_canvas = canvas
+        self.initial_score = 0
         self.timer()
 
     def move_block_left(self, event):
@@ -317,6 +325,6 @@ class TetrisGUI:
     def timer(self):
         game_time = time.time() - self.start_time
         self.topbar_time.config(text = f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
-        self.game_canvas.after(1000, self.timer)
+        self.topbar_time.after(1000, self.timer)
 
 run_gui()
