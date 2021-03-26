@@ -39,7 +39,11 @@ def run_gui():
     topbar.grid(row=0, columnspan=2, sticky="we")
 
     topbar_time = tkinter.Label(
+<<<<<<< HEAD
         topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
+=======
+        topbar, bg=D_GREY, text='00:00', font="digital-7", fg="orange", borderwidth=1
+>>>>>>> origin/arrinao
     )
     topbar_time.pack(side="left", padx=10)
 
@@ -81,7 +85,11 @@ def run_gui():
 
     main_board.current_block_mover()
 
+<<<<<<< HEAD
     tetris_gui = TetrisGUI(main_board, topbar_time)
+=======
+    tetris_gui = TetrisGUI(main_board, topbar_time, game_canvas)
+>>>>>>> origin/arrinao
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
@@ -295,10 +303,18 @@ class Board:
 
 
 class TetrisGUI:
+<<<<<<< HEAD
     def __init__(self, main_board, topbar_time):
         self.main_board = main_board
         self.topbar_time = topbar_time
         self.start_time = time.time()
+=======
+    def __init__(self, main_board, topbar_time, canvas):
+        self.main_board = main_board
+        self.topbar_time = topbar_time
+        self.start_time = time.time()
+        self.game_canvas = canvas
+>>>>>>> origin/arrinao
         self.timer()
 
     def move_block_left(self, event):
@@ -315,8 +331,13 @@ class TetrisGUI:
 
     def timer(self):
         game_time = time.time() - self.start_time
+<<<<<<< HEAD
         self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
         self.topbar_time.after(1000, self.timer)
 
+=======
+        self.topbar_time.config(text = f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
+        self.game_canvas.after(1000, self.timer)
+>>>>>>> origin/arrinao
 
 run_gui()
