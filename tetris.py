@@ -39,7 +39,7 @@ def run_gui():
     topbar.grid(row=0, columnspan=2, sticky="we")
 
     topbar_time = tkinter.Label(
-        topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
+        topbar, bg=D_GREY, text="huga", font="digital-7", fg="orange", borderwidth=1
     )
     topbar_time.pack(side="left", padx=10)
 
@@ -189,7 +189,7 @@ class Board:
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L_rev":
-            coords = [[(x - 1, y-1), (x-1, y), (x, y), (x + 1, y)]]
+            coords = [[(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
