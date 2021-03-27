@@ -228,6 +228,7 @@ class Board:
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
             self.full_line_clear()
             self.new_block()
+            self.game_over()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
@@ -292,6 +293,13 @@ class Board:
                     self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
+
+    def game_over(self):
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        print(y_coordinates)
+        print(game_height)
+        if any(y <= 0 for y in y_coordinates):
+            print('LOOOOOOOOOOSER!')
 
 
 class TetrisGUI:
