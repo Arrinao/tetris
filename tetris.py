@@ -23,6 +23,8 @@ TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
+game_status = Enum('game_status', 'in_progress, game_lost, game_won')
+
 
 def run_gui():
 
@@ -69,8 +71,6 @@ def run_gui():
 
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
-
-    game_status = Enum('game_status', 'in_progress, game_lost, game_won')
 
     small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, game_status.in_progress)
 
@@ -234,6 +234,7 @@ class Board:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
             self.full_line_clear()
+
             self.new_block()
             self.game_over()
         else:
@@ -303,10 +304,9 @@ class Board:
 
     def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
-        print(y_coordinates)
-        print(game_height)
+        print(self.game_status)
         if any(y <= 0 for y in y_coordinates):
-            print('LOOOOOOOOOOSER!')
+            self.game_status = game_status.game_lost
 
 
 class TetrisGUI:
