@@ -2,6 +2,7 @@ import random
 import tkinter
 import collections
 import time
+from enum import Enum
 
 game_speed = 300
 square_size = 32
@@ -69,7 +70,10 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
+    game_status = Enum('game_status', 'in_progress, game_lost, game_won')
+
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, game_status.in_progress)
+
     main_board = Board(
         game_canvas,
         game_width,
@@ -77,6 +81,7 @@ def run_gui():
         GREY,
         (int(game_width / 2), -2),
         small_board,
+        game_status.in_progress
     )
 
     main_board.current_block_mover()
@@ -101,7 +106,7 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
+    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board, game_status):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -113,6 +118,7 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
+        self.game_status = game_status
 
     def draw_board(self):
         """
@@ -170,11 +176,12 @@ class Board:
                 )
 
     def new_block(self):
-        self.current_block_center = (int(game_width / 2), -2)
-        self.block_letter = self.small_board.block_letter
-        self.small_board.block_letter = random.choice(block_letters)
-        self.small_board.draw_block()
-        self.rotate_counter = 0
+        if self.game_status == game_status.in_progress:
+            self.current_block_center = (int(game_width / 2), -2)
+            self.block_letter = self.small_board.block_letter
+            self.small_board.block_letter = random.choice(block_letters)
+            self.small_board.draw_block()
+            self.rotate_counter = 0
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
