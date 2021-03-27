@@ -240,8 +240,9 @@ class Board:
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-        self.draw_block()
-        self.canvas.after(game_speed, self.current_block_mover)
+        if self.game_status == game_status.in_progress:
+            self.draw_block()
+            self.canvas.after(game_speed, self.current_block_mover)
 
     def user_input_left(self):
         """
