@@ -86,6 +86,8 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
+    root.bind('<Down>', tetris_gui.move_block_down)
+    root.bind('<KeyRelease-Down>', tetris_gui.move_block_down)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -113,6 +115,7 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
+        self.moving_down = False
 
     def draw_board(self):
         """
@@ -256,6 +259,16 @@ class Board:
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
 
+    def user_input_down(self):
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+            y + 1 == game_height for (x, y) in self.get_block_shape()
+        ):
+            return
+        while self.moving_down is True:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
+            game_canvas.after(30, self.user_input_down)
+
     def coord_extractor(self):
         coords = []
         for coord in self.landed_blocks.values():
@@ -307,6 +320,14 @@ class TetrisGUI:
 
     def move_block_right(self, event):
         self.main_board.user_input_right()
+        self.main_board.draw_block()
+
+    def move_block_down(self, event):
+        if self.main_board.moving_down is False:
+            self.main_board.moving_down = True
+        else:
+            self.main_board.moving_down = False
+        self.main_board.user_input_down()
         self.main_board.draw_block()
 
     def rotate_block(self, event):
