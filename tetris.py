@@ -2,6 +2,7 @@ import random
 import tkinter
 import collections
 import time
+from enum import Enum
 
 game_speed = 300
 square_size = 32
@@ -21,6 +22,8 @@ PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+
+game_status = Enum('game_status', 'in_progress, game_lost, game_won')
 
 
 def run_gui():
@@ -69,7 +72,8 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, game_status.in_progress)
+
     main_board = Board(
         game_canvas,
         game_width,
@@ -77,6 +81,7 @@ def run_gui():
         GREY,
         (int(game_width / 2), -2),
         small_board,
+        game_status.in_progress
     )
 
     main_board.current_block_mover()
@@ -86,6 +91,8 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
+    root.bind('<Down>', tetris_gui.move_block_down)
+    root.bind('<KeyRelease-Down>', tetris_gui.move_block_down)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -101,7 +108,7 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
+    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board, game_status):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -113,6 +120,8 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
+        self.game_status = game_status
+        self.moving_down = False
 
     def draw_board(self):
         """
@@ -170,11 +179,12 @@ class Board:
                 )
 
     def new_block(self):
-        self.current_block_center = (int(game_width / 2), -2)
-        self.block_letter = self.small_board.block_letter
-        self.small_board.block_letter = random.choice(block_letters)
-        self.small_board.draw_block()
-        self.rotate_counter = 0
+        if self.game_status == game_status.in_progress:
+            self.current_block_center=(int(game_width / 2), -2)
+            self.block_letter=self.small_board.block_letter
+            self.small_board.block_letter=random.choice(block_letters)
+            self.small_board.draw_block()
+            self.rotate_counter=0
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -227,12 +237,22 @@ class Board:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
             self.full_line_clear()
+
             self.new_block()
+            self.game_over()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-        self.draw_block()
-        self.canvas.after(game_speed, self.current_block_mover)
+        if self.game_status == game_status.in_progress:
+            self.draw_block()
+            self.canvas.after(game_speed, self.current_block_mover)
+
+    def coord_extractor(self):
+        coords = []
+        for coord in self.landed_blocks.values():
+            for (x, y) in coord:
+                coords.append((x, y))
+        return coords
 
     def user_input_left(self):
         """
@@ -256,12 +276,15 @@ class Board:
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
 
-    def coord_extractor(self):
-        coords = []
-        for coord in self.landed_blocks.values():
-            for (x, y) in coord:
-                coords.append((x, y))
-        return coords
+    def user_input_down(self):
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+            y + 1 == game_height for (x, y) in self.get_block_shape()
+        ):
+            return
+        while self.moving_down is True:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
+            game_canvas.after(10, self.user_input_down)
 
     def block_rotator(self):
         """
@@ -293,6 +316,12 @@ class Board:
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
 
+    def game_over(self):
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        print(self.game_status)
+        if any(y <= 0 for y in y_coordinates):
+            self.game_status = game_status.game_lost
+
 
 class TetrisGUI:
     def __init__(self, main_board, topbar_time):
@@ -311,6 +340,14 @@ class TetrisGUI:
 
     def rotate_block(self, event):
         self.main_board.block_rotator()
+        self.main_board.draw_block()
+
+    def move_block_down(self, event):
+        if self.main_board.moving_down is False:
+            self.main_board.moving_down = True
+        else:
+            self.main_board.moving_down = False
+        self.main_board.user_input_down()
         self.main_board.draw_block()
 
     def timer(self):
