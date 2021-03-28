@@ -232,8 +232,9 @@ class Board:
             self.full_line_clear()
             self.new_block()
         else:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
+            if self.moving_down is False:
+                x, y = self.current_block_center
+                self.current_block_center = (x, y + 1)
         self.draw_block()
         self.canvas.after(game_speed, self.current_block_mover)
 
@@ -267,7 +268,8 @@ class Board:
         if self.moving_down is True:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-            self.canvas.after(80, self.user_input_down)
+            self.draw_block()
+            self.canvas.after(25, self.user_input_down)
 
     def coord_extractor(self):
         coords = []
@@ -323,12 +325,13 @@ class TetrisGUI:
         self.main_board.draw_block()
 
     def move_block_down_press(self, event):
-        self.moving_down = True
+        if self.main_board.moving_down is True:
+            return
+        self.main_board.moving_down = True
         self.main_board.user_input_down()
-        self.main_board.draw_block()
 
     def move_block_down_release(self, event):
-        self.moving_down = False
+        self.main_board.moving_down = False
 
     def rotate_block(self, event):
         self.main_board.block_rotator()
