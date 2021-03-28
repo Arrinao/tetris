@@ -23,7 +23,7 @@ TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
-game_status = Enum('game_status', 'in_progress, game_lost, game_won')
+ENUM_game_status = Enum('game_status', 'in_progress, game_lost, game_won')
 
 
 def run_gui():
@@ -72,7 +72,7 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, game_status.in_progress)
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
 
     main_board = Board(
         game_canvas,
@@ -80,8 +80,7 @@ def run_gui():
         game_height,
         GREY,
         (int(game_width / 2), -2),
-        small_board,
-        game_status.in_progress
+        small_board
     )
 
     main_board.current_block_mover()
@@ -106,7 +105,7 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board, game_status):
+    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -118,7 +117,7 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
-        self.game_status = game_status
+        self.game_status = ENUM_game_status.in_progress
 
     def draw_board(self):
         """
@@ -176,7 +175,7 @@ class Board:
                 )
 
     def new_block(self):
-        if self.game_status == game_status.in_progress:
+        if self.game_status == ENUM_game_status.in_progress:
             self.current_block_center = (int(game_width / 2), -2)
             self.block_letter = self.small_board.block_letter
             self.small_board.block_letter = random.choice(block_letters)
@@ -236,11 +235,11 @@ class Board:
             self.full_line_clear()
 
             self.new_block()
-            self.game_over()
+            self.game_over_check()
         else:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-        if self.game_status == game_status.in_progress:
+        if self.game_status == ENUM_game_status.in_progress:
             self.draw_block()
             self.canvas.after(game_speed, self.current_block_mover)
 
@@ -303,11 +302,11 @@ class Board:
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
 
-    def game_over(self):
+    def game_over_check(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         print(self.game_status)
         if any(y <= 0 for y in y_coordinates):
-            self.game_status = game_status.game_lost
+            self.game_status = ENUM_game_status.game_lost
 
 
 class TetrisGUI:
