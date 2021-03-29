@@ -79,9 +79,8 @@ def run_gui():
         small_board,
     )
 
-    main_board.current_block_mover()
-
     tetris_gui = TetrisGUI(main_board, topbar_time)
+    tetris_gui.move_block_down()
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
@@ -220,7 +219,7 @@ class Board:
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
 
-    def current_block_mover(self):
+    def move_current_block_down(self):
         """
         Moves the current block downwards one square on the canvas
         """
@@ -237,7 +236,6 @@ class Board:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
         self.draw_block()
-        self.canvas.after(game_speed, self.current_block_mover)
 
     def user_input_left(self):
         """
@@ -324,6 +322,10 @@ class TetrisGUI:
     def move_block_right(self, event):
         self.main_board.user_input_right()
         self.main_board.draw_block()
+
+    def move_block_down(self):
+        self.main_board.move_current_block_down()
+        self.main_board.canvas.after(game_speed, self.move_block_down)
 
     def move_block_down_press(self, event):
         if self.main_board.fast_down:
