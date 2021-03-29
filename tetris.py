@@ -265,7 +265,7 @@ class Board:
             y + 1 == game_height for (x, y) in self.get_block_shape()
         ):
             return
-        if self.moving_down is True:
+        if self.moving_down:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
             self.draw_block()
