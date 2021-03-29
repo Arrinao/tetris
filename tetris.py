@@ -86,7 +86,7 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
-    root.bind('<P>', tetris_gui.pause_game)
+    root.bind('<p>', tetris_gui.pause_game)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -234,7 +234,6 @@ class Board:
             else:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
-            print(self.paused)
             self.draw_block()
             self.canvas.after(game_speed, self.current_block_mover)
 
@@ -306,9 +305,12 @@ class TetrisGUI:
         self.timer()
 
     def pause_game(self, event):
-        self.main_board.paused = True
-        if self.main_board.paused:
+        if self.main_board.paused is True:
             self.main_board.paused = False
+            self.main_board.current_block_mover()
+        else:
+            if not self.main_board.paused:
+                self.main_board.paused = True
 
     def move_block_left(self, event):
         if not self.main_board.paused:
