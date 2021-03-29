@@ -232,7 +232,7 @@ class Board:
             self.full_line_clear()
             self.new_block()
         else:
-            if self.moving_down is False:
+            if not self.moving_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
         self.draw_block()
