@@ -233,7 +233,7 @@ class Board:
             self.full_line_clear()
             self.new_block()
         else:
-            if self.fast_down is False:
+            if not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
         self.draw_block()
@@ -266,7 +266,7 @@ class Board:
             y + 1 == game_height for (x, y) in self.get_block_shape()
         ):
             return
-        if self.fast_down is True:
+        if self.fast_down:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
             self.draw_block()
@@ -326,7 +326,7 @@ class TetrisGUI:
         self.main_board.draw_block()
 
     def move_block_down_press(self, event):
-        if self.main_board.fast_down is True:
+        if self.main_board.fast_down:
             return
         self.main_board.fast_down = True
         self.main_board.user_input_down()
