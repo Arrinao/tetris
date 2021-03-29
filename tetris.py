@@ -86,8 +86,8 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
-    root.bind('<Down>', tetris_gui.move_block_down_press)
-    root.bind('<KeyRelease-Down>', tetris_gui.move_block_down_release)
+    root.bind("<Down>", tetris_gui.move_block_down_press)
+    root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
