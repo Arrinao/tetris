@@ -115,7 +115,7 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
-        self.moving_down = False
+        self.fast_down = False
 
     def draw_board(self):
         """
@@ -178,6 +178,7 @@ class Board:
         self.small_board.block_letter = random.choice(block_letters)
         self.small_board.draw_block()
         self.rotate_counter = 0
+        self.fast_down = False
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -232,7 +233,7 @@ class Board:
             self.full_line_clear()
             self.new_block()
         else:
-            if self.moving_down is False:
+            if self.fast_down is False:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
         self.draw_block()
@@ -265,7 +266,7 @@ class Board:
             y + 1 == game_height for (x, y) in self.get_block_shape()
         ):
             return
-        if self.moving_down is True:
+        if self.fast_down is True:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
             self.draw_block()
@@ -325,13 +326,13 @@ class TetrisGUI:
         self.main_board.draw_block()
 
     def move_block_down_press(self, event):
-        if self.main_board.moving_down is True:
+        if self.main_board.fast_down is True:
             return
-        self.main_board.moving_down = True
+        self.main_board.fast_down = True
         self.main_board.user_input_down()
 
     def move_block_down_release(self, event):
-        self.main_board.moving_down = False
+        self.main_board.fast_down = False
 
     def rotate_block(self, event):
         self.main_board.block_rotator()
