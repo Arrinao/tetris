@@ -235,7 +235,6 @@ class Board:
             if not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
-        self.draw_block()
 
     def user_input_left(self):
         """
@@ -325,6 +324,7 @@ class TetrisGUI:
 
     def move_block_down(self):
         self.main_board.move_current_block_down()
+        self.main_board.draw_block()
         self.main_board.canvas.after(game_speed, self.move_block_down)
 
     def move_block_down_press(self, event):
