@@ -86,6 +86,8 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
+    root.bind("<Down>", tetris_gui.move_block_down_press)
+    root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -113,6 +115,7 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
+        self.fast_down = False
 
     def draw_board(self):
         """
@@ -175,6 +178,7 @@ class Board:
         self.small_board.block_letter = random.choice(block_letters)
         self.small_board.draw_block()
         self.rotate_counter = 0
+        self.fast_down = False
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -229,8 +233,9 @@ class Board:
             self.full_line_clear()
             self.new_block()
         else:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
+            if not self.fast_down:
+                x, y = self.current_block_center
+                self.current_block_center = (x, y + 1)
         self.draw_block()
         self.canvas.after(game_speed, self.current_block_mover)
 
@@ -255,6 +260,17 @@ class Board:
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
+
+    def user_input_down(self):
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+            y + 1 == game_height for (x, y) in self.get_block_shape()
+        ):
+            return
+        if self.fast_down:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
+            self.draw_block()
+            self.canvas.after(25, self.user_input_down)
 
     def coord_extractor(self):
         coords = []
@@ -308,6 +324,15 @@ class TetrisGUI:
     def move_block_right(self, event):
         self.main_board.user_input_right()
         self.main_board.draw_block()
+
+    def move_block_down_press(self, event):
+        if self.main_board.fast_down:
+            return
+        self.main_board.fast_down = True
+        self.main_board.user_input_down()
+
+    def move_block_down_release(self, event):
+        self.main_board.fast_down = False
 
     def rotate_block(self, event):
         self.main_board.block_rotator()
