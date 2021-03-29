@@ -325,7 +325,7 @@ class TetrisGUI:
         self.main_board.draw_block()
 
     def move_block_down_press(self, event):
-        if self.main_board.moving_down is True:
+        if self.main_board.moving_down:
             return
         self.main_board.moving_down = True
         self.main_board.user_input_down()
