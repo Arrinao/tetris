@@ -86,6 +86,7 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
+    root.bind('<P>', tetris_gui.pause_game)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -113,6 +114,7 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
+        self.paused = False
 
     def draw_board(self):
         """
@@ -220,19 +222,21 @@ class Board:
         """
         Moves the current block downwards one square on the canvas
         """
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-            y + 1 == game_height for (x, y) in self.get_block_shape()
-        ):
-            if self.block_letter not in self.landed_blocks:
-                self.landed_blocks[self.block_letter] = []
-            self.landed_blocks[self.block_letter].extend(self.get_block_shape())
-            self.full_line_clear()
-            self.new_block()
-        else:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
-        self.draw_block()
-        self.canvas.after(game_speed, self.current_block_mover)
+        if not self.paused:
+            if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+                y + 1 == game_height for (x, y) in self.get_block_shape()
+            ):
+                if self.block_letter not in self.landed_blocks:
+                    self.landed_blocks[self.block_letter] = []
+                self.landed_blocks[self.block_letter].extend(self.get_block_shape())
+                self.full_line_clear()
+                self.new_block()
+            else:
+                x, y = self.current_block_center
+                self.current_block_center = (x, y + 1)
+            print(self.paused)
+            self.draw_block()
+            self.canvas.after(game_speed, self.current_block_mover)
 
     def user_input_left(self):
         """
@@ -301,22 +305,30 @@ class TetrisGUI:
         self.start_time = time.time()
         self.timer()
 
+    def pause_game(self, event):
+        self.main_board.paused = True
+        if self.main_board.paused:
+            self.main_board.paused = False
+
     def move_block_left(self, event):
-        self.main_board.user_input_left()
-        self.main_board.draw_block()
+        if not self.main_board.paused:
+            self.main_board.user_input_left()
+            self.main_board.draw_block()
 
     def move_block_right(self, event):
-        self.main_board.user_input_right()
-        self.main_board.draw_block()
+        if not self.main_board.paused:
+            self.main_board.user_input_right()
+            self.main_board.draw_block()
 
     def rotate_block(self, event):
-        self.main_board.block_rotator()
-        self.main_board.draw_block()
+        if not self.main_board.paused:
+            self.main_board.block_rotator()
+            self.main_board.draw_block()
 
     def timer(self):
-        game_time = time.time() - self.start_time
-        self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
-        self.topbar_time.after(1000, self.timer)
-
+        if not self.main_board.paused:
+            game_time = time.time() - self.start_time
+            self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
+            self.topbar_time.after(1000, self.timer)
 
 run_gui()
