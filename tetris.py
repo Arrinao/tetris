@@ -321,8 +321,7 @@ class TetrisGUI:
             self.paused = False
             self.move_block_down()
         else:
-            if not self.paused:
-                self.paused = True
+            self.paused = True
 
     def move_block_left(self, event):
         if not self.paused:
