@@ -313,16 +313,20 @@ class TetrisGUI:
         self.main_board = main_board
         self.topbar_time = topbar_time
         self.start_time = time.time()
+        self.pause_start = 0
+        self.paused_time = 0
         self.paused = False
         self.timer()
 
     def pause_game(self, event):
         if self.paused:
             self.paused = False
+            self.paused_time = time.time() - self.pause_start
             self.move_block_down()
             self.timer()
         else:
             self.paused = True
+            self.pause_start = time.time()
 
     def move_block_left(self, event):
         if not self.paused:
@@ -356,7 +360,7 @@ class TetrisGUI:
 
     def timer(self):
         if not self.paused:
-            game_time = time.time() - self.start_time
+            game_time = time.time() - self.start_time - self.paused_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
