@@ -320,6 +320,7 @@ class TetrisGUI:
         if self.paused:
             self.paused = False
             self.move_block_down()
+            self.timer()
         else:
             self.paused = True
 
