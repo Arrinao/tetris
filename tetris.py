@@ -317,7 +317,7 @@ class TetrisGUI:
         self.timer()
 
     def pause_game(self, event):
-        if self.paused is True:
+        if self.paused:
             self.paused = False
             self.move_block_down()
         else:
