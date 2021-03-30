@@ -115,7 +115,6 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
-        self.paused = False
         self.fast_down = False
 
     def draw_board(self):
@@ -225,19 +224,18 @@ class Board:
         """
         Moves the current block downwards one square on the canvas
         """
-        if not self.paused:
-            if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-                y + 1 == game_height for (x, y) in self.get_block_shape()
-            ):
-                if self.block_letter not in self.landed_blocks:
-                    self.landed_blocks[self.block_letter] = []
-                self.landed_blocks[self.block_letter].extend(self.get_block_shape())
-                self.full_line_clear()
-                self.new_block()
-            else:
-                if not self.fast_down:
-                    x, y = self.current_block_center
-                    self.current_block_center = (x, y + 1)
+        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+            y + 1 == game_height for (x, y) in self.get_block_shape()
+        ):
+            if self.block_letter not in self.landed_blocks:
+                self.landed_blocks[self.block_letter] = []
+            self.landed_blocks[self.block_letter].extend(self.get_block_shape())
+            self.full_line_clear()
+            self.new_block()
+        else:
+            if not self.fast_down:
+                x, y = self.current_block_center
+                self.current_block_center = (x, y + 1)
 
     def user_input_left(self):
         """
@@ -315,30 +313,32 @@ class TetrisGUI:
         self.main_board = main_board
         self.topbar_time = topbar_time
         self.start_time = time.time()
+        self.paused = False
         self.timer()
 
     def pause_game(self, event):
-        if self.main_board.paused is True:
-            self.main_board.paused = False
-            self.main_board.move_current_block_down()
+        if self.paused is True:
+            self.paused = False
+            self.move_block_down()
         else:
-            if not self.main_board.paused:
-                self.main_board.paused = True
+            if not self.paused:
+                self.paused = True
 
     def move_block_left(self, event):
-        if not self.main_board.paused:
+        if not self.paused:
             self.main_board.user_input_left()
             self.main_board.draw_block()
 
     def move_block_right(self, event):
-        if not self.main_board.paused:
+        if not self.paused:
             self.main_board.user_input_right()
             self.main_board.draw_block()
 
     def move_block_down(self):
-        self.main_board.move_current_block_down()
-        self.main_board.draw_block()
-        self.main_board.canvas.after(game_speed, self.move_block_down)
+        if not self.paused:
+            self.main_board.move_current_block_down()
+            self.main_board.draw_block()
+            self.main_board.canvas.after(game_speed, self.move_block_down)
 
     def move_block_down_press(self, event):
         if self.main_board.fast_down:
@@ -350,12 +350,12 @@ class TetrisGUI:
         self.main_board.fast_down = False
 
     def rotate_block(self, event):
-        if not self.main_board.paused:
+        if not self.paused:
             self.main_board.block_rotator()
             self.main_board.draw_block()
 
     def timer(self):
-        if not self.main_board.paused:
+        if not self.paused:
             game_time = time.time() - self.start_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
