@@ -85,7 +85,7 @@ def run_gui():
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
-    root.bind('<p>', tetris_gui.pause_game)
+    root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
 
@@ -363,5 +363,6 @@ class TetrisGUI:
             game_time = time.time() - self.start_time - self.paused_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
+
 
 run_gui()
