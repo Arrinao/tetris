@@ -151,6 +151,7 @@ class Board:
             "O": ORANGE,
         }
         self.canvas.delete("block")
+
         for x, y in self.get_block_shape():
             self.canvas.create_rectangle(
                 x * square_size,
@@ -300,6 +301,10 @@ class Board:
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
+                print(coordinates_counter)
+                print(y_coordinates)
+                self.flasher()
+                self.canvas.after(600)
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
                     # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
@@ -307,6 +312,34 @@ class Board:
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
 
+    def flasher(self):
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        coordinates_counter = collections.Counter(y_coordinates)
+        for x_line in range(game_height):
+            count = coordinates_counter[x_line]
+            if count == game_width:
+                for flash in range(3):
+                    print(f'Flash, no. {flash}')
+                    for x, y in self.get_block_shape():
+                        self.canvas.create_rectangle(
+                            x * square_size,
+                            y * square_size,
+                            x * square_size + square_size,
+                            y * square_size + square_size,
+                            tags="block",
+                            fill='White',
+                        )
+                    self.canvas.after(100)
+                    for x, y in self.get_block_shape():
+                        self.canvas.create_rectangle(
+                            x * square_size,
+                            y * square_size,
+                            x * square_size + square_size,
+                            y * square_size + square_size,
+                            tags="block",
+                            fill=self.color_dict[self.block_letter],
+                        )
+                    self.canvas.after(100)
 
 class TetrisGUI:
     def __init__(self, main_board, topbar_time):
