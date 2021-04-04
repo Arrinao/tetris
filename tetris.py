@@ -324,8 +324,6 @@ class TetrisGUI:
 
     def game_over_check(self):
         y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
-        print(y_coordinates)
-        print(self.game_status)
         if any(y <= 0 for y in y_coordinates):
             self.game_status = GameStatus.game_lost
 
