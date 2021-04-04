@@ -119,7 +119,6 @@ class Board:
         self.small_board = small_board
         self.draw_board()
         self.draw_block()
-        self.game_status = ENUM_game_status.in_progress
         self.fast_down = False
 
     def draw_board(self):
@@ -178,13 +177,12 @@ class Board:
                 )
 
     def new_block(self):
-        if self.game_status == ENUM_game_status.in_progress:
-            self.current_block_center = (int(game_width / 2), -2)
-            self.block_letter = self.small_board.block_letter
-            self.small_board.block_letter = random.choice(block_letters)
-            self.small_board.draw_block()
-            self.rotate_counter = 0
-            self.fast_down = False
+        self.current_block_center = (int(game_width / 2), -2)
+        self.block_letter = self.small_board.block_letter
+        self.small_board.block_letter = random.choice(block_letters)
+        self.small_board.draw_block()
+        self.rotate_counter = 0
+        self.fast_down = False
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -237,17 +235,11 @@ class Board:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
             self.full_line_clear()
-
             self.new_block()
-            self.game_over_check()
         else:
             if not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
-
-        if self.game_status == ENUM_game_status.in_progress:
-            self.draw_block()
-            self.canvas.after(game_speed, self.current_block_mover)
 
     def user_input_left(self):
         """
@@ -319,12 +311,6 @@ class Board:
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
 
-    def game_over_check(self):
-        y_coordinates = [y for (x, y) in self.coord_extractor()]
-        print(self.game_status)
-        if any(y <= 0 for y in y_coordinates):
-            self.game_status = ENUM_game_status.game_lost
-
 
 class TetrisGUI:
     def __init__(self, main_board, topbar_time):
@@ -334,7 +320,15 @@ class TetrisGUI:
         self.pause_start = 0
         self.paused_time = 0
         self.paused = False
+        self.game_status = ENUM_game_status.in_progress
         self.timer()
+
+    def game_over_check(self):
+        y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
+        print(y_coordinates)
+        print(self.game_status)
+        if any(y <= 0 for y in y_coordinates):
+            self.game_status = ENUM_game_status.game_lost
 
     def pause_game(self, event):
         if self.paused:
@@ -347,7 +341,7 @@ class TetrisGUI:
             self.pause_start = time.time()
 
     def move_block_left(self, event):
-        if not self.paused:
+        if self.game_status == ENUM_game_status.in_progress and not self.paused:
             self.main_board.user_input_left()
             self.main_board.draw_block()
 
@@ -357,8 +351,9 @@ class TetrisGUI:
             self.main_board.draw_block()
 
     def move_block_down(self):
-        if not self.paused:
+        if self.game_status == ENUM_game_status.in_progress and not self.paused:
             self.main_board.move_current_block_down()
+            self.game_over_check()
             self.main_board.draw_block()
             self.main_board.canvas.after(game_speed, self.move_block_down)
 
@@ -372,12 +367,12 @@ class TetrisGUI:
         self.main_board.fast_down = False
 
     def rotate_block(self, event):
-        if not self.paused:
+        if self.game_status == ENUM_game_status.in_progress and not self.paused:
             self.main_board.block_rotator()
             self.main_board.draw_block()
 
     def timer(self):
-        if not self.paused:
+        if self.game_status == ENUM_game_status.in_progress and not self.paused:
             game_time = time.time() - self.start_time - self.paused_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
