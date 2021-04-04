@@ -302,8 +302,13 @@ class Board:
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
-                self.flasher(x_line)
-                self.canvas.after(600)
+                for flash in range(2):
+                    self.flasher(x_line, 'yellow')
+                    self.canvas.update()
+                    time.sleep(0.1)
+                    self.flasher(x_line, 'brown')
+                    self.canvas.update()
+                    time.sleep(0.1)
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
                     # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
@@ -311,16 +316,15 @@ class Board:
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
 
-    def flasher(self, x_line):
+    def flasher(self, x_line, fill):
+        print('flash!')
         for x in range(10):
-            print(x, x_line)
             self.canvas.create_rectangle(
                 x * square_size,
                 x_line * square_size,
                 x * square_size + square_size,
                 x_line * square_size + square_size,
-                tags="block",
-                fill='snow',
+                fill=fill,
             )
 
 
