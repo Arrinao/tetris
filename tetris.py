@@ -2,6 +2,7 @@ import random
 import tkinter
 import collections
 import time
+from enum import Enum
 
 game_speed = 300
 square_size = 32
@@ -21,6 +22,8 @@ PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+
+GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
 
 
 def run_gui():
@@ -315,32 +318,38 @@ class TetrisGUI:
         self.start_time = time.time()
         self.pause_start = 0
         self.paused_time = 0
-        self.paused = False
+        self.game_status = GameStatus.in_progress
         self.timer()
 
+    def game_over_check(self):
+        y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
+        if any(y <= 0 for y in y_coordinates):
+            self.game_status = GameStatus.game_lost
+
     def pause_game(self, event):
-        if self.paused:
-            self.paused = False
+        if self.game_status == GameStatus.paused:
+            self.game_status = GameStatus.in_progress
             self.paused_time += time.time() - self.pause_start
             self.move_block_down()
             self.timer()
-        else:
-            self.paused = True
+        elif self.game_status == GameStatus.in_progress:
+            self.game_status = GameStatus.paused
             self.pause_start = time.time()
 
     def move_block_left(self, event):
-        if not self.paused:
+        if self.game_status == GameStatus.in_progress:
             self.main_board.user_input_left()
             self.main_board.draw_block()
 
     def move_block_right(self, event):
-        if not self.paused:
+        if self.game_status == GameStatus.in_progress:
             self.main_board.user_input_right()
             self.main_board.draw_block()
 
     def move_block_down(self):
-        if not self.paused:
+        if self.game_status == GameStatus.in_progress:
             self.main_board.move_current_block_down()
+            self.game_over_check()
             self.main_board.draw_block()
             self.main_board.canvas.after(game_speed, self.move_block_down)
 
@@ -354,12 +363,12 @@ class TetrisGUI:
         self.main_board.fast_down = False
 
     def rotate_block(self, event):
-        if not self.paused:
+        if self.game_status == GameStatus.in_progress:
             self.main_board.block_rotator()
             self.main_board.draw_block()
 
     def timer(self):
-        if not self.paused:
+        if self.game_status == GameStatus.in_progress:
             game_time = time.time() - self.start_time - self.paused_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
