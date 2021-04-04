@@ -23,7 +23,7 @@ TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
-GameStatus = Enum('GameStatus', 'in_progress, game_lost, paused')
+GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
 
 
 def run_gui():
@@ -80,7 +80,7 @@ def run_gui():
         game_height,
         GREY,
         (int(game_width / 2), -2),
-        small_board
+        small_board,
     )
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
