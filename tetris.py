@@ -309,7 +309,6 @@ class Board:
                     self.flasher(x_line, 'brown')
                     self.canvas.update()
                     time.sleep(0.1)
-                # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
                     # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                     self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
