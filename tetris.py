@@ -73,7 +73,6 @@ def run_gui():
     new_game_button3.grid(sticky="n")
 
     small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
-
     main_board = Board(
         game_canvas,
         game_width,
