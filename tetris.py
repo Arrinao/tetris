@@ -317,7 +317,6 @@ class Board:
                     ]
 
     def flasher(self, x_line, fill):
-        print('flash!')
         for x in range(10):
             self.canvas.create_rectangle(
                 x * square_size,
