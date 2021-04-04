@@ -19,6 +19,7 @@ PURPLE = "#9900FF"
 ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
+WHITE = 'snow'
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
@@ -301,9 +302,7 @@ class Board:
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
-                print(coordinates_counter)
-                print(y_coordinates)
-                self.flasher()
+                self.flasher(x_line)
                 self.canvas.after(600)
                 # TODO: root.after() here
                 for letter, coord_list in self.landed_blocks.items():
@@ -312,34 +311,18 @@ class Board:
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
 
-    def flasher(self):
-        y_coordinates = [y for (x, y) in self.coord_extractor()]
-        coordinates_counter = collections.Counter(y_coordinates)
-        for x_line in range(game_height):
-            count = coordinates_counter[x_line]
-            if count == game_width:
-                for flash in range(3):
-                    print(f'Flash, no. {flash}')
-                    for x, y in self.get_block_shape():
-                        self.canvas.create_rectangle(
-                            x * square_size,
-                            y * square_size,
-                            x * square_size + square_size,
-                            y * square_size + square_size,
-                            tags="block",
-                            fill='White',
-                        )
-                    self.canvas.after(100)
-                    for x, y in self.get_block_shape():
-                        self.canvas.create_rectangle(
-                            x * square_size,
-                            y * square_size,
-                            x * square_size + square_size,
-                            y * square_size + square_size,
-                            tags="block",
-                            fill=self.color_dict[self.block_letter],
-                        )
-                    self.canvas.after(100)
+    def flasher(self, x_line):
+        for x in range(10):
+            print(x, x_line)
+            self.canvas.create_rectangle(
+                x * square_size,
+                x_line * square_size,
+                x * square_size + square_size,
+                x_line * square_size + square_size,
+                tags="block",
+                fill='snow',
+            )
+
 
 class TetrisGUI:
     def __init__(self, main_board, topbar_time):
