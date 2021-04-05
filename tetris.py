@@ -21,7 +21,7 @@ PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 WHITE = 'snow'
 
-block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
+block_letters = ["I"]
 
 
 def run_gui():
@@ -297,35 +297,43 @@ class Board:
         """
         Clears the line once it's fully populated with blocks
         """
+        flash_list = []
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
+                flash_list.append(x_line)
+        for x_line in flash_list:
+            count = coordinates_counter[x_line]
+            if count == game_width:
                 for flash in range(2):
-                    self.flasher(x_line, 'yellow')
+                    self.flasher(flash_list, 'yellow')
                     self.canvas.update()
                     time.sleep(0.1)
-                    self.flasher(x_line, 'brown')
+                    self.flasher(flash_list, 'blue')
                     self.canvas.update()
                     time.sleep(0.1)
-                self.flasher(x_line, D_GREY)
-                for letter, coord_list in self.landed_blocks.items():
-                    # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
-                    self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
-                        (a, b + 1) for (a, b) in coord_list if b < x_line
+            self.canvas.delete('flash')
+            for letter, coord_list in self.landed_blocks.items():
+                # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
+                self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
+                    (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
+        print(flash_list)
 
-    def flasher(self, x_line, fill):
+    def flasher(self, flash_list, fill):
         for x in range(game_width):
-            self.canvas.create_rectangle(
-                x * square_size,
-                x_line * square_size,
-                x * square_size + square_size,
-                x_line * square_size + square_size,
-                fill=fill,
-                outline=self.outline_color
-            )
+            for x_line in flash_list:
+                self.canvas.create_rectangle(
+                    x * square_size,
+                    x_line * square_size,
+                    x * square_size + square_size,
+                    x_line * square_size + square_size,
+                    tags="flash",
+                    fill=fill,
+                    outline=self.outline_color
+                )
 
 
 class TetrisGUI:
