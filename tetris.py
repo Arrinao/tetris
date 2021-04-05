@@ -138,6 +138,16 @@ class Board:
 
             x_gap += square_size
 
+    def draw_rectangle(self, x, y, tags, fill):
+        self.canvas.create_rectangle(
+                x * square_size,
+                y * square_size,
+                x * square_size + square_size,
+                y * square_size + square_size,
+                tags = tags,
+                fill = fill,
+        )
+
     def draw_block(self):
         """
         Draws the different shapes on the board
@@ -154,25 +164,11 @@ class Board:
         self.canvas.delete("block")
 
         for x, y in self.get_block_shape():
-            self.canvas.create_rectangle(
-                x * square_size,
-                y * square_size,
-                x * square_size + square_size,
-                y * square_size + square_size,
-                tags="block",
-                fill=self.color_dict[self.block_letter],
-            )
+            self.draw_rectangle(x, y, 'block', self.color_dict[self.block_letter])
 
         for letter, coord_list in self.landed_blocks.items():
             for (x, y) in coord_list:
-                self.canvas.create_rectangle(
-                    x * square_size,
-                    y * square_size,
-                    x * square_size + square_size,
-                    y * square_size + square_size,
-                    tags="block",
-                    fill=self.color_dict[letter],
-                )
+                self.draw_rectangle(x, y, 'block', self.color_dict[letter])
 
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
@@ -327,15 +323,7 @@ class Board:
         '''
         for x in range(game_width):
             for x_line in full_lines:
-                self.canvas.create_rectangle(
-                    x * square_size,
-                    x_line * square_size,
-                    x * square_size + square_size,
-                    x_line * square_size + square_size,
-                    tags="flash",
-                    fill=fill,
-                    outline=self.outline_color
-                )
+                self.draw_rectangle(x, x_line, 'flash', fill)
 
 
 class TetrisGUI:
