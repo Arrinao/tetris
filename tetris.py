@@ -217,13 +217,25 @@ class Board:
 
         return coords[self.rotate_counter % len(coords)]
 
+    def block_can_move(self, move_x, move_y):
+        goes_beyond_left_side = any(x + move_x == -1 for (x, y) in self.get_block_shape())
+        goes_beyond_right_side = any(x + move_x == game_width for (x, y) in self.get_block_shape())
+        goes_beyond_bottom = any(y + move_y == game_height for (x, y) in self.get_block_shape())
+        hits_landed_blocks = any(
+            (x + move_x, y + move_y) in self.coord_extractor() for (x, y) in self.get_block_shape()
+        )
+        return (
+            not goes_beyond_left_side
+            and not goes_beyond_right_side
+            and not hits_landed_blocks
+            and not goes_beyond_bottom
+        )
+
     def move_current_block_down(self):
         """
         Moves the current block downwards one square on the canvas
         """
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-            y + 1 == game_height for (x, y) in self.get_block_shape()
-        ):
+        if not self.block_can_move(0, 1):
             if self.block_letter not in self.landed_blocks:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
@@ -238,30 +250,20 @@ class Board:
         """
         Moves the current block to the left on the canvas
         """
-        if any(x == 0 for (x, y) in self.get_block_shape()) or any(
-            (x - 1, y) in self.coord_extractor() for x, y in self.get_block_shape()
-        ):
-            return
-        x, y = self.current_block_center
-        self.current_block_center = (x - 1, y)
+        if self.block_can_move(-1, 0):
+            x, y = self.current_block_center
+            self.current_block_center = (x - 1, y)
 
     def user_input_right(self):
         """
         Moves the current block to the right on the canvas
         """
-        if any(x == game_width - 1 for x, y in self.get_block_shape()) or any(
-            (x + 1, y) in self.coord_extractor() for x, y in self.get_block_shape()
-        ):
-            return
-        x, y = self.current_block_center
-        self.current_block_center = (x + 1, y)
+        if self.block_can_move(1, 0):
+            x, y = self.current_block_center
+            self.current_block_center = (x + 1, y)
 
     def user_input_down(self):
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-            y + 1 == game_height for (x, y) in self.get_block_shape()
-        ):
-            return
-        if self.fast_down:
+        if self.block_can_move(0, 1) and self.fast_down:
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
             self.draw_block()
