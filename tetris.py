@@ -224,12 +224,16 @@ class Board:
         hits_landed_blocks = any(
             (x + move_x, y + move_y) in self.coord_extractor() for (x, y) in self.get_block_shape()
         )
-        return (
-            not goes_beyond_left_side
-            and not goes_beyond_right_side
-            and not hits_landed_blocks
-            and not goes_beyond_bottom
-        )
+
+        if goes_beyond_left_side:
+            return False
+        if goes_beyond_right_side:
+            return False
+        if goes_beyond_bottom:
+            return False
+        if hits_landed_blocks:
+            return False
+        return True
 
     def move_current_block_down(self):
         """
