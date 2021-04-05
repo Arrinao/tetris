@@ -19,7 +19,7 @@ PURPLE = "#9900FF"
 ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
-WHITE = 'snow'
+WHITE = "snow"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
@@ -140,12 +140,12 @@ class Board:
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
-                x * square_size,
-                y * square_size,
-                x * square_size + square_size,
-                y * square_size + square_size,
-                tags = tags,
-                fill = fill,
+            x * square_size,
+            y * square_size,
+            x * square_size + square_size,
+            y * square_size + square_size,
+            tags=tags,
+            fill=fill,
         )
 
     def draw_block(self):
@@ -164,11 +164,11 @@ class Board:
         self.canvas.delete("block")
 
         for x, y in self.get_block_shape():
-            self.draw_rectangle(x, y, 'block', self.color_dict[self.block_letter])
+            self.draw_rectangle(x, y, "block", self.color_dict[self.block_letter])
 
         for letter, coord_list in self.landed_blocks.items():
             for (x, y) in coord_list:
-                self.draw_rectangle(x, y, 'block', self.color_dict[letter])
+                self.draw_rectangle(x, y, "block", self.color_dict[letter])
 
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
@@ -302,28 +302,28 @@ class Board:
                 full_lines.append(x_line)
         if full_lines:
             for flash in range(2):
-                self.flasher(full_lines, 'yellow')
+                self.flasher(full_lines, "yellow")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(full_lines, 'blue')
+                self.flasher(full_lines, "blue")
                 self.canvas.update()
                 time.sleep(0.1)
-            self.canvas.delete('flash')
+            self.canvas.delete("flash")
         for x_line in full_lines:
             for letter, coord_list in self.landed_blocks.items():
                 # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
-                    ]
+                ]
 
     def flasher(self, full_lines, fill):
-        '''
+        """
         Takes a list of full x lines and a color. Paints the blocks in the x_line with a given color.
         Used in conjuction with full_line clear for flashing purposes
-        '''
+        """
         for x in range(game_width):
             for x_line in full_lines:
-                self.draw_rectangle(x, x_line, 'flash', fill)
+                self.draw_rectangle(x, x_line, "flash", fill)
 
 
 class TetrisGUI:
