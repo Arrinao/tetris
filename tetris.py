@@ -21,7 +21,7 @@ PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 WHITE = 'snow'
 
-block_letters = ["I"]
+block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 
 def run_gui():
@@ -295,35 +295,38 @@ class Board:
 
     def full_line_clear(self):
         """
-        Clears the line once it's fully populated with blocks
+        Flashes the line once it's fully populated with blocks and clears it afterwards
         """
-        flash_list = []
+        full_lines = []
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
-                flash_list.append(x_line)
-        if x_line in flash_list:
+                full_lines.append(x_line)
+        if full_lines:
             for flash in range(2):
-                self.flasher(flash_list, 'yellow')
+                self.flasher(full_lines, 'yellow')
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(flash_list, 'blue')
+                self.flasher(full_lines, 'blue')
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete('flash')
-        for x_line in flash_list:
+        for x_line in full_lines:
             for letter, coord_list in self.landed_blocks.items():
                 # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
-        print(flash_list)
 
-    def flasher(self, flash_list, fill):
+    def flasher(self, full_lines, fill):
+        '''
+        Takes a list of full x lines and a color. Paints the blocks in the x_line with a given color.
+        Used in conjuction with full_line clear for flashing purposes
+        '''
         for x in range(game_width):
-            for x_line in flash_list:
+            for x_line in full_lines:
                 self.canvas.create_rectangle(
                     x * square_size,
                     x_line * square_size,
