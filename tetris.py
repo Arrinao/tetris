@@ -281,13 +281,7 @@ class Board:
         Rotates the current block
         """
         self.rotate_counter += 1
-        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape()) or any(
-        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape()
-        # ):
-        if any(
-            x not in range(game_width) or y >= game_height or (x, y) in self.coord_extractor()
-            for (x, y) in self.get_block_shape()
-        ):
+        if not self.block_can_move(0, 0):
             self.rotate_counter -= 1
 
     def full_line_clear(self):
