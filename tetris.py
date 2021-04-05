@@ -304,17 +304,16 @@ class Board:
             count = coordinates_counter[x_line]
             if count == game_width:
                 flash_list.append(x_line)
-        for x_line in flash_list:
-            count = coordinates_counter[x_line]
-            if count == game_width:
-                for flash in range(2):
-                    self.flasher(flash_list, 'yellow')
-                    self.canvas.update()
-                    time.sleep(0.1)
-                    self.flasher(flash_list, 'blue')
-                    self.canvas.update()
-                    time.sleep(0.1)
+        if x_line in flash_list:
+            for flash in range(2):
+                self.flasher(flash_list, 'yellow')
+                self.canvas.update()
+                time.sleep(0.1)
+                self.flasher(flash_list, 'blue')
+                self.canvas.update()
+                time.sleep(0.1)
             self.canvas.delete('flash')
+        for x_line in flash_list:
             for letter, coord_list in self.landed_blocks.items():
                 # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
