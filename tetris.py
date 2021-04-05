@@ -19,7 +19,6 @@ PURPLE = "#9900FF"
 ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
-WHITE = "snow"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
