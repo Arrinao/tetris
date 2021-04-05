@@ -297,7 +297,7 @@ class Board:
                     ]
                 self.score()
 
-    def score(self):
+    def increment_score(self):
         self.initial_score += 10
         self.topbar_score.config(text=self.initial_score)
 
