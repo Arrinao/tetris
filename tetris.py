@@ -217,9 +217,6 @@ class Board:
 
         return coords[self.rotate_counter % len(coords)]
 
-    def get_landed_coords(self):
-        return [coords for shape, coords in self.landed_blocks]
-
     def move_current_block_down(self):
         """
         Moves the current block downwards one square on the canvas
