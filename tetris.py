@@ -220,13 +220,16 @@ class Board:
     def get_landed_coords(self):
         return [coords for shape, coords in self.landed_blocks]
 
+    def block_hits_bottom_if_it_moves_down(self):
+        return any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
+            y + 1 == game_height for (x, y) in self.get_block_shape()
+        )
+
     def move_current_block_down(self):
         """
         Moves the current block downwards one square on the canvas
         """
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-            y + 1 == game_height for (x, y) in self.get_block_shape()
-        ):
+        if self.block_hits_bottom_if_it_moves_down():
             if self.block_letter not in self.landed_blocks:
                 self.landed_blocks[self.block_letter] = []
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
@@ -260,9 +263,7 @@ class Board:
         self.current_block_center = (x + 1, y)
 
     def user_input_down(self):
-        if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-            y + 1 == game_height for (x, y) in self.get_block_shape()
-        ):
+        if self.block_hits_bottom_if_it_moves_down():
             return
         if self.fast_down:
             x, y = self.current_block_center
