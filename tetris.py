@@ -232,10 +232,9 @@ class Board:
             self.landed_blocks[self.block_letter].extend(self.get_block_shape())
             self.full_line_clear()
             self.new_block()
-        else:
-            if not self.fast_down:
-                x, y = self.current_block_center
-                self.current_block_center = (x, y + 1)
+        elif not self.fast_down:
+            x, y = self.current_block_center
+            self.current_block_center = (x, y + 1)
 
     def user_input_left(self):
         """
@@ -260,9 +259,7 @@ class Board:
         self.current_block_center = (x + 1, y)
 
     def user_input_down(self):
-        if self.block_hits_bottom_if_it_moves_down():
-            return
-        if self.fast_down:
+        if self.fast_down and not self.block_hits_bottom_if_it_moves_down():
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
             self.draw_block()
@@ -280,9 +277,6 @@ class Board:
         Rotates the current block
         """
         self.rotate_counter += 1
-        # if any(x <= -1 or x >= game_width for (x, y) in self.get_block_shape()) or any(
-        #    (x, y) in self.landed_blocks for x, y in self.get_block_shape()
-        # ):
         if any(
             x not in range(game_width) or y >= game_height or (x, y) in self.coord_extractor()
             for (x, y) in self.get_block_shape()
@@ -300,6 +294,7 @@ class Board:
             count = coordinates_counter[x_line]
             if count == game_width:
                 full_lines.append(x_line)
+
         if full_lines:
             for flash in range(2):
                 self.flasher(full_lines, "yellow")
@@ -309,9 +304,9 @@ class Board:
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
+
         for x_line in full_lines:
             for letter, coord_list in self.landed_blocks.items():
-                # self.landed_blocks = {letter: [(a, b) for (a, b) in coord_list if b > x_line] + [(a, b+1) for (a, b) in coord_list if b < x_line]} #Why this doesn't work?
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
@@ -369,10 +364,9 @@ class TetrisGUI:
             self.main_board.canvas.after(game_speed, self.move_block_down)
 
     def move_block_down_press(self, event):
-        if self.main_board.fast_down:
-            return
-        self.main_board.fast_down = True
-        self.main_board.user_input_down()
+        if not self.main_board.fast_down:
+            self.main_board.fast_down = True
+            self.main_board.user_input_down()
 
     def move_block_down_release(self, event):
         self.main_board.fast_down = False
