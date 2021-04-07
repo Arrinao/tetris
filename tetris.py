@@ -221,9 +221,9 @@ class Board:
         return [coords for shape, coords in self.landed_blocks]
 
     def block_hits_bottom_if_it_moves_down(self):
-        return any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(
-            y + 1 == game_height for (x, y) in self.get_block_shape()
-        )
+        return any(
+            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()
+        ) or any(y + 1 == game_height for (x, y) in self.get_block_shape())
 
     def move_current_block_down(self):
         """
