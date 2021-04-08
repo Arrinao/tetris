@@ -115,7 +115,7 @@ class Board:
         self.topbar_score = topbar_score
         self.draw_board()
         self.draw_block()
-        self.initial_score = 0
+        self.game_score = 0
 
     def draw_board(self):
         """
@@ -298,8 +298,8 @@ class Board:
                 self.score()
 
     def score(self):
-        self.initial_score += 10
-        self.topbar_score.config(text=self.initial_score)
+        self.game_score += 10
+        self.topbar_score.config(text=self.game_score)
 
 
 class TetrisGUI:
@@ -307,7 +307,7 @@ class TetrisGUI:
         self.main_board = main_board
         self.topbar_time = topbar_time
         self.start_time = time.time()
-        self.initial_score = 0
+        self.game_score = 0
         self.timer()
 
     def move_block_left(self, event):
