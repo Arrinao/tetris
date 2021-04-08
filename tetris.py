@@ -355,10 +355,10 @@ class TetrisGUI:
                 self.main_board.canvas.after_cancel(self.move_down)
                 self.game_status = GameStatus.paused
                 self.no_retry_pause = True
-                self.main_board.canvas.after(game_speed, self.pause_repeater)
+                self.main_board.canvas.after(1000, self.pause_spam_preventer)
                 self.pause_start = time.time()
 
-    def pause_repeater(self):
+    def pause_spam_preventer(self):
         self.no_retry_pause = False
 
     def move_block_left(self, event):
