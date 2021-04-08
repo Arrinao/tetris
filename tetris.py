@@ -307,7 +307,6 @@ class TetrisGUI:
         self.main_board = main_board
         self.topbar_time = topbar_time
         self.start_time = time.time()
-        self.game_score = 0
         self.timer()
 
     def move_block_left(self, event):
