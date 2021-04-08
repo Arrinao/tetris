@@ -337,6 +337,7 @@ class TetrisGUI:
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
+        self.no_retry_pause = False
 
     def game_over_check(self):
         y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
@@ -344,15 +345,21 @@ class TetrisGUI:
             self.game_status = GameStatus.game_lost
 
     def pause_game(self, event):
-        if self.game_status == GameStatus.paused:
-            self.game_status = GameStatus.in_progress
-            self.paused_time += time.time() - self.pause_start
-            self.move_block_down()
-            self.timer()
-        elif self.game_status == GameStatus.in_progress:
-            self.main_board.canvas.after_cancel(self.move_down)
-            self.game_status = GameStatus.paused
-            self.pause_start = time.time()
+        if self.no_retry_pause is False:
+            if self.game_status == GameStatus.paused:
+                self.game_status = GameStatus.in_progress
+                self.paused_time += time.time() - self.pause_start
+                self.move_block_down()
+                self.timer()
+            elif self.game_status == GameStatus.in_progress:
+                self.main_board.canvas.after_cancel(self.move_down)
+                self.game_status = GameStatus.paused
+                self.no_retry_pause = True
+                self.main_board.canvas.after(game_speed, self.pause_repeater)
+                self.pause_start = time.time()
+
+    def pause_repeater(self):
+        self.no_retry_pause = False
 
     def move_block_left(self, event):
         if self.game_status == GameStatus.in_progress:
