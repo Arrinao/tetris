@@ -295,9 +295,9 @@ class Board:
                     self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                         (a, b + 1) for (a, b) in coord_list if b < x_line
                     ]
-                self.score()
+                self.score_increment()
 
-    def score(self):
+    def score_increment(self):
         self.game_score += 10
         self.topbar_score.config(text=self.game_score)
 
