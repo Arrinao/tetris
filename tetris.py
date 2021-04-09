@@ -337,7 +337,7 @@ class TetrisGUI:
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
-        self.no_retry_pause = False
+        self.retry_pause = True
 
     def game_over_check(self):
         y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
