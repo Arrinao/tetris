@@ -340,7 +340,6 @@ class TetrisGUI:
         if self.game_status == GameStatus.paused:
             self.game_status = GameStatus.in_progress
             self.paused_time += time.time() - self.pause_start
-            self.move_block_down()
             self.timer()
         elif self.game_status == GameStatus.in_progress:
             self.game_status = GameStatus.paused
@@ -361,7 +360,7 @@ class TetrisGUI:
             self.main_board.move_current_block_down()
             self.game_over_check()
             self.main_board.draw_block()
-            self.main_board.canvas.after(game_speed, self.move_block_down)
+        self.main_board.canvas.after(game_speed, self.move_block_down)
 
     def move_block_down_press(self, event):
         if not self.main_board.fast_down:
