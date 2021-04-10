@@ -309,11 +309,11 @@ class Board:
             self.canvas.delete("flash")
 
         for x_line in full_lines:
+            self.score_increment()
             for letter, coord_list in self.landed_blocks.items():
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
-                self.score_increment()
 
     def score_increment(self):
         self.game_score += 10
