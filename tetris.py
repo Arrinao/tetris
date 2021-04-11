@@ -57,6 +57,7 @@ def run_gui():
         width=square_size * 4,
         height=square_size * 2,
         highlightthickness=0,
+
     )
     topbar_canvas.pack(side="right", expand=True)
 
@@ -300,10 +301,10 @@ class Board:
 
         if full_lines:
             for flash in range(2):
-                self.flasher(full_lines, "yellow")
+                self.flasher(full_lines, "pink")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(full_lines, "blue")
+                self.flasher(full_lines, "mediumpurple3")
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
