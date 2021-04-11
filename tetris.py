@@ -313,16 +313,16 @@ class Board:
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
-            print(len(full_lines))
-            if len(full_lines) == 1:
-                self.game_score += 10
-            elif len(full_lines) == 2:
-                self.game_score += 20
-            elif len(full_lines) == 3:
-                self.game_score += 30
-            elif len(full_lines) == 4:
-                self.game_score += 40
-            self.topbar_score.config(text=self.game_score)
+
+        if len(full_lines) == 1:
+            self.game_score += 10
+        elif len(full_lines) == 2:
+            self.game_score += 30
+        elif len(full_lines) == 3:
+            self.game_score += 50
+        elif len(full_lines) == 4:
+            self.game_score += 70
+        self.topbar_score.config(text=self.game_score)
 
     def flasher(self, full_lines, fill):
         """
