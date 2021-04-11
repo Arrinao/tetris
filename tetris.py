@@ -47,7 +47,7 @@ def run_gui():
     topbar_time.pack(side="left", padx=10)
 
     topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="foo", font="digital-7", fg="orange", borderwidth=1
+        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor="e"
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
@@ -72,7 +72,7 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None)
+    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, None)
     main_board = Board(
         game_canvas,
         game_width,
@@ -80,6 +80,7 @@ def run_gui():
         GREY,
         (int(game_width / 2), -2),
         small_board,
+        topbar_score,
     )
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
@@ -106,7 +107,9 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board):
+    def __init__(
+        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score
+    ):
         self.canvas = canvas
         self.width = width
         self.height = height
@@ -116,8 +119,10 @@ class Board:
         self.block_letter = random.choice(block_letters)
         self.rotate_counter = 0
         self.small_board = small_board
+        self.topbar_score = topbar_score
         self.draw_board()
         self.draw_block()
+        self.game_score = 0
         self.fast_down = False
 
     def draw_board(self):
@@ -297,10 +302,10 @@ class Board:
 
         if full_lines:
             for flash in range(2):
-                self.flasher(full_lines, "yellow")
+                self.flasher(full_lines, "pink")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(full_lines, "blue")
+                self.flasher(full_lines, "mediumpurple3")
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
@@ -310,6 +315,16 @@ class Board:
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
+
+        if len(full_lines) == 1:
+            self.game_score += 10
+        elif len(full_lines) == 2:
+            self.game_score += 30
+        elif len(full_lines) == 3:
+            self.game_score += 50
+        elif len(full_lines) == 4:
+            self.game_score += 70
+        self.topbar_score.config(text=self.game_score)
 
     def flasher(self, full_lines, fill):
         """
