@@ -47,7 +47,7 @@ def run_gui():
     topbar_time.pack(side="left", padx=10)
 
     topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor = 'e'
+        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor="e"
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
@@ -57,7 +57,6 @@ def run_gui():
         width=square_size * 4,
         height=square_size * 2,
         highlightthickness=0,
-
     )
     topbar_canvas.pack(side="right", expand=True)
 
@@ -81,7 +80,7 @@ def run_gui():
         GREY,
         (int(game_width / 2), -2),
         small_board,
-        topbar_score
+        topbar_score,
     )
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
@@ -108,7 +107,9 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score):
+    def __init__(
+        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score
+    ):
         self.canvas = canvas
         self.width = width
         self.height = height
