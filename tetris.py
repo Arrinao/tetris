@@ -38,7 +38,7 @@ def run_gui():
     )
     game_canvas.grid(row=1, sticky="nswe")
 
-    topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
+    topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge", height=square_size*50)
     topbar.grid(row=0, columnspan=2, sticky="we")
 
     topbar_time = tkinter.Label(
@@ -200,18 +200,25 @@ class Board:
     def resize_to_fit(self):
         if self.block_letter == 'I':
             self.canvas.config(width=square_size * 4, height=square_size * 1)
+            self.canvas.pack(pady=square_size/2+5)
         if self.block_letter == 'L':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
         if self.block_letter == 'L_rev':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
         if self.block_letter == 'O':
             self.canvas.config(width=square_size * 2, height=square_size * 2)
+            self.canvas.pack(pady=5)
         if self.block_letter == 'E':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
         if self.block_letter == 'Z':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
         if self.block_letter == 'Z_rev':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
