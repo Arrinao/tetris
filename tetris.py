@@ -82,6 +82,8 @@ def run_gui():
         None,
     )
 
+    small_board.resize_to_fit()
+
     main_board = Board(
         game_canvas,
         game_width,
@@ -129,10 +131,10 @@ class Board:
         self.rotate_counter = 0
         self.small_board = small_board
         self.topbar_score = topbar_score
-        self.draw_board()
-        self.draw_block()
         self.game_score = 0
         self.fast_down = False
+        self.draw_board()
+        self.draw_block()
 
     def draw_board(self):
         """
@@ -185,32 +187,31 @@ class Board:
         for letter, coord_list in self.landed_blocks.items():
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", self.color_dict[letter])
-        self.resize_to_fit()
 
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
         self.small_board.block_letter = random.choice(block_letters)
+        self.small_board.resize_to_fit()
         self.small_board.draw_block()
         self.rotate_counter = 0
         self.fast_down = False
 
     def resize_to_fit(self):
-        if not self.small_board:
-            if self.block_letter == 'I':
-                self.canvas.config(width=square_size * 4, height=square_size * 1)
-            if self.block_letter == 'L':
-                self.canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'L_rev':
-                self.canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'O':
-                self.canvas.config(width=square_size * 2, height=square_size * 2)
-            if self.block_letter == 'E':
-                self.canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'Z':
-                self.canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'Z_rev':
-                self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == 'I':
+            self.canvas.config(width=square_size * 4, height=square_size * 1)
+        if self.block_letter == 'L':
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == 'L_rev':
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == 'O':
+            self.canvas.config(width=square_size * 2, height=square_size * 2)
+        if self.block_letter == 'E':
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == 'Z':
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == 'Z_rev':
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
