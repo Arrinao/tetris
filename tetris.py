@@ -56,9 +56,9 @@ def run_gui():
         bg=D_GREY,
         width=square_size * 4,
         height=square_size * 2,
-        highlightthickness=0,
+        highlightthickness=1,
     )
-    topbar_canvas.pack(side="right", expand=True)
+    topbar_canvas.pack(side="right", expand=True, padx=15, pady=15)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
@@ -72,7 +72,7 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, None)
+    small_board = Board(topbar_canvas, 1, 2, D_GREY, (1, 1), None, None, None)
     main_board = Board(
         game_canvas,
         game_width,
@@ -81,6 +81,7 @@ def run_gui():
         (int(game_width / 2), -2),
         small_board,
         topbar_score,
+        topbar_canvas
     )
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
@@ -108,7 +109,7 @@ def rotate_point(point, center):
 
 class Board:
     def __init__(
-        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score
+        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score, topbar_canvas
     ):
         self.canvas = canvas
         self.width = width
@@ -120,6 +121,7 @@ class Board:
         self.rotate_counter = 0
         self.small_board = small_board
         self.topbar_score = topbar_score
+        self.topbar_canvas = topbar_canvas
         self.draw_board()
         self.draw_block()
         self.game_score = 0
@@ -181,6 +183,21 @@ class Board:
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
         self.small_board.block_letter = random.choice(block_letters)
+        small_dict = {'I':(4, 1), 'L':(3, 2), 'L_rev':(3, 2), 'O':(2, 2), 'E':(3, 2), 'Z':(3, 2), 'Z_rev':(3, 2)}
+        if self.small_board.block_letter == 'I':
+            self.topbar_canvas.config(width=square_size * 4, height=square_size * 1)
+        if self.small_board.block_letter == 'L':
+            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.small_board.block_letter == 'L_rev':
+            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.small_board.block_letter == 'O':
+            self.topbar_canvas.config(width=square_size * 2, height=square_size * 2)
+        if self.small_board.block_letter == 'E':
+            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.small_board.block_letter == 'Z':
+            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.small_board.block_letter == 'Z_rev':
+            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
         self.small_board.draw_block()
         self.rotate_counter = 0
         self.fast_down = False
@@ -188,7 +205,7 @@ class Board:
     def get_block_shape(self):
         (x, y) = self.current_block_center
         if self.block_letter == "I":
-            coords = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
+            coords = [[(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 2, y - 1)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L":
@@ -305,7 +322,7 @@ class Board:
                 self.flasher(full_lines, "pink")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(full_lines, "mediumpurple3")
+                self.flasher(full_lines, "black")
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
@@ -321,9 +338,9 @@ class Board:
         elif len(full_lines) == 2:
             self.game_score += 30
         elif len(full_lines) == 3:
-            self.game_score += 50
+            self.game_score += 60
         elif len(full_lines) == 4:
-            self.game_score += 70
+            self.game_score += 100
         self.topbar_score.config(text=self.game_score)
 
     def flasher(self, full_lines, fill):
