@@ -80,7 +80,6 @@ def run_gui():
         (1, 1),
         None,
         None,
-        topbar_canvas
     )
 
     main_board = Board(
@@ -91,7 +90,6 @@ def run_gui():
         (int(game_width / 2), -2),
         small_board,
         topbar_score,
-        None
     )
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
@@ -119,7 +117,7 @@ def rotate_point(point, center):
 
 class Board:
     def __init__(
-        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score, topbar_canvas
+        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score
     ):
         self.canvas = canvas
         self.width = width
@@ -131,7 +129,6 @@ class Board:
         self.rotate_counter = 0
         self.small_board = small_board
         self.topbar_score = topbar_score
-        self.topbar_canvas = topbar_canvas
         self.draw_board()
         self.draw_block()
         self.game_score = 0
@@ -188,22 +185,7 @@ class Board:
         for letter, coord_list in self.landed_blocks.items():
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", self.color_dict[letter])
-
-        if self.topbar_canvas is not None:
-            if self.block_letter == 'I':
-                self.topbar_canvas.config(width=square_size * 4, height=square_size * 1)
-            if self.block_letter == 'L':
-                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'L_rev':
-                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'O':
-                self.topbar_canvas.config(width=square_size * 2, height=square_size * 2)
-            if self.block_letter == 'E':
-                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'Z':
-                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-            if self.block_letter == 'Z_rev':
-                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+        self.resize_to_fit()
 
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
@@ -212,6 +194,23 @@ class Board:
         self.small_board.draw_block()
         self.rotate_counter = 0
         self.fast_down = False
+
+    def resize_to_fit(self):
+        if not self.small_board:
+            if self.block_letter == 'I':
+                self.canvas.config(width=square_size * 4, height=square_size * 1)
+            if self.block_letter == 'L':
+                self.canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'L_rev':
+                self.canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'O':
+                self.canvas.config(width=square_size * 2, height=square_size * 2)
+            if self.block_letter == 'E':
+                self.canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'Z':
+                self.canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'Z_rev':
+                self.canvas.config(width=square_size * 3, height=square_size * 2)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
