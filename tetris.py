@@ -72,7 +72,17 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 1, 2, D_GREY, (1, 1), None, None, None)
+    small_board = Board(
+        topbar_canvas,
+        1,
+        2,
+        D_GREY,
+        (1, 1),
+        None,
+        None,
+        topbar_canvas
+    )
+
     main_board = Board(
         game_canvas,
         game_width,
@@ -81,7 +91,7 @@ def run_gui():
         (int(game_width / 2), -2),
         small_board,
         topbar_score,
-        topbar_canvas
+        None
     )
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
@@ -179,25 +189,26 @@ class Board:
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", self.color_dict[letter])
 
+        if self.topbar_canvas is not None:
+            if self.block_letter == 'I':
+                self.topbar_canvas.config(width=square_size * 4, height=square_size * 1)
+            if self.block_letter == 'L':
+                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'L_rev':
+                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'O':
+                self.topbar_canvas.config(width=square_size * 2, height=square_size * 2)
+            if self.block_letter == 'E':
+                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'Z':
+                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+            if self.block_letter == 'Z_rev':
+                self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
+
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
         self.small_board.block_letter = random.choice(block_letters)
-        small_dict = {'I':(4, 1), 'L':(3, 2), 'L_rev':(3, 2), 'O':(2, 2), 'E':(3, 2), 'Z':(3, 2), 'Z_rev':(3, 2)}
-        if self.small_board.block_letter == 'I':
-            self.topbar_canvas.config(width=square_size * 4, height=square_size * 1)
-        if self.small_board.block_letter == 'L':
-            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.small_board.block_letter == 'L_rev':
-            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.small_board.block_letter == 'O':
-            self.topbar_canvas.config(width=square_size * 2, height=square_size * 2)
-        if self.small_board.block_letter == 'E':
-            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.small_board.block_letter == 'Z':
-            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.small_board.block_letter == 'Z_rev':
-            self.topbar_canvas.config(width=square_size * 3, height=square_size * 2)
         self.small_board.draw_block()
         self.rotate_counter = 0
         self.fast_down = False
