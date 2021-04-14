@@ -79,8 +79,8 @@ def run_gui():
 
     small_board = Board(
         topbar_canvas,
-        1,
-        2,
+        0,
+        0,
         D_GREY,
         (1, 1),
         None,
@@ -206,6 +206,9 @@ class Board:
         if self.block_letter == 'I':
             self.canvas.config(width=square_size * 4, height=square_size * 1)
             self.canvas.pack(pady=square_size/2+5)
+            self.current_block_center = (1, 0)
+        else:
+            self.current_block_center = (1, 1)
         if self.block_letter == 'L':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
@@ -228,7 +231,7 @@ class Board:
     def get_block_shape(self):
         (x, y) = self.current_block_center
         if self.block_letter == "I":
-            coords = [[(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 2, y - 1)]]
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 2, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L":
