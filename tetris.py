@@ -55,7 +55,7 @@ def run_gui():
     topbar_canvas_container.pack(side='right', expand=True)
     topbar_canvas_container.pack_propagate(0)
 
-    #canvas_container holds topbar_canvas. This is required to prevent stretching width of the topbar_canvas as its width changes when displaying certain shapes.
+    #This forces fixed size of topbar_canvas but allows it to resize constantly inside.
 
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
