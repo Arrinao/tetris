@@ -51,8 +51,15 @@ def run_gui():
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
+    # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
+    topbar_canvas_container = tkinter.Frame(
+        topbar, bg=D_GREY, relief="ridge", height=square_size * 3, width=square_size * 5
+    )
+    topbar_canvas_container.pack(side="right", expand=True)
+    topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
+
     topbar_canvas = tkinter.Canvas(
-        topbar,
+        topbar_canvas_container,
         bg=D_GREY,
         width=square_size * 4,
         height=square_size * 2,
@@ -72,7 +79,18 @@ def run_gui():
     new_game_button3 = tkinter.Button(sidebar, text="start")
     new_game_button3.grid(sticky="n")
 
-    small_board = Board(topbar_canvas, 4, 2, D_GREY, (2, 1), None, None)
+    small_board = Board(
+        topbar_canvas,
+        0,
+        0,
+        D_GREY,
+        (1, 1),
+        None,
+        None,
+    )
+
+    small_board.resize_to_fit()
+
     main_board = Board(
         game_canvas,
         game_width,
@@ -120,10 +138,10 @@ class Board:
         self.rotate_counter = 0
         self.small_board = small_board
         self.topbar_score = topbar_score
-        self.draw_board()
-        self.draw_block()
         self.game_score = 0
         self.fast_down = False
+        self.draw_board()
+        self.draw_block()
 
     def draw_board(self):
         """
@@ -181,9 +199,36 @@ class Board:
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
         self.small_board.block_letter = random.choice(block_letters)
+        self.small_board.resize_to_fit()
         self.small_board.draw_block()
         self.rotate_counter = 0
         self.fast_down = False
+
+    def resize_to_fit(self):
+        if self.block_letter == "L":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
+        if self.block_letter == "L_rev":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
+        if self.block_letter == "O":
+            self.canvas.config(width=square_size * 2, height=square_size * 2)
+            self.canvas.pack(pady=5)
+        if self.block_letter == "E":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
+        if self.block_letter == "Z":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
+        if self.block_letter == "Z_rev":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+            self.canvas.pack(pady=5)
+        if self.block_letter == "I":
+            self.canvas.config(width=square_size * 4, height=square_size * 1)
+            self.canvas.pack(pady=square_size / 2 + 5)
+            self.current_block_center = (2, 0)
+        else:
+            self.current_block_center = (1, 1)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -305,7 +350,7 @@ class Board:
                 self.flasher(full_lines, "pink")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(full_lines, "mediumpurple3")
+                self.flasher(full_lines, "black")
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
@@ -321,9 +366,9 @@ class Board:
         elif len(full_lines) == 2:
             self.game_score += 30
         elif len(full_lines) == 3:
-            self.game_score += 50
+            self.game_score += 60
         elif len(full_lines) == 4:
-            self.game_score += 70
+            self.game_score += 100
         self.topbar_score.config(text=self.game_score)
 
     def flasher(self, full_lines, fill):
