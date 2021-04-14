@@ -38,7 +38,7 @@ def run_gui():
     )
     game_canvas.grid(row=1, sticky="nswe")
 
-    topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge", height=square_size*50)
+    topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
     topbar.grid(row=0, columnspan=2, sticky="we")
 
     topbar_time = tkinter.Label(
@@ -51,8 +51,12 @@ def run_gui():
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
+    topbar_holder = tkinter.Frame(topbar, bg=RED, relief='ridge', height=square_size*3, width=square_size*5)
+    topbar_holder.pack(side='right', expand=True)
+    topbar_holder.pack_propagate(0)
+    
     topbar_canvas = tkinter.Canvas(
-        topbar,
+        topbar_holder,
         bg=D_GREY,
         width=square_size * 4,
         height=square_size * 2,
