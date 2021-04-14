@@ -51,10 +51,12 @@ def run_gui():
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
-    #This forces fixed size of topbar_canvas but allows it to resize constantly inside.
-    topbar_canvas_container = tkinter.Frame(topbar, bg=D_GREY, relief='ridge', height=square_size*3, width=square_size*5)
-    topbar_canvas_container.pack(side='right', expand=True)
-    topbar_canvas_container.pack_propagate(0) # don't overlook width and height
+    # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
+    topbar_canvas_container = tkinter.Frame(
+        topbar, bg=D_GREY, relief="ridge", height=square_size * 3, width=square_size * 5
+    )
+    topbar_canvas_container.pack(side="right", expand=True)
+    topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
 
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
@@ -203,27 +205,27 @@ class Board:
         self.fast_down = False
 
     def resize_to_fit(self):
-        if self.block_letter == 'L':
+        if self.block_letter == "L":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
-        if self.block_letter == 'L_rev':
+        if self.block_letter == "L_rev":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
-        if self.block_letter == 'O':
+        if self.block_letter == "O":
             self.canvas.config(width=square_size * 2, height=square_size * 2)
             self.canvas.pack(pady=5)
-        if self.block_letter == 'E':
+        if self.block_letter == "E":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
-        if self.block_letter == 'Z':
+        if self.block_letter == "Z":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
-        if self.block_letter == 'Z_rev':
+        if self.block_letter == "Z_rev":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
-        if self.block_letter == 'I':
+        if self.block_letter == "I":
             self.canvas.config(width=square_size * 4, height=square_size * 1)
-            self.canvas.pack(pady=square_size/2+5)
+            self.canvas.pack(pady=square_size / 2 + 5)
             self.current_block_center = (2, 0)
         else:
             self.current_block_center = (1, 1)
