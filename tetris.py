@@ -51,18 +51,18 @@ def run_gui():
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
-    topbar_holder = tkinter.Frame(topbar, bg=RED, relief='ridge', height=square_size*3, width=square_size*5)
+    topbar_holder = tkinter.Frame(topbar, bg=D_GREY, relief='ridge', height=square_size*3, width=square_size*5)
     topbar_holder.pack(side='right', expand=True)
     topbar_holder.pack_propagate(0)
-    
+
     topbar_canvas = tkinter.Canvas(
         topbar_holder,
         bg=D_GREY,
         width=square_size * 4,
         height=square_size * 2,
-        highlightthickness=1,
+        highlightthickness=0,
     )
-    topbar_canvas.pack(side="right", expand=True, padx=15, pady=15)
+    topbar_canvas.pack(side="right", expand=True, pady=15)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
