@@ -51,11 +51,10 @@ def run_gui():
     )
     topbar_score.pack(side="left", fill="x", expand=True)
 
+    #This forces fixed size of topbar_canvas but allows it to resize constantly inside.
     topbar_canvas_container = tkinter.Frame(topbar, bg=D_GREY, relief='ridge', height=square_size*3, width=square_size*5)
     topbar_canvas_container.pack(side='right', expand=True)
     topbar_canvas_container.pack_propagate(0)
-
-    #This forces fixed size of topbar_canvas but allows it to resize constantly inside.
 
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
