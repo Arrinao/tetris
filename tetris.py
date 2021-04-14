@@ -203,12 +203,6 @@ class Board:
         self.fast_down = False
 
     def resize_to_fit(self):
-        if self.block_letter == 'I':
-            self.canvas.config(width=square_size * 4, height=square_size * 1)
-            self.canvas.pack(pady=square_size/2+5)
-            self.current_block_center = (1, 0)
-        else:
-            self.current_block_center = (1, 1)
         if self.block_letter == 'L':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
@@ -227,6 +221,12 @@ class Board:
         if self.block_letter == 'Z_rev':
             self.canvas.config(width=square_size * 3, height=square_size * 2)
             self.canvas.pack(pady=5)
+        if self.block_letter == 'I':
+            self.canvas.config(width=square_size * 4, height=square_size * 1)
+            self.canvas.pack(pady=square_size/2+5)
+            self.current_block_center = (1, 0)
+        else:
+            self.current_block_center = (1, 1)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
