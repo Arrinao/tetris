@@ -54,7 +54,7 @@ def run_gui():
     #This forces fixed size of topbar_canvas but allows it to resize constantly inside.
     topbar_canvas_container = tkinter.Frame(topbar, bg=D_GREY, relief='ridge', height=square_size*3, width=square_size*5)
     topbar_canvas_container.pack(side='right', expand=True)
-    topbar_canvas_container.pack_propagate(0)
+    topbar_canvas_container.pack_propagate(0) # don't overlook width and height
 
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
@@ -224,14 +224,14 @@ class Board:
         if self.block_letter == 'I':
             self.canvas.config(width=square_size * 4, height=square_size * 1)
             self.canvas.pack(pady=square_size/2+5)
-            self.current_block_center = (1, 0)
+            self.current_block_center = (2, 0)
         else:
             self.current_block_center = (1, 1)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
         if self.block_letter == "I":
-            coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 2, y)]]
+            coords = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L":
