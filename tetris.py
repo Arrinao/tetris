@@ -44,11 +44,11 @@ def run_gui():
     topbar_time = tkinter.Label(
         topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
     )
-    topbar_time.pack(side="left", padx=10)
+    topbar_time.pack(side="left", padx=15)
 
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
     topbar_canvas_container = tkinter.Frame(
-        topbar, bg=D_GREY, relief="ridge", height=square_size * 3, width=square_size * 5
+        topbar, bg=D_GREY, relief="ridge", height=square_size * 3, width=square_size * 5,
     )
     topbar_canvas_container.pack(side="right")
     topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
@@ -63,9 +63,9 @@ def run_gui():
     topbar_canvas.pack(side="right", expand=True)
 
     topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor="e"
+        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", anchor="e"
     )
-    topbar_score.pack(side="right", fill="x", expand=True)
+    topbar_score.pack(side="right", padx=20, fill="x", expand=True)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
@@ -206,25 +206,25 @@ class Board:
     def resize_to_fit(self):
         if self.block_letter == "L":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-            self.canvas.pack(pady=5)
+            self.canvas.pack(pady=10)
         if self.block_letter == "L_rev":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-            self.canvas.pack(pady=5)
+            self.canvas.pack(pady=10)
         if self.block_letter == "O":
             self.canvas.config(width=square_size * 2, height=square_size * 2)
-            self.canvas.pack(pady=5)
+            self.canvas.pack(pady=10)
         if self.block_letter == "E":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-            self.canvas.pack(pady=5)
+            self.canvas.pack(pady=10)
         if self.block_letter == "Z":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-            self.canvas.pack(pady=5)
+            self.canvas.pack(pady=10)
         if self.block_letter == "Z_rev":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-            self.canvas.pack(pady=5)
+            self.canvas.pack(pady=10)
         if self.block_letter == "I":
             self.canvas.config(width=square_size * 4, height=square_size * 1)
-            self.canvas.pack(pady=square_size / 2 + 5)
+            self.canvas.pack(pady=square_size / 2 + 10)
             self.current_block_center = (2, 0)
         else:
             self.current_block_center = (1, 1)
@@ -392,7 +392,7 @@ class TetrisGUI:
 
     def game_over_check(self):
         y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
-        if any(y <= 0 for y in y_coordinates):
+        if any(y < 0 for y in y_coordinates):
             self.game_status = GameStatus.game_lost
 
     def pause_game(self, event):
