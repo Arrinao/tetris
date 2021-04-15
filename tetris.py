@@ -46,16 +46,11 @@ def run_gui():
     )
     topbar_time.pack(side="left", padx=10)
 
-    topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor="e"
-    )
-    topbar_score.pack(side="left", fill="x", expand=True)
-
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
     topbar_canvas_container = tkinter.Frame(
         topbar, bg=D_GREY, relief="ridge", height=square_size * 3, width=square_size * 5
     )
-    topbar_canvas_container.pack(side="right", expand=True)
+    topbar_canvas_container.pack(side="right")
     topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
 
     topbar_canvas = tkinter.Canvas(
@@ -66,6 +61,11 @@ def run_gui():
         highlightthickness=0,
     )
     topbar_canvas.pack(side="right", expand=True)
+
+    topbar_score = tkinter.Label(
+        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", borderwidth=1, anchor="e"
+    )
+    topbar_score.pack(side="right", fill="x", expand=True)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
@@ -88,8 +88,8 @@ def run_gui():
         None,
         None,
     )
-
     small_board.resize_to_fit()
+    small_board.draw_block()
 
     main_board = Board(
         game_canvas,
@@ -141,7 +141,6 @@ class Board:
         self.game_score = 0
         self.fast_down = False
         self.draw_board()
-        self.draw_block()
 
     def draw_board(self):
         """
