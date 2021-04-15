@@ -21,7 +21,7 @@ ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
-block_letters = ["I"]
+block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
 
@@ -89,9 +89,7 @@ def run_gui():
         None,
     )
     small_board.resize_to_fit()
-
-    print(small_board.block_letter)
-    print(small_board.current_block_center)
+    small_board.draw_block()
 
     main_board = Board(
         game_canvas,
@@ -230,7 +228,6 @@ class Board:
             self.current_block_center = (2, 0)
         else:
             self.current_block_center = (1, 1)
-        self.draw_block()
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
