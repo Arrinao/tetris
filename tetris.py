@@ -48,7 +48,11 @@ def run_gui():
 
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
     topbar_canvas_container = tkinter.Frame(
-        topbar, bg=D_GREY, relief="ridge", height=square_size * 3, width=square_size * 5,
+        topbar,
+        bg=D_GREY,
+        relief="ridge",
+        height=square_size * 3,
+        width=square_size * 5,
     )
     topbar_canvas_container.pack(side="right")
     topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
