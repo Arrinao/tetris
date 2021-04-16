@@ -38,6 +38,10 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
+    button_image = tkinter.PhotoImage(file=(image_dir / "button.png"))
+    button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
+    start_image = tkinter.PhotoImage(file=(image_dir / "start.png"))
+
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
@@ -81,13 +85,16 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
-    new_game_button = tkinter.Button(sidebar, text="start")
+    new_game_button = tkinter.Button(sidebar, image=button_image, borderwidth=0, highlightthickness=0)
     new_game_button.grid(sticky="n")
 
-    new_game_button2 = tkinter.Button(sidebar, text="start")
+    new_game_image = tkinter.Label(new_game_button, image=start_image)
+    new_game_image.grid(sticky='nsew')
+
+    new_game_button2 = tkinter.Button(sidebar, image=button_image, borderwidth=0, highlightthickness=0)
     new_game_button2.grid(sticky="n")
 
-    new_game_button3 = tkinter.Button(sidebar, text="start")
+    new_game_button3 = tkinter.Button(sidebar, image=button_image, borderwidth=0, highlightthickness=0)
     new_game_button3.grid(sticky="n")
 
     small_board = Board(
@@ -114,9 +121,6 @@ def run_gui():
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
     tetris_gui.move_block_down()
-
-    button_image = tkinter.PhotoImage(file=(image_dir / "button.png"))
-    button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
