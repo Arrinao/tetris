@@ -32,9 +32,6 @@ try:
 except AttributeError:
     image_dir = pathlib.Path(__file__).parent / "images"
 
-button_image = tkinter.PhotoImage(file=(image_dir / "button.png"))
-button_image_pressed = tkinter.PhotoImage(file=(image_dir / "pressed_button.png"))
-
 
 def run_gui():
 
@@ -117,6 +114,9 @@ def run_gui():
 
     tetris_gui = TetrisGUI(main_board, topbar_time)
     tetris_gui.move_block_down()
+
+    button_image = tkinter.PhotoImage(file=(image_dir / "button.png"))
+    button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
