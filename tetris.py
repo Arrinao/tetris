@@ -2,6 +2,8 @@ import random
 import tkinter
 import collections
 import time
+import pathlib
+import sys
 from enum import Enum
 
 game_speed = 300
@@ -24,6 +26,14 @@ TEAL = "paleturquoise3"
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
+
+try:
+    image_dir = pathlib.Path(sys._MEIPASS)
+except AttributeError:
+    image_dir = pathlib.Path(__file__).parent / "images"
+
+button_image = tkinter.PhotoImage(file=(image_dir / "button.png"))
+button_image_pressed = tkinter.PhotoImage(file=(image_dir / "pressed_button.png"))
 
 
 def run_gui():
