@@ -38,9 +38,10 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    button_image = tkinter.PhotoImage(file=(image_dir / "button.png"))
+    new_game_letters = tkinter.PhotoImage(file=(image_dir / "start.png"))
+    new_game_button = tkinter.PhotoImage(file=(image_dir / "button.png"))
+    new_game_letters.tk.call(new_game_letters, 'copy', new_game_button, '-compositingrule', 'overlay')
     button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
-    start_image = tkinter.PhotoImage(file=(image_dir / "start.png"))
 
     game_canvas = tkinter.Canvas(
         root,
@@ -85,16 +86,13 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
-    new_game_button = tkinter.Button(sidebar, image=button_image, borderwidth=0, highlightthickness=0)
+    new_game_button = tkinter.Button(sidebar, image=new_game_button, borderwidth=0, highlightthickness=0)
     new_game_button.grid(sticky="n")
 
-    new_game_image = tkinter.Label(new_game_button, image=start_image)
-    new_game_image.grid(sticky='nsew')
-
-    new_game_button2 = tkinter.Button(sidebar, image=button_image, borderwidth=0, highlightthickness=0)
+    new_game_button2 = tkinter.Button(sidebar, image=new_game_letters, borderwidth=0, highlightthickness=0)
     new_game_button2.grid(sticky="n")
 
-    new_game_button3 = tkinter.Button(sidebar, image=button_image, borderwidth=0, highlightthickness=0)
+    new_game_button3 = tkinter.Button(sidebar, image=new_game_letters, borderwidth=0, highlightthickness=0)
     new_game_button3.grid(sticky="n")
 
     small_board = Board(
