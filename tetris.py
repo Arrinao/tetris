@@ -38,15 +38,20 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    new_game_letters = tkinter.PhotoImage(file=(image_dir / "start.png"))
-    new_game_button = tkinter.PhotoImage(file=(image_dir / "button.png"))
-    new_game_letters.tk.call(new_game_letters, 'copy', new_game_button, '-compositingrule', 'overlay')
+    akuli_does_not_believe = tkinter.PhotoImage(file=(image_dir / "start.png"))
+    high_legend1 = tkinter.PhotoImage(file=(image_dir / "hstart.png"))
+    button1 = tkinter.PhotoImage(file=(image_dir / "button.png"))
+    button2 = tkinter.PhotoImage(file=(image_dir / "button.png"))
+    akuli_does_not_believe.tk.call(button1, 'copy', akuli_does_not_believe, '-compositingrule', 'overlay')
+    high_legend1.tk.call(button2, 'copy', high_legend1, '-compositingrule', 'overlay')
+
     button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
 
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
         height=square_size * game_height,
+        highlightthickness=1
     )
     game_canvas.grid(row=1, sticky="nswe")
 
@@ -86,13 +91,13 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
-    new_game_button = tkinter.Button(sidebar, image=new_game_button, borderwidth=0, highlightthickness=0)
+    new_game_button = tkinter.Button(sidebar, image=button1, borderwidth=0, highlightthickness=0)
     new_game_button.grid(sticky="n")
 
-    new_game_button2 = tkinter.Button(sidebar, image=new_game_letters, borderwidth=0, highlightthickness=0)
+    new_game_button2 = tkinter.Button(sidebar, image=button2, borderwidth=0, highlightthickness=0)
     new_game_button2.grid(sticky="n")
 
-    new_game_button3 = tkinter.Button(sidebar, image=new_game_letters, borderwidth=0, highlightthickness=0)
+    new_game_button3 = tkinter.Button(sidebar, image=button1, borderwidth=0, highlightthickness=0)
     new_game_button3.grid(sticky="n")
 
     small_board = Board(
