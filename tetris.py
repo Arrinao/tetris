@@ -32,20 +32,28 @@ try:
 except AttributeError:
     image_dir = pathlib.Path(__file__).parent / "images"
 
+root = tkinter.Tk()
+root.resizable(False, False)
+
+start = tkinter.PhotoImage(file=(image_dir / "start.png"))
+start_hover = tkinter.PhotoImage(file=(image_dir / "hstart.png"))
+button1 = tkinter.PhotoImage(file=(image_dir / "button.png"))
+button2 = tkinter.PhotoImage(file=(image_dir / "button.png"))
+button3 = tkinter.PhotoImage(file=(image_dir / "button.png"))
+start.tk.call(button1, 'copy', start, '-compositingrule', 'overlay')
+start_hover.tk.call(button2, 'copy', start_hover, '-compositingrule', 'overlay')
+button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
+
+
+def light_icon_text(event):
+    event.widget.config(image=button2)
+
+
+def darken_icon_text(event):
+    event.widget.config(image=button1)
+
 
 def run_gui():
-
-    root = tkinter.Tk()
-    root.resizable(False, False)
-
-    akuli_does_not_believe = tkinter.PhotoImage(file=(image_dir / "start.png"))
-    high_legend1 = tkinter.PhotoImage(file=(image_dir / "hstart.png"))
-    button1 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-    button2 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-    akuli_does_not_believe.tk.call(button1, 'copy', akuli_does_not_believe, '-compositingrule', 'overlay')
-    high_legend1.tk.call(button2, 'copy', high_legend1, '-compositingrule', 'overlay')
-
-    button_image_pressed = tkinter.PhotoImage(file=(image_dir / "button_pressed.png"))
 
     game_canvas = tkinter.Canvas(
         root,
@@ -94,10 +102,10 @@ def run_gui():
     new_game_button = tkinter.Button(sidebar, image=button1, borderwidth=0, highlightthickness=0)
     new_game_button.grid(sticky="n")
 
-    new_game_button2 = tkinter.Button(sidebar, image=button2, borderwidth=0, highlightthickness=0)
+    new_game_button2 = tkinter.Button(sidebar, image=button3, borderwidth=0, highlightthickness=0)
     new_game_button2.grid(sticky="n")
 
-    new_game_button3 = tkinter.Button(sidebar, image=button1, borderwidth=0, highlightthickness=0)
+    new_game_button3 = tkinter.Button(sidebar, image=button3, borderwidth=0, highlightthickness=0)
     new_game_button3.grid(sticky="n")
 
     small_board = Board(
@@ -131,6 +139,8 @@ def run_gui():
     root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
+    new_game_button.bind('<Enter>', light_icon_text)
+    new_game_button.bind('<Leave>', darken_icon_text)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
