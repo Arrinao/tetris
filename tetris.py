@@ -76,7 +76,8 @@ def run_gui():
         root,
         width=square_size * game_width,
         height=square_size * game_height,
-        highlightthickness=1
+        highlightthickness=1,
+        highlightbackground="royal blue"
     )
     game_canvas.grid(row=1, sticky="nswe")
 
@@ -156,6 +157,7 @@ def run_gui():
     root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
+
     new_game_button_image.bind('<Enter>', partial(lighten_icon_text, button_image1))
     new_game_button_image.bind('<Leave>', partial(darken_icon_text, button_image2))
     game_mode_button_image.bind('<Enter>', partial(lighten_icon_text, button_image3))
