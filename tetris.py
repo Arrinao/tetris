@@ -36,37 +36,21 @@ except AttributeError:
 root = tkinter.Tk()
 root.resizable(False, False)
 
-button_image1 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-button_image2 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-button_image3 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-button_image4 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-button_image5 = tkinter.PhotoImage(file=(image_dir / "button.png"))
-button_image6 = tkinter.PhotoImage(file=(image_dir / "button.png"))
+button_images={}
+icon_images={}
 
-start = tkinter.PhotoImage(file=(image_dir / "start.png"))
-start_hover = tkinter.PhotoImage(file=(image_dir / "hstart.png"))
-
-gamemode = tkinter.PhotoImage(file=(image_dir / "gamemode.png"))
-gamemode_hover = tkinter.PhotoImage(file=(image_dir / "hgamemode.png"))
-
-highscores = tkinter.PhotoImage(file=(image_dir / "highscores.png"))
-highscores_hover = tkinter.PhotoImage(file=(image_dir / "hhighscores.png"))
-
-button_image1.tk.call(button_image1, 'copy', start, '-compositingrule', 'overlay')
-button_image2.tk.call(button_image2, 'copy', start_hover, '-compositingrule', 'overlay')
-button_image3.tk.call(button_image3, 'copy', gamemode, '-compositingrule', 'overlay')
-button_image4.tk.call(button_image4, 'copy', gamemode_hover, '-compositingrule', 'overlay')
-button_image5.tk.call(button_image5, 'copy', highscores, '-compositingrule', 'overlay')
-button_image6.tk.call(button_image6, 'copy', highscores_hover, '-compositingrule', 'overlay')
-
+for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
+    icon_images[filename] = tkinter.PhotoImage(file=(image_dir / filename))
+    button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
+    button_images[filename].tk.call(button_images[filename], 'copy', icon_images[filename], '-compositingrule', 'overlay')
 
 def lighten_icon_text(button_image, event):
-    lighten_image_dict = {button_image1: button_image2, button_image3: button_image4, button_image5: button_image6}
+    lighten_image_dict = {button_images['start.png']: button_images['hstart.png'], button_images['gamemode.png']: button_images['hgamemode.png'], button_images['highscores.png']: button_images['hhighscores.png']}
     return event.widget.config(image=lighten_image_dict[button_image])
 
 
 def darken_icon_text(button_image, event):
-    darken_image_dict = {button_image2: button_image1, button_image4: button_image3, button_image6: button_image5}
+    darken_image_dict = {button_images['hstart.png']: button_images['start.png'], button_images['hgamemode.png']: button_images['gamemode.png'], button_images['hhighscores.png']: button_images['highscores.png']}
     return event.widget.config(image=darken_image_dict[button_image])
 
 
@@ -117,13 +101,13 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
-    new_game_button_image = tkinter.Button(sidebar, image=button_image1, borderwidth=0, highlightthickness=0)
+    new_game_button_image = tkinter.Button(sidebar, image=button_images['start.png'], borderwidth=0, highlightthickness=0)
     new_game_button_image.grid(sticky="n")
 
-    game_mode_button_image = tkinter.Button(sidebar, image=button_image3, borderwidth=0, highlightthickness=0)
+    game_mode_button_image = tkinter.Button(sidebar, image=button_images['gamemode.png'], borderwidth=0, highlightthickness=0)
     game_mode_button_image.grid(sticky="n")
 
-    high_scores_button_image = tkinter.Button(sidebar, image=button_image5, borderwidth=0, highlightthickness=0)
+    high_scores_button_image = tkinter.Button(sidebar, image=button_images['highscores.png'], borderwidth=0, highlightthickness=0)
     high_scores_button_image.grid(sticky="n")
 
     small_board = Board(
@@ -158,12 +142,12 @@ def run_gui():
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
 
-    new_game_button_image.bind('<Enter>', partial(lighten_icon_text, button_image1))
-    new_game_button_image.bind('<Leave>', partial(darken_icon_text, button_image2))
-    game_mode_button_image.bind('<Enter>', partial(lighten_icon_text, button_image3))
-    game_mode_button_image.bind('<Leave>', partial(darken_icon_text, button_image4))
-    high_scores_button_image.bind('<Enter>', partial(lighten_icon_text, button_image5))
-    high_scores_button_image.bind('<Leave>', partial(darken_icon_text, button_image6))
+    new_game_button_image.bind('<Enter>', partial(lighten_icon_text, button_images['start.png']))
+    new_game_button_image.bind('<Leave>', partial(darken_icon_text, button_images['hstart.png']))
+    game_mode_button_image.bind('<Enter>', partial(lighten_icon_text, button_images['gamemode.png']))
+    game_mode_button_image.bind('<Leave>', partial(darken_icon_text, button_images['hgamemode.png']))
+    high_scores_button_image.bind('<Enter>', partial(lighten_icon_text, button_images['highscores.png']))
+    high_scores_button_image.bind('<Leave>', partial(darken_icon_text, button_images['hhighscores.png']))
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
