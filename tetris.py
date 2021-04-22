@@ -128,12 +128,6 @@ def run_gui():
     tetris_gui = TetrisGUI(main_board, topbar_time)
     tetris_gui.move_block_down()
 
-    button_images = {}
-    for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
-        transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
-        button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
-        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image, '-compositingrule', 'overlay')
-
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
