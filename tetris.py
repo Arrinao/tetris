@@ -33,20 +33,15 @@ try:
 except AttributeError:
     image_dir = pathlib.Path(__file__).parent / "images"
 
-root = tkinter.Tk()
-root.resizable(False, False)
 
-button_images = {}
-for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
-    transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
-    button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
-    button_images[filename].tk.call(button_images[filename], 'copy', transparent_image, '-compositingrule', 'overlay')
+def set_button_image(button_image, event):
+    event.widget.config(image=button_image)
 
-
-def highlight_icon_text(button_image, event):
-    return event.widget.config(image=button_image)
 
 def run_gui():
+
+    root = tkinter.Tk()
+    root.resizable(False, False)
 
     game_canvas = tkinter.Canvas(
         root,
@@ -93,6 +88,12 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
+    button_images = {}
+    for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
+        transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
+        button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
+        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image, '-compositingrule', 'overlay')
+
     new_game_button_image = tkinter.Button(sidebar, image=button_images['start.png'], borderwidth=0, highlightthickness=0)
     new_game_button_image.grid(sticky="n")
 
@@ -127,6 +128,12 @@ def run_gui():
     tetris_gui = TetrisGUI(main_board, topbar_time)
     tetris_gui.move_block_down()
 
+    button_images = {}
+    for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
+        transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
+        button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
+        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image, '-compositingrule', 'overlay')
+
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
     root.bind("<Up>", tetris_gui.rotate_block)
@@ -134,12 +141,12 @@ def run_gui():
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
 
-    new_game_button_image.bind('<Enter>', partial(highlight_icon_text, button_images['hstart.png']))
-    new_game_button_image.bind('<Leave>', partial(highlight_icon_text, button_images['start.png']))
-    game_mode_button_image.bind('<Enter>', partial(highlight_icon_text, button_images['hgamemode.png']))
-    game_mode_button_image.bind('<Leave>', partial(highlight_icon_text, button_images['gamemode.png']))
-    high_scores_button_image.bind('<Enter>', partial(highlight_icon_text, button_images['hhighscores.png']))
-    high_scores_button_image.bind('<Leave>', partial(highlight_icon_text, button_images['highscores.png']))
+    new_game_button_image.bind('<Enter>', partial(set_button_image, button_images['hstart.png']))
+    new_game_button_image.bind('<Leave>', partial(set_button_image, button_images['start.png']))
+    game_mode_button_image.bind('<Enter>', partial(set_button_image, button_images['hgamemode.png']))
+    game_mode_button_image.bind('<Leave>', partial(set_button_image, button_images['gamemode.png']))
+    high_scores_button_image.bind('<Enter>', partial(set_button_image, button_images['hhighscores.png']))
+    high_scores_button_image.bind('<Leave>', partial(set_button_image, button_images['highscores.png']))
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
