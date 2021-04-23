@@ -90,15 +90,10 @@ def run_gui():
 
     #image source https://cooltext.com/
     button_images = {}
-    for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png']: 
+    for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
         transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
         button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
-        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image,'-to', 10,0,110,50, '-compositingrule', 'overlay')
-
-    for filename in ['highscores.png', 'hhighscores.png']:
-        transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
-        button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
-        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image,'-to', 0,0,120,50, '-compositingrule', 'overlay')
+        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image, '-compositingrule', 'overlay')
 
     new_game_button_image = tkinter.Button(sidebar, image=button_images['start.png'], borderwidth=0, highlightthickness=0)
     new_game_button_image.grid(sticky="n")
