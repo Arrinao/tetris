@@ -2,6 +2,9 @@ import random
 import tkinter
 import collections
 import time
+import pathlib
+import sys
+from functools import partial
 from enum import Enum
 
 game_speed = 300
@@ -25,6 +28,20 @@ block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
 
+try:
+    # When an end user is running the app or exe created with pyinstaller,
+    # sys._MEIPASS is the path to where images are, as a string.
+    image_dir = pathlib.Path(sys._MEIPASS)
+except AttributeError:
+    # When a developer runs this program without pyinstaller, there is no
+    # sys._MEIPASS attribute, and we need to find the images based on where
+    # this file is.
+    image_dir = pathlib.Path(__file__).parent / "images"
+
+
+def set_button_image(button_image, event):
+    event.widget.config(image=button_image)
+
 
 def run_gui():
 
@@ -35,6 +52,8 @@ def run_gui():
         root,
         width=square_size * game_width,
         height=square_size * game_height,
+        highlightthickness=1,
+        highlightbackground="royal blue",
     )
     game_canvas.grid(row=1, sticky="nswe")
 
@@ -74,14 +93,36 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
-    new_game_button = tkinter.Button(sidebar, text="start")
+    # image source https://cooltext.com/
+    button_images = {}
+    for filename in [
+        "start.png",
+        "hstart.png",
+        "gamemode.png",
+        "hgamemode.png",
+        "highscores.png",
+        "hhighscores.png",
+    ]:
+        transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
+        button_images[filename] = tkinter.PhotoImage(file=image_dir / "button.png")
+        button_images[filename].tk.call(
+            button_images[filename], "copy", transparent_image, "-compositingrule", "overlay"
+        )
+
+    new_game_button = tkinter.Button(
+        sidebar, image=button_images["start.png"], borderwidth=0, highlightthickness=0
+    )
     new_game_button.grid(sticky="n")
 
-    new_game_button2 = tkinter.Button(sidebar, text="start")
-    new_game_button2.grid(sticky="n")
+    game_mode_button = tkinter.Button(
+        sidebar, image=button_images["gamemode.png"], borderwidth=0, highlightthickness=0
+    )
+    game_mode_button.grid(sticky="n")
 
-    new_game_button3 = tkinter.Button(sidebar, text="start")
-    new_game_button3.grid(sticky="n")
+    high_scores_button = tkinter.Button(
+        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0
+    )
+    high_scores_button.grid(sticky="n")
 
     small_board = Board(
         topbar_canvas,
@@ -114,6 +155,13 @@ def run_gui():
     root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
+
+    new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
+    new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
+    game_mode_button.bind("<Enter>", partial(set_button_image, button_images["hgamemode.png"]))
+    game_mode_button.bind("<Leave>", partial(set_button_image, button_images["gamemode.png"]))
+    high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
+    high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
