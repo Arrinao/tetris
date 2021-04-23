@@ -53,7 +53,7 @@ def run_gui():
         width=square_size * game_width,
         height=square_size * game_height,
         highlightthickness=1,
-        highlightbackground="royal blue"
+        highlightbackground="royal blue",
     )
     game_canvas.grid(row=1, sticky="nswe")
 
@@ -93,20 +93,35 @@ def run_gui():
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
 
-    #image source https://cooltext.com/
+    # image source https://cooltext.com/
     button_images = {}
-    for filename in ["start.png", "hstart.png", 'gamemode.png', 'hgamemode.png', 'highscores.png', 'hhighscores.png']:
+    for filename in [
+        "start.png",
+        "hstart.png",
+        "gamemode.png",
+        "hgamemode.png",
+        "highscores.png",
+        "hhighscores.png",
+    ]:
         transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
-        button_images[filename] = tkinter.PhotoImage(file=image_dir / 'button.png')
-        button_images[filename].tk.call(button_images[filename], 'copy', transparent_image, '-compositingrule', 'overlay')
+        button_images[filename] = tkinter.PhotoImage(file=image_dir / "button.png")
+        button_images[filename].tk.call(
+            button_images[filename], "copy", transparent_image, "-compositingrule", "overlay"
+        )
 
-    new_game_button = tkinter.Button(sidebar, image=button_images['start.png'], borderwidth=0, highlightthickness=0)
+    new_game_button = tkinter.Button(
+        sidebar, image=button_images["start.png"], borderwidth=0, highlightthickness=0
+    )
     new_game_button.grid(sticky="n")
 
-    game_mode_button = tkinter.Button(sidebar, image=button_images['gamemode.png'], borderwidth=0, highlightthickness=0)
+    game_mode_button = tkinter.Button(
+        sidebar, image=button_images["gamemode.png"], borderwidth=0, highlightthickness=0
+    )
     game_mode_button.grid(sticky="n")
 
-    high_scores_button = tkinter.Button(sidebar, image=button_images['highscores.png'], borderwidth=0, highlightthickness=0)
+    high_scores_button = tkinter.Button(
+        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0
+    )
     high_scores_button.grid(sticky="n")
 
     small_board = Board(
@@ -141,12 +156,12 @@ def run_gui():
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
 
-    new_game_button.bind('<Enter>', partial(set_button_image, button_images['hstart.png']))
-    new_game_button.bind('<Leave>', partial(set_button_image, button_images['start.png']))
-    game_mode_button.bind('<Enter>', partial(set_button_image, button_images['hgamemode.png']))
-    game_mode_button.bind('<Leave>', partial(set_button_image, button_images['gamemode.png']))
-    high_scores_button.bind('<Enter>', partial(set_button_image, button_images['hhighscores.png']))
-    high_scores_button.bind('<Leave>', partial(set_button_image, button_images['highscores.png']))
+    new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
+    new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
+    game_mode_button.bind("<Enter>", partial(set_button_image, button_images["hgamemode.png"]))
+    game_mode_button.bind("<Leave>", partial(set_button_image, button_images["gamemode.png"]))
+    high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
+    high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
