@@ -124,28 +124,6 @@ def run_gui():
     )
     high_scores_button.grid(sticky="n")
 
-    small_board = Board(
-        topbar_canvas,
-        0,
-        0,
-        D_GREY,
-        (1, 1),
-        None,
-        None,
-    )
-    small_board.resize_to_fit()
-    small_board.draw_block()
-
-    main_board = Board(
-        game_canvas,
-        game_width,
-        game_height,
-        GREY,
-        (int(game_width / 2), -2),
-        small_board,
-        topbar_score,
-    )
-
     tetris_gui = TetrisGUI(main_board, topbar_time)
     tetris_gui.move_block_down()
 
@@ -155,6 +133,7 @@ def run_gui():
     root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
+    root.bind("<f>", tetris_gui.new_game)
 
     new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
     new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
@@ -430,14 +409,14 @@ class Board:
 
 
 class TetrisGUI:
-    def __init__(self, main_board, topbar_time):
-        self.main_board = main_board
+    def __init__(self, topbar_time):
         self.topbar_time = topbar_time
         self.start_time = time.time()
         self.pause_start = 0
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
+        self.new_game()
 
     def game_over_check(self):
         y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
@@ -488,6 +467,29 @@ class TetrisGUI:
             game_time = time.time() - self.start_time - self.paused_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
+
+    def new_game(self, event):
+        small_board = Board(
+            self.small_board.topbar_canvas,
+            0,
+            0,
+            D_GREY,
+            (1, 1),
+            None,
+            None,
+        )
+        small_board.resize_to_fit()
+        small_board.draw_block()
+
+        main_board = Board(
+            self.main_board.game_canvas,
+            game_width,
+            game_height,
+            GREY,
+            (int(game_width / 2), -2),
+            small_board,
+            self.main_board.topbar_score,
+        )
 
 
 run_gui()
