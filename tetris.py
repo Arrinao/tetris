@@ -48,6 +48,7 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
+    global game_canvas
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
@@ -60,6 +61,7 @@ def run_gui():
     topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
     topbar.grid(row=0, columnspan=2, sticky="we")
 
+    global topbar_time
     topbar_time = tkinter.Label(
         topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
     )
@@ -76,6 +78,7 @@ def run_gui():
     topbar_canvas_container.pack(side="right")
     topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
 
+    global topbar_canvas
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
         bg=D_GREY,
@@ -85,6 +88,7 @@ def run_gui():
     )
     topbar_canvas.pack(side="right", expand=True)
 
+    global topbar_score
     topbar_score = tkinter.Label(
         topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", anchor="e"
     )
@@ -124,6 +128,28 @@ def run_gui():
     )
     high_scores_button.grid(sticky="n")
 
+    small_board = Board(
+        topbar_canvas,
+        0,
+        0,
+        D_GREY,
+        (1, 1),
+        None,
+        None,
+    )
+    small_board.resize_to_fit()
+    small_board.draw_block()
+
+    main_board = Board(
+        game_canvas,
+        game_width,
+        game_height,
+        GREY,
+        (int(game_width / 2), -2),
+        small_board,
+        topbar_score,
+    )
+
     tetris_gui = TetrisGUI(main_board, topbar_time)
     tetris_gui.move_block_down()
 
@@ -133,7 +159,7 @@ def run_gui():
     root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
-    root.bind("<f>", tetris_gui.new_game)
+    root.bind('<f>', new_game)
 
     new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
     new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
@@ -153,6 +179,32 @@ def rotate_point(point, center):
     a = point_x - x
     b = point_y - y
     return (x - b, y + a)
+
+
+def new_game(event):
+    small_board = Board(
+        topbar_canvas,
+        0,
+        0,
+        D_GREY,
+        (1, 1),
+        None,
+        None,
+    )
+    small_board.resize_to_fit()
+    small_board.draw_block()
+
+    main_board = Board(
+        game_canvas,
+        game_width,
+        game_height,
+        GREY,
+        (int(game_width / 2), -2),
+        small_board,
+        topbar_score,
+    )
+
+    tetris_gui = TetrisGUI(main_board, topbar_time)
 
 
 class Board:
@@ -409,14 +461,14 @@ class Board:
 
 
 class TetrisGUI:
-    def __init__(self, topbar_time):
+    def __init__(self, main_board, topbar_time):
         self.topbar_time = topbar_time
         self.start_time = time.time()
         self.pause_start = 0
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
-        self.new_game()
+        self.main_board = main_board
 
     def game_over_check(self):
         y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
@@ -467,29 +519,6 @@ class TetrisGUI:
             game_time = time.time() - self.start_time - self.paused_time
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
-
-    def new_game(self, event):
-        small_board = Board(
-            self.small_board.topbar_canvas,
-            0,
-            0,
-            D_GREY,
-            (1, 1),
-            None,
-            None,
-        )
-        small_board.resize_to_fit()
-        small_board.draw_block()
-
-        main_board = Board(
-            self.main_board.game_canvas,
-            game_width,
-            game_height,
-            GREY,
-            (int(game_width / 2), -2),
-            small_board,
-            self.main_board.topbar_score,
-        )
 
 
 run_gui()
