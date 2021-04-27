@@ -368,39 +368,31 @@ class Board:
         """
         Flashes the line once it's fully populated with blocks and clears it afterwards
         """
-        full_lines = []
+        self.full_lines = []
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
-                full_lines.append(x_line)
+                self.full_lines.append(x_line)
 
-        if full_lines:
+        if self.full_lines:
             for flash in range(2):
-                self.flasher(full_lines, "pink")
+                self.flasher(self.full_lines, "pink")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(full_lines, "black")
+                self.flasher(self.full_lines, "black")
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
 
-        for x_line in full_lines:
+        for x_line in self.full_lines:
             for letter, coord_list in self.landed_blocks.items():
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
 
-        if len(full_lines) == 1:
-            self.game_score += 10
-        elif len(full_lines) == 2:
-            self.game_score += 30
-        elif len(full_lines) == 3:
-            self.game_score += 60
-        elif len(full_lines) == 4:
-            self.game_score += 100
-        self.topbar_score.config(text=self.game_score)
+        
 
     def flasher(self, full_lines, fill):
         """
@@ -408,18 +400,13 @@ class Board:
         Used in conjuction with full_line clear for flashing purposes
         """
         for x in range(game_width):
-            for x_line in full_lines:
+            for x_line in self.full_lines:
                 self.draw_rectangle(x, x_line, "flash", fill)
 
 
 class TetrisGUI:
     def __init__(self, topbar_time, game_canvas, topbar_score):
         self.topbar_time = topbar_time
-        self.start_time = time.time()
-        self.pause_start = 0
-        self.paused_time = 0
-        self.game_status = GameStatus.in_progress
-        self.timer()
         self.new_game()
 
     def game_over_check(self):
@@ -472,6 +459,18 @@ class TetrisGUI:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
+    def increase_score(self):
+        if self.main_board.block_hits_bottom_if_it_moves_down():
+            if len(self.main_board.full_lines) == 1:
+                self.game_score += 10
+            elif len(self.main_board.full_lines) == 2:
+                self.game_score += 30
+            elif len(self.main_board.full_lines) == 3:
+                self.game_score += 60
+            elif len(self.main_board.full_lines) == 4:
+                self.game_score += 100
+            self.main_board.topbar_score.config(text=self.main_board.game_score)
+
     def new_game(self, event=None):
         small_board = Board(
             topbar_canvas,
@@ -494,6 +493,10 @@ class TetrisGUI:
             small_board,
             topbar_score,
         )
+        self.start_time = time.time()
+        self.pause_start = 0
+        self.paused_time = 0
+        self.game_status = GameStatus.in_progress
         self.timer()
 
 
