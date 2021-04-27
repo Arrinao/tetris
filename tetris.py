@@ -48,7 +48,6 @@ def run_gui():
     root = tkinter.Tk()
     root.resizable(False, False)
 
-    global game_canvas
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
@@ -61,7 +60,6 @@ def run_gui():
     topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
     topbar.grid(row=0, columnspan=2, sticky="we")
 
-    global topbar_time
     topbar_time = tkinter.Label(
         topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
     )
@@ -78,7 +76,6 @@ def run_gui():
     topbar_canvas_container.pack(side="right")
     topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
 
-    global topbar_canvas
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
         bg=D_GREY,
@@ -88,7 +85,6 @@ def run_gui():
     )
     topbar_canvas.pack(side="right", expand=True)
 
-    global topbar_score
     topbar_score = tkinter.Label(
         topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", anchor="e"
     )
@@ -128,7 +124,7 @@ def run_gui():
     )
     high_scores_button.grid(sticky="n")
 
-    tetris_gui = TetrisGUI(topbar_time, game_canvas, topbar_score)
+    tetris_gui = TetrisGUI(topbar_time, game_canvas, topbar_score, topbar_canvas)
     tetris_gui.move_block_down()
 
     root.bind("<Left>", tetris_gui.move_block_left)
@@ -145,6 +141,8 @@ def run_gui():
     game_mode_button.bind("<Leave>", partial(set_button_image, button_images["gamemode.png"]))
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
+
+    tetris_gui.timer()
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -413,8 +411,11 @@ class Board:
 
 
 class TetrisGUI:
-    def __init__(self, topbar_time, game_canvas, topbar_score):
+    def __init__(self, topbar_time, game_canvas, topbar_score, topbar_canvas):
         self.topbar_time = topbar_time
+        self.topbar_canvas = topbar_canvas
+        self.game_canvas = game_canvas
+        self.topbar_score = topbar_score
         self.new_game()
 
     def game_over_check(self):
@@ -468,8 +469,8 @@ class TetrisGUI:
             self.topbar_time.after(1000, self.timer)
 
     def new_game(self, event=None):
-        small_board = Board(
-            topbar_canvas,
+        self.small_board = Board(
+            self.topbar_canvas,
             0,
             0,
             D_GREY,
@@ -477,23 +478,22 @@ class TetrisGUI:
             None,
             None,
             )
-        small_board.resize_to_fit()
-        small_board.draw_block()
+        self.small_board.resize_to_fit()
+        self.small_board.draw_block()
 
         self.main_board = Board(
-            game_canvas,
+            self.game_canvas,
             game_width,
             game_height,
             GREY,
             (int(game_width / 2), -2),
-            small_board,
-            topbar_score,
+            self.small_board,
+            self.topbar_score,
         )
         self.start_time = time.time()
         self.pause_start = 0
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
-        self.timer()
         self.main_board.game_score = 0
         self.main_board.topbar_score.config(text=self.main_board.game_score)
 
