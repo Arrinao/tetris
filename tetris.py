@@ -126,6 +126,9 @@ def run_gui():
 
     tetris_gui = TetrisGUI(topbar_time, game_canvas, topbar_score, topbar_canvas)
     tetris_gui.move_block_down()
+    tetris_gui.timer()
+
+    draw_board(game_canvas)
 
     root.bind("<Left>", tetris_gui.move_block_left)
     root.bind("<Right>", tetris_gui.move_block_right)
@@ -142,11 +145,32 @@ def run_gui():
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
-    tetris_gui.timer()
-
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
+
     root.mainloop()
+
+
+def draw_board(canvas):
+    """
+    Draws the board of rectangles on top of the canvas
+    """
+    x_gap = 0
+    for x in range(game_width):
+        y_gap = 0
+        for y in range(game_height):
+            canvas.create_rectangle(
+                x_gap,
+                y_gap,
+                x_gap + square_size,
+                y_gap + square_size,
+                fill=D_GREY,
+                outline=GREY,
+            )
+            y_gap += square_size
+
+        x_gap += square_size
+
 
 
 def rotate_point(point, center):
@@ -173,27 +197,6 @@ class Board:
         self.topbar_score = topbar_score
         self.game_score = 0
         self.fast_down = False
-        self.draw_board()
-
-    def draw_board(self):
-        """
-        Draws the board of rectangles on top of the canvas
-        """
-        x_gap = 0
-        for x in range(self.width):
-            y_gap = 0
-            for y in range(self.height):
-                self.canvas.create_rectangle(
-                    x_gap,
-                    y_gap,
-                    x_gap + square_size,
-                    y_gap + square_size,
-                    fill=D_GREY,
-                    outline=self.outline_color,
-                )
-                y_gap += square_size
-
-            x_gap += square_size
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
