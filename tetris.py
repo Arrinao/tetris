@@ -392,7 +392,15 @@ class Board:
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
 
-        
+        if len(self.full_lines) == 1:
+            self.game_score += 10
+        elif len(self.full_lines) == 2:
+            self.game_score += 30
+        elif len(self.full_lines) == 3:
+            self.game_score += 60
+        elif len(self.full_lines) == 4:
+            self.game_score += 100
+        self.topbar_score.config(text=self.game_score)
 
     def flasher(self, full_lines, fill):
         """
@@ -459,17 +467,7 @@ class TetrisGUI:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    def increase_score(self):
-        if self.main_board.block_hits_bottom_if_it_moves_down():
-            if len(self.main_board.full_lines) == 1:
-                self.game_score += 10
-            elif len(self.main_board.full_lines) == 2:
-                self.game_score += 30
-            elif len(self.main_board.full_lines) == 3:
-                self.game_score += 60
-            elif len(self.main_board.full_lines) == 4:
-                self.game_score += 100
-            self.main_board.topbar_score.config(text=self.main_board.game_score)
+    
 
     def new_game(self, event=None):
         small_board = Board(
