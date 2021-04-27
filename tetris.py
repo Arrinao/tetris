@@ -183,12 +183,9 @@ def rotate_point(point, center):
 
 class Board:
     def __init__(
-        self, canvas, width, height, outline_color, current_block_center, small_board, topbar_score
+        self, canvas, current_block_center, small_board, topbar_score
     ):
         self.canvas = canvas
-        self.width = width
-        self.height = height
-        self.outline_color = outline_color
         self.landed_blocks = {}
         self.current_block_center = current_block_center
         self.block_letter = random.choice(block_letters)
@@ -474,9 +471,6 @@ class TetrisGUI:
     def new_game(self, event=None):
         self.small_board = Board(
             self.topbar_canvas,
-            0,
-            0,
-            D_GREY,
             (1, 1),
             None,
             None,
@@ -486,9 +480,6 @@ class TetrisGUI:
 
         self.main_board = Board(
             self.game_canvas,
-            game_width,
-            game_height,
-            GREY,
             (int(game_width / 2), -2),
             self.small_board,
             self.topbar_score,
