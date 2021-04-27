@@ -467,8 +467,6 @@ class TetrisGUI:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    
-
     def new_game(self, event=None):
         small_board = Board(
             topbar_canvas,
@@ -496,6 +494,8 @@ class TetrisGUI:
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
+        self.main_board.game_score = 0
+        self.main_board.topbar_score.config(text=self.main_board.game_score)
 
 
 run_gui()
