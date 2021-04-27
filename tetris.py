@@ -109,8 +109,12 @@ def run_gui():
             button_images[filename], "copy", transparent_image, "-compositingrule", "overlay"
         )
 
+    tetris_gui = TetrisGUI(topbar_time, game_canvas, topbar_score, topbar_canvas)
+    tetris_gui.move_block_down()
+    tetris_gui.timer()
+
     new_game_button = tkinter.Button(
-        sidebar, image=button_images["start.png"], borderwidth=0, highlightthickness=0
+        sidebar, image=button_images["start.png"], borderwidth=0, highlightthickness=0, command=tetris_gui.new_game
     )
     new_game_button.grid(sticky="n")
 
@@ -124,10 +128,6 @@ def run_gui():
     )
     high_scores_button.grid(sticky="n")
 
-    tetris_gui = TetrisGUI(topbar_time, game_canvas, topbar_score, topbar_canvas)
-    tetris_gui.move_block_down()
-    tetris_gui.timer()
-
     draw_board(game_canvas)
 
     root.bind("<Left>", tetris_gui.move_block_left)
@@ -136,7 +136,6 @@ def run_gui():
     root.bind("<p>", tetris_gui.pause_game)
     root.bind("<Down>", tetris_gui.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
-    root.bind('<f>', tetris_gui.new_game)
 
     new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
     new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
