@@ -150,7 +150,7 @@ def run_gui():
 
     root.mainloop()
 
-
+# Draws the board consisting of 15x10 squares before the game starts
 def draw_board(canvas):
     """
     Draws the board of rectangles on top of the canvas
