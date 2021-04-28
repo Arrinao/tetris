@@ -149,10 +149,9 @@ def run_gui():
 
     root.mainloop()
 
-# Draws the board consisting of 15x10 squares before the game starts
 def draw_board(canvas):
     """
-    Draws the board of rectangles on top of the canvas
+    Draws the board consisting of 15x10 rectangles on top of the canvas before the game starts
     """
     x_gap = 0
     for x in range(game_width):
@@ -365,37 +364,37 @@ class Board:
         """
         Flashes the line once it's fully populated with blocks and clears it afterwards
         """
-        self.full_lines = []
+        full_lines = []
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         coordinates_counter = collections.Counter(y_coordinates)
         for x_line in range(game_height):
             count = coordinates_counter[x_line]
             if count == game_width:
-                self.full_lines.append(x_line)
+                full_lines.append(x_line)
 
-        if self.full_lines:
+        if full_lines:
             for flash in range(2):
-                self.flasher(self.full_lines, "pink")
+                self.flasher(full_lines, "pink")
                 self.canvas.update()
                 time.sleep(0.1)
-                self.flasher(self.full_lines, "black")
+                self.flasher(full_lines, "black")
                 self.canvas.update()
                 time.sleep(0.1)
             self.canvas.delete("flash")
 
-        for x_line in self.full_lines:
+        for x_line in full_lines:
             for letter, coord_list in self.landed_blocks.items():
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
 
-        if len(self.full_lines) == 1:
+        if len(full_lines) == 1:
             self.game_score += 10
-        elif len(self.full_lines) == 2:
+        elif len(full_lines) == 2:
             self.game_score += 30
-        elif len(self.full_lines) == 3:
+        elif len(full_lines) == 3:
             self.game_score += 60
-        elif len(self.full_lines) == 4:
+        elif len(full_lines) == 4:
             self.game_score += 100
         self.topbar_score.config(text=self.game_score)
 
@@ -405,7 +404,7 @@ class Board:
         Used in conjuction with full_line clear for flashing purposes
         """
         for x in range(game_width):
-            for x_line in self.full_lines:
+            for x_line in full_lines:
                 self.draw_rectangle(x, x_line, "flash", fill)
 
 
@@ -467,7 +466,7 @@ class TetrisGUI:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    def new_game(self, event=None):
+    def new_game(self):
         self.small_board = Board(
             self.topbar_canvas,
             (1, 1),
