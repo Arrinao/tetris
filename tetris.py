@@ -114,7 +114,11 @@ def run_gui():
     tetris_gui.timer()
 
     new_game_button = tkinter.Button(
-        sidebar, image=button_images["start.png"], borderwidth=0, highlightthickness=0, command=tetris_gui.new_game
+        sidebar,
+        image=button_images["start.png"],
+        borderwidth=0,
+        highlightthickness=0,
+        command=tetris_gui.new_game,
     )
     new_game_button.grid(sticky="n")
 
@@ -149,6 +153,7 @@ def run_gui():
 
     root.mainloop()
 
+
 def draw_board(canvas):
     """
     Draws the board consisting of 15x10 rectangles on top of the canvas before the game starts
@@ -170,7 +175,6 @@ def draw_board(canvas):
         x_gap += square_size
 
 
-
 def rotate_point(point, center):
     x, y = center
     point_x, point_y = point
@@ -180,9 +184,7 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(
-        self, canvas, current_block_center, small_board, topbar_score
-    ):
+    def __init__(self, canvas, current_block_center, small_board, topbar_score):
         self.canvas = canvas
         self.landed_blocks = {}
         self.current_block_center = current_block_center
@@ -472,7 +474,7 @@ class TetrisGUI:
             (1, 1),
             None,
             None,
-            )
+        )
         self.small_board.resize_to_fit()
         self.small_board.draw_block()
 
