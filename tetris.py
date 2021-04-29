@@ -175,6 +175,30 @@ def draw_board(canvas):
         x_gap += square_size
 
 
+def new_game(self):
+    small_board = Board(
+        topbar_canvas,
+        (1, 1),
+        None,
+        None,
+    )
+    small_board.resize_to_fit()
+    small_board.draw_block()
+
+    main_board = Board(
+        game_canvas,
+        (int(game_width / 2), -2),
+        small_board,
+        topbar_score,
+    )
+    start_time = time.time()
+    pause_start = 0
+    paused_time = 0
+    game_status = GameStatus.in_progress
+    main_board.game_score = 0
+    main_board.topbar_score.config(text=main_board.game_score)
+
+
 def rotate_point(point, center):
     x, y = center
     point_x, point_y = point
@@ -184,16 +208,9 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, current_block_center, small_board, topbar_score):
+    def __init__(self, canvas, small_board):
         self.canvas = canvas
-        self.landed_blocks = {}
-        self.current_block_center = current_block_center
-        self.block_letter = random.choice(block_letters)
-        self.rotate_counter = 0
         self.small_board = small_board
-        self.topbar_score = topbar_score
-        self.game_score = 0
-        self.fast_down = False
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
@@ -227,6 +244,17 @@ class Board:
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", self.color_dict[letter])
 
+
+class Game:
+    def __init__(self, current_block_center, topbar_score):
+        self.landed_blocks = {}
+        self.current_block_center = current_block_center
+        self.block_letter = random.choice(block_letters)
+        self.rotate_counter = 0
+        self.topbar_score = topbar_score
+        self.game_score = 0
+        self.fast_down = False
+
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.small_board.block_letter
@@ -235,29 +263,6 @@ class Board:
         self.small_board.draw_block()
         self.rotate_counter = 0
         self.fast_down = False
-
-    def resize_to_fit(self):
-        if self.block_letter == "L":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "L_rev":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "O":
-            self.canvas.config(width=square_size * 2, height=square_size * 2)
-        if self.block_letter == "E":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "Z":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "Z_rev":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "I":
-            self.canvas.config(width=square_size * 4, height=square_size * 1)
-
-        if self.block_letter == "I":
-            self.canvas.pack(pady=square_size / 2 + 10)
-            self.current_block_center = (2, 0)
-        else:
-            self.canvas.pack(pady=10)
-            self.current_block_center = (1, 1)
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -409,8 +414,37 @@ class Board:
             for x_line in full_lines:
                 self.draw_rectangle(x, x_line, "flash", fill)
 
+    def resize_to_fit(self):
+        if self.block_letter == "L":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == "L_rev":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == "O":
+            self.canvas.config(width=square_size * 2, height=square_size * 2)
+        if self.block_letter == "E":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == "Z":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == "Z_rev":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if self.block_letter == "I":
+            self.canvas.config(width=square_size * 4, height=square_size * 1)
 
-class TetrisGUI:
+        if self.block_letter == "I":
+            self.canvas.pack(pady=square_size / 2 + 10)
+            self.current_block_center = (2, 0)
+        else:
+            self.canvas.pack(pady=10)
+            self.current_block_center = (1, 1)
+
+    def timer(self):
+        if self.game_status == GameStatus.in_progress:
+            game_time = time.time() - self.start_time - self.paused_time
+            self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
+            self.topbar_time.after(1000, self.timer)
+
+
+class TetrisControl:
     def __init__(self, topbar_time, game_canvas, topbar_score, topbar_canvas):
         self.topbar_time = topbar_time
         self.topbar_canvas = topbar_canvas
@@ -462,34 +496,6 @@ class TetrisGUI:
             self.main_board.block_rotator()
             self.main_board.draw_block()
 
-    def timer(self):
-        if self.game_status == GameStatus.in_progress:
-            game_time = time.time() - self.start_time - self.paused_time
-            self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
-            self.topbar_time.after(1000, self.timer)
-
-    def new_game(self):
-        self.small_board = Board(
-            self.topbar_canvas,
-            (1, 1),
-            None,
-            None,
-        )
-        self.small_board.resize_to_fit()
-        self.small_board.draw_block()
-
-        self.main_board = Board(
-            self.game_canvas,
-            (int(game_width / 2), -2),
-            self.small_board,
-            self.topbar_score,
-        )
-        self.start_time = time.time()
-        self.pause_start = 0
-        self.paused_time = 0
-        self.game_status = GameStatus.in_progress
-        self.main_board.game_score = 0
-        self.main_board.topbar_score.config(text=self.main_board.game_score)
 
 
 run_gui()
