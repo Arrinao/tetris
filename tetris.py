@@ -134,7 +134,8 @@ def run_gui():
 
     draw_board(game_canvas)
 
-    tetris_control = TetrisControl(topbar_time, game_canvas, topbar_score, topbar_canvas)
+    global tetris_control
+    tetris_control = TetrisControl()
 
     root.bind("<Left>", tetris_control.move_block_left)
     root.bind("<Right>", tetris_control.move_block_right)
@@ -181,6 +182,7 @@ def new_game(game_mode):
     if game_mode == 'Tetris':
         game = Game(main_board, small_board, topbar_score)
         game.move_current_block_down()
+        tetris_control.game = game
     root.mainloop()
 
 
@@ -440,13 +442,10 @@ class Game:
 
 
 class TetrisControl:
-    def __init__(self, game, game_canvas, topbar_score, topbar_canvas):
-        self.game = game
-        self.topbar_canvas = topbar_canvas
-        self.game_canvas = game_canvas
+    def __init__(self):
+        self.game = None
         self.pause_start = 0
         self.paused_time = 0
-        self.topbar_score = topbar_score
 
     def pause_game(self, event):
         if self.game_status == GameStatus.paused:
@@ -459,18 +458,18 @@ class TetrisControl:
 
     def move_block_left(self, event):
         if self.game.game_status == GameStatus.in_progress:
-            self.main_board.user_input_left()
-            self.main_board.draw_block(None, None, None)
+            self.game.main_board.user_input_left()
+            self.game.main_board.draw_block(None, None, None)
 
     def move_block_right(self, event):
         if self.game.game_status == GameStatus.in_progress:
-            self.main_board.user_input_right()
-            self.main_board.draw_block()
+            self.game.main_board.user_input_right()
+            self.game.main_board.draw_block()
 
     def move_block_down_press(self, event):
-        if not self.main_board.fast_down:
-            self.main_board.fast_down = True
-            self.main_board.user_input_down()
+        if not self.game.main_board.fast_down:
+            self.game.main_board.fast_down = True
+            self.game.main_board.user_input_down()
 
     def move_block_down_release(self, event):
         self.main_board.fast_down = False
