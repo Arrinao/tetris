@@ -198,6 +198,7 @@ class Board:
     def __init__(self, canvas, small_board):
         self.canvas = canvas
         self.small_board = small_board
+        self.landed_blocks = {}
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
@@ -209,10 +210,11 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self, current_block, block_letter, landed_blocks={}):
+    def draw_block(self, current_block, block_letter):
         """
         Draws the different shapes on the board
         """
+        print(self.landed_blocks)
         color_dict = {
             "L": YELLOW,
             "I": RED,
@@ -227,7 +229,7 @@ class Board:
         for x, y in current_block:
             self.draw_rectangle(x, y, "block", color_dict[block_letter])
 
-        for letter, coord_list in landed_blocks.items():
+        for letter, coord_list in self.landed_blocks.items():
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", color_dict[letter])
 
@@ -259,40 +261,40 @@ class Game:
     def get_block_shape(self):
         (x, y) = self.current_block_center
         if self.block_letter == "I":
-            current_block = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
+            coords = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L":
-            current_block = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L_rev":
-            current_block = [[(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]]
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
+            coords = [[(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "O":
-            current_block = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+            coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
 
         if self.block_letter == "E":
-            current_block = [[(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]]
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "Z":
-            current_block = [[(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]]
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
+            coords = [[(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "Z_rev":
-            current_block = [[(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
-            current_block.append([rotate_point(point, self.current_block_center) for point in current_block[-1]])
+            coords = [[(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
-        return current_block[self.rotate_counter % len(current_block)]
-        print(current_block[self.rotate_counter % len(current_block)])
+        self.current_block = coords[self.rotate_counter % len(coords)]
+        return self.current_block
 
     def move_current_block_down(self):
         """
@@ -303,14 +305,14 @@ class Game:
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
+                self.landed_blocks = self.main_board.landed_blocks
                 self.full_line_clear()
                 self.new_block()
             elif not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
                 self.game_over_check()
-                self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
-                print(self.get_block_shape())
+                self.main_board.draw_block(self.current_block, self.block_letter)
                 self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
     def user_input_left(self):
@@ -323,6 +325,7 @@ class Game:
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
+        self.main_board.draw_block(self.current_block, self.block_letter)
 
     def user_input_right(self):
         """
@@ -343,11 +346,11 @@ class Game:
             self.canvas.after(25, self.user_input_down)
 
     def coord_extractor(self):
-        current_block = []
+        coords = []
         for coord in self.landed_blocks.values():
             for (x, y) in coord:
-                current_block.append((x, y))
-        return current_block
+                coords.append((x, y))
+        return coords
 
     def block_rotator(self):
         """
@@ -458,26 +461,26 @@ class TetrisControl:
 
     def move_block_left(self, event):
         if self.game.game_status == GameStatus.in_progress:
-            self.game.main_board.user_input_left()
-            self.game.main_board.draw_block(None, None, None)
+            self.game.user_input_left()
+
 
     def move_block_right(self, event):
         if self.game.game_status == GameStatus.in_progress:
-            self.game.main_board.user_input_right()
+            self.game.user_input_right()
             self.game.main_board.draw_block()
 
     def move_block_down_press(self, event):
         if not self.game.main_board.fast_down:
-            self.game.main_board.fast_down = True
+            self.game.fast_down = True
             self.game.main_board.user_input_down()
 
     def move_block_down_release(self, event):
-        self.main_board.fast_down = False
+        self.game.fast_down = False
 
     def rotate_block(self, event):
         if self.game_status == GameStatus.in_progress:
-            self.main_board.block_rotator()
-            self.main_board.draw_block()
+            self.game.block_rotator()
+            self.game.main_board.draw_block()
 
 
 run_gui()
