@@ -210,7 +210,7 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self, current_block, block_letter):
+    def draw_block(self, current_block, block_letter, landed_blocks={}):
         """
         Draws the different shapes on the board
         """
@@ -229,7 +229,7 @@ class Board:
         for x, y in current_block:
             self.draw_rectangle(x, y, "block", color_dict[block_letter])
 
-        for letter, coord_list in self.landed_blocks.items():
+        for letter, coord_list in landed_blocks.items():
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", color_dict[letter])
 
@@ -293,26 +293,29 @@ class Game:
             coords = [[(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
-        self.current_block = coords[self.rotate_counter % len(coords)]
-        return self.current_block
+        return coords[self.rotate_counter % len(coords)]
+
+    def block_hits_bottom_if_it_moves_down(self):
+        return any(
+            (x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()
+        ) or any(y + 1 == game_height for (x, y) in self.get_block_shape())
 
     def move_current_block_down(self):
         """
         Moves the current block downwards one square on the canvas
         """
         if self.game_status == GameStatus.in_progress:
-            if any((x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()) or any(y + 1 == game_height for (x, y) in self.get_block_shape()): #checks for block hitting bottom or landed blocks
+            if self.block_hits_bottom_if_it_moves_down():
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
-                self.landed_blocks = self.main_board.landed_blocks
                 self.full_line_clear()
                 self.new_block()
             elif not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
                 self.game_over_check()
-                self.main_board.draw_block(self.current_block, self.block_letter)
+                self.main_board.draw_block(self.get_block_shape(), self.block_letter)
                 self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
     def user_input_left(self):
@@ -325,7 +328,7 @@ class Game:
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
-        self.main_board.draw_block(self.current_block, self.block_letter)
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
 
     def user_input_right(self):
         """
@@ -337,13 +340,14 @@ class Game:
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter)
 
     def user_input_down(self):
         if self.fast_down and not self.block_hits_bottom_if_it_moves_down():
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-            self.main_board.draw_block()
-            self.canvas.after(25, self.user_input_down)
+            self.main_board.draw_block(self.get_block_shape(), self.block_letter)
+            self.main_board.canvas.after(25, self.user_input_down)
 
     def coord_extractor(self):
         coords = []
@@ -463,16 +467,14 @@ class TetrisControl:
         if self.game.game_status == GameStatus.in_progress:
             self.game.user_input_left()
 
-
     def move_block_right(self, event):
         if self.game.game_status == GameStatus.in_progress:
             self.game.user_input_right()
-            self.game.main_board.draw_block()
 
     def move_block_down_press(self, event):
-        if not self.game.main_board.fast_down:
+        if not self.game.fast_down:
             self.game.fast_down = True
-            self.game.main_board.user_input_down()
+            self.game.user_input_down()
 
     def move_block_down_release(self, event):
         self.game.fast_down = False
