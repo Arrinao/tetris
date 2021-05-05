@@ -210,11 +210,11 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self, current_block, block_letter, current_block_center=(int(game_width / 2), -2), landed_blocks={}):
+    def draw_block(self, current_block=None, block_letter=None, current_block_center=(int(game_width / 2), -2), landed_blocks={}):
         """
         Draws the different shapes on the board
         """
-        print(self.landed_blocks)
+        print(landed_blocks)
         color_dict = {
             "L": YELLOW,
             "I": RED,
@@ -226,8 +226,9 @@ class Board:
         }
         self.canvas.delete("block")
 
-        for x, y in current_block:
-            self.draw_rectangle(x, y, "block", color_dict[block_letter])
+        if current_block is not None:
+            for x, y in current_block:
+                self.draw_rectangle(x, y, "block", color_dict[block_letter])
 
         for letter, coord_list in landed_blocks.items():
             for (x, y) in coord_list:
@@ -278,8 +279,7 @@ class Game:
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.upcoming_block_letter
         self.upcoming_block_letter = random.choice(block_letters)
-        self.resize_to_fit()
-        self.small_board.draw_block(self.get_block_shape, self.block_letter)
+        self.small_board.draw_block(self.get_block_shape(), self.block_letter)
         self.rotate_counter = 0
         self.fast_down = False
 
@@ -331,11 +331,12 @@ class Game:
         """
         if self.game_status == GameStatus.in_progress:
             if self.block_hits_bottom_if_it_moves_down():
-                print('uuuuga')
+                print('HI')
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
-                self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+                self.main_board.draw_block(self.landed_blocks)
+                print(self.landed_blocks)
                 self.full_line_clear()
                 self.new_block()
             elif not self.fast_down:
