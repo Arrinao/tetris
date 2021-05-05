@@ -210,7 +210,7 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self, current_block, block_letter, landed_blocks={}):
+    def draw_block(self, current_block, block_letter, current_block_center=(int(game_width / 2), -2), landed_blocks={}):
         """
         Draws the different shapes on the board
         """
@@ -233,6 +233,31 @@ class Board:
             for (x, y) in coord_list:
                 self.draw_rectangle(x, y, "block", color_dict[letter])
 
+        if self.small_board is None:
+            self.resize_to_fit(block_letter)
+
+    def resize_to_fit(self, block_letter):
+        if block_letter == "L":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if block_letter == "L_rev":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if block_letter == "O":
+            self.canvas.config(width=square_size * 2, height=square_size * 2)
+        if block_letter == "E":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if block_letter == "Z":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if block_letter == "Z_rev":
+            self.canvas.config(width=square_size * 3, height=square_size * 2)
+        if block_letter == "I":
+            self.canvas.config(width=square_size * 4, height=square_size * 1)
+
+        if block_letter == "I":
+            self.canvas.pack(pady=square_size / 2 + 10)
+        else:
+            self.canvas.pack(pady=10)
+            self.current_block_center = (1, 1)
+
 
 class Game:
     def __init__(self, main_board, small_board, topbar_score):
@@ -253,8 +278,8 @@ class Game:
         self.current_block_center = (int(game_width / 2), -2)
         self.block_letter = self.upcoming_block_letter
         self.upcoming_block_letter = random.choice(block_letters)
-        self.small_board.resize_to_fit()
-        self.small_board.draw_block(self.get_block_shape, self.block_letter, None)
+        self.resize_to_fit()
+        self.small_board.draw_block(self.get_block_shape, self.block_letter)
         self.rotate_counter = 0
         self.fast_down = False
 
@@ -306,9 +331,11 @@ class Game:
         """
         if self.game_status == GameStatus.in_progress:
             if self.block_hits_bottom_if_it_moves_down():
+                print('uuuuga')
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
+                self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
                 self.full_line_clear()
                 self.new_block()
             elif not self.fast_down:
@@ -328,7 +355,7 @@ class Game:
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
-        self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter)
 
     def user_input_right(self):
         """
@@ -412,29 +439,6 @@ class Game:
         for x in range(game_width):
             for x_line in full_lines:
                 self.draw_rectangle(x, x_line, "flash", fill)
-
-    def resize_to_fit(self):
-        if self.block_letter == "L":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "L_rev":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "O":
-            self.canvas.config(width=square_size * 2, height=square_size * 2)
-        if self.block_letter == "E":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "Z":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "Z_rev":
-            self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "I":
-            self.canvas.config(width=square_size * 4, height=square_size * 1)
-
-        if self.block_letter == "I":
-            self.canvas.pack(pady=square_size / 2 + 10)
-            self.current_block_center = (2, 0)
-        else:
-            self.canvas.pack(pady=10)
-            self.current_block_center = (1, 1)
 
     def timer(self):
         if self.game_status == GameStatus.in_progress:
