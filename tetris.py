@@ -180,7 +180,7 @@ def new_game(game_mode):
     small_board = Board(topbar_canvas, None)
     main_board = Board(game_canvas, small_board)
     if game_mode == 'Tetris':
-        game = Game(main_board, small_board, topbar_score)
+        game = Game(main_board, small_board, topbar_score, topbar_time)
         game.move_current_block_down()
         tetris_control.game = game
     root.mainloop()
@@ -259,7 +259,7 @@ class Board:
 
 
 class Game:
-    def __init__(self, main_board, small_board, topbar_score):
+    def __init__(self, main_board, small_board, topbar_score, topbar_time):
         self.landed_blocks = {}
         self.block_letter = random.choice(block_letters)
         self.upcoming_block_letter = random.choice(block_letters)
@@ -267,11 +267,15 @@ class Game:
         self.topbar_score = topbar_score
         self.main_board = main_board
         self.small_board = small_board
+        self.topbar_time = topbar_time
         self.fast_down = False
         self.start_time = time.time()
         self.rotate_counter = 0
         self.game_score = 0
+        self.pause_start = 0
+        self.paused_time = 0
         self.game_status = GameStatus.in_progress
+        self.timer()
 
     def new_block(self):
         self.current_block_center = (int(game_width / 2), -2)
@@ -327,7 +331,9 @@ class Game:
         """
         Moves the current block downwards one square on the canvas
         """
-        if self.game_status == GameStatus.in_progress:
+        if self.game_status == GameStatus.paused:
+            self.main_board.canvas.after(game_speed, self.move_current_block_down)
+        elif self.game_status == GameStatus.in_progress:
             if self.block_hits_bottom_if_it_moves_down():
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
@@ -452,17 +458,15 @@ class Game:
 class TetrisControl:
     def __init__(self):
         self.game = None
-        self.pause_start = 0
-        self.paused_time = 0
 
     def pause_game(self, event):
-        if self.game_status == GameStatus.paused:
-            self.game_status = GameStatus.in_progress
-            self.paused_time += time.time() - self.pause_start
-            self.timer()
-        elif self.game_status == GameStatus.in_progress:
-            self.game_status = GameStatus.paused
-            self.pause_start = time.time()
+        if self.game.game_status == GameStatus.paused:
+            self.game.game_status = GameStatus.in_progress
+            self.game.paused_time += time.time() - self.game.pause_start
+            self.game.timer()
+        elif self.game.game_status == GameStatus.in_progress:
+            self.game.game_status = GameStatus.paused
+            self.game.pause_start = time.time()
 
     def move_block_left(self, event):
         if self.game.game_status == GameStatus.in_progress:
