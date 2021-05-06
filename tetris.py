@@ -342,7 +342,7 @@ class Game:
                 self.current_block_center = (x, y + 1)
                 self.game_over_check()
                 self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
-                self.main_board.canvas.after(game_speed, self.move_current_block_down)
+            self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
     def user_input_left(self):
         """
@@ -481,7 +481,6 @@ class TetrisControl:
 
     def move_block_down_release(self, event):
         self.game.fast_down = False
-        self.game.move_current_block_down()
 
     def rotate_block(self, event):
         if self.game_status == GameStatus.in_progress:
