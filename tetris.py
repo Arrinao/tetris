@@ -198,7 +198,6 @@ class Board:
     def __init__(self, canvas, small_board):
         self.canvas = canvas
         self.small_board = small_board
-        self.landed_blocks = {}
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
@@ -214,8 +213,6 @@ class Board:
         """
         Draws the different shapes on the board
         """
-        landed_blocks = self.landed_blocks
-        print(landed_blocks)
         color_dict = {
             "L": YELLOW,
             "I": RED,
@@ -230,8 +227,8 @@ class Board:
         if self.small_board is not None:
             for x, y in current_block:
                 self.draw_rectangle(x, y, "block", color_dict[block_letter])
-            print(self.landed_blocks)
-            for letter, coord_list in self.landed_blocks.items():
+            print(landed_blocks)
+            for letter, coord_list in landed_blocks.items():
                 for (x, y) in coord_list:
                     self.draw_rectangle(x, y, "block", color_dict[letter])
         else:
@@ -284,7 +281,6 @@ class Game:
         self.small_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
         self.rotate_counter = 0
         self.fast_down = False
-        self.move_current_block_down()
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -485,6 +481,7 @@ class TetrisControl:
 
     def move_block_down_release(self, event):
         self.game.fast_down = False
+        self.game.move_current_block_down()
 
     def rotate_block(self, event):
         if self.game_status == GameStatus.in_progress:
