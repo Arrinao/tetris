@@ -227,7 +227,6 @@ class Board:
         if self.small_board is not None:
             for x, y in current_block:
                 self.draw_rectangle(x, y, "block", color_dict[block_letter])
-            print(landed_blocks)
             for letter, coord_list in landed_blocks.items():
                 for (x, y) in coord_list:
                     self.draw_rectangle(x, y, "block", color_dict[letter])
@@ -334,7 +333,6 @@ class Game:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
                 self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
-                print(self.landed_blocks)
                 self.full_line_clear()
                 self.new_block()
             elif not self.fast_down:
@@ -392,6 +390,7 @@ class Game:
             for (x, y) in self.get_block_shape()
         ):
             self.rotate_counter -= 1
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
 
     def full_line_clear(self):
         """
@@ -408,12 +407,12 @@ class Game:
         if full_lines:
             for flash in range(2):
                 self.flasher(full_lines, "pink")
-                self.canvas.update()
+                self.main_board.canvas.update()
                 time.sleep(0.1)
                 self.flasher(full_lines, "black")
-                self.canvas.update()
+                self.main_board.canvas.update()
                 time.sleep(0.1)
-            self.canvas.delete("flash")
+            self.main_board.canvas.delete("flash")
 
         for x_line in full_lines:
             for letter, coord_list in self.landed_blocks.items():
@@ -437,7 +436,7 @@ class Game:
         """
         for x in range(game_width):
             for x_line in full_lines:
-                self.draw_rectangle(x, x_line, "flash", fill)
+                self.main_board.draw_rectangle(x, x_line, "flash", fill)
 
     def timer(self):
         if self.game_status == GameStatus.in_progress:
@@ -483,9 +482,8 @@ class TetrisControl:
         self.game.fast_down = False
 
     def rotate_block(self, event):
-        if self.game_status == GameStatus.in_progress:
+        if self.game.game_status == GameStatus.in_progress:
             self.game.block_rotator()
-            self.game.main_board.draw_block()
 
 
 run_gui()
