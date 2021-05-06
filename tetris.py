@@ -182,6 +182,7 @@ def new_game(game_mode):
     if game_mode == 'Tetris':
         game = Game(main_board, small_board, topbar_score, topbar_time)
         game.move_current_block_down()
+        small_board.draw_block(game.get_block_shape(), game.upcoming_block_letter, game.landed_blocks)
         tetris_control.game = game
     root.mainloop()
 
@@ -225,15 +226,14 @@ class Board:
         self.canvas.delete("block")
 
         if self.small_board is not None:
-            for x, y in current_block:
-                self.draw_rectangle(x, y, "block", color_dict[block_letter])
             for letter, coord_list in landed_blocks.items():
                 for (x, y) in coord_list:
                     self.draw_rectangle(x, y, "block", color_dict[letter])
         else:
-            for x, y in current_block:
-                self.draw_rectangle(x, y, "block", color_dict[block_letter])
             self.resize_to_fit(block_letter)
+
+        for x, y in current_block:
+            self.draw_rectangle(x, y, "block", color_dict[block_letter])
 
     def resize_to_fit(self, block_letter):
         if block_letter == "L":
