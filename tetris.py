@@ -332,8 +332,8 @@ class Game:
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
-                self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
                 self.full_line_clear()
+                self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
                 self.new_block()
             elif not self.fast_down:
                 x, y = self.current_block_center
