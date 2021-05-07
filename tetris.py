@@ -118,7 +118,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=new_game(game_mode='Tetris'),
+        command=new_game
     )
     new_game_button.grid(sticky="n")
 
@@ -176,14 +176,13 @@ def draw_board(canvas):
         x_gap += square_size
 
 
-def new_game(game_mode):
+def new_game():
     small_board = Board(topbar_canvas, None)
     main_board = Board(game_canvas, small_board)
-    if game_mode == 'Tetris':
-        game = Game(main_board, small_board, topbar_score, topbar_time)
-        game.move_current_block_down()
-        small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
-        tetris_control.game = game
+    game = Game(main_board, small_board, topbar_score, topbar_time)
+    game.move_current_block_down()
+    small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
+    tetris_control.game = game
     root.mainloop()
 
 
@@ -518,5 +517,5 @@ class TetrisControl:
 
 
 run_gui()
-new_game(game_mode='Tetris')
+new_game()
 
