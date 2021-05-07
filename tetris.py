@@ -118,7 +118,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=new_game,
+        command=new_game(game_mode='Tetris'),
     )
     new_game_button.grid(sticky="n")
 
@@ -182,7 +182,7 @@ def new_game(game_mode):
     if game_mode == 'Tetris':
         game = Game(main_board, small_board, topbar_score, topbar_time)
         game.move_current_block_down()
-        small_board.draw_block(game.get_block_shape(), game.upcoming_block_letter, game.landed_blocks)
+        small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
         tetris_control.game = game
     root.mainloop()
 
@@ -210,7 +210,7 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self, current_block, block_letter, landed_blocks, current_block_center=(int(game_width / 2), -2)):
+    def draw_block(self, block, block_letter, landed_blocks):
         """
         Draws the different shapes on the board
         """
@@ -232,7 +232,7 @@ class Board:
         else:
             self.resize_to_fit(block_letter)
 
-        for x, y in current_block:
+        for x, y in block:
             self.draw_rectangle(x, y, "block", color_dict[block_letter])
 
     def resize_to_fit(self, block_letter):
@@ -250,12 +250,9 @@ class Board:
             self.canvas.config(width=square_size * 3, height=square_size * 2)
         if block_letter == "I":
             self.canvas.config(width=square_size * 4, height=square_size * 1)
-
-        if block_letter == "I":
             self.canvas.pack(pady=square_size / 2 + 10)
         else:
             self.canvas.pack(pady=10)
-            self.current_block_center = (1, 1)
 
 
 class Game:
@@ -264,6 +261,7 @@ class Game:
         self.block_letter = random.choice(block_letters)
         self.upcoming_block_letter = random.choice(block_letters)
         self.current_block_center = (int(game_width / 2), -2)
+        self.upcoming_block_center = (1, 1)
         self.topbar_score = topbar_score
         self.main_board = main_board
         self.small_board = small_board
@@ -278,12 +276,13 @@ class Game:
         self.timer()
 
     def new_block(self):
-        self.current_block_center = (int(game_width / 2), -2)
-        self.block_letter = self.upcoming_block_letter
-        self.upcoming_block_letter = random.choice(block_letters)
-        self.small_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
-        self.rotate_counter = 0
-        self.fast_down = False
+        if self.game_status == GameStatus.in_progress:
+            self.current_block_center = (int(game_width / 2), -2)
+            self.block_letter = self.upcoming_block_letter
+            self.upcoming_block_letter = random.choice(block_letters)
+            self.small_board.draw_block(self.get_upcoming_block_shape(), self.upcoming_block_letter, self.landed_blocks)
+            self.rotate_counter = 0
+            self.fast_down = False
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -322,6 +321,35 @@ class Game:
 
         return coords[self.rotate_counter % len(coords)]
 
+    def get_upcoming_block_shape(self):
+        if self.upcoming_block_letter == 'I':
+            self.upcoming_block_center = (2, 0)
+        else:
+            self.upcoming_block_center = (1, 1)
+        (x, y) = self.upcoming_block_center
+
+        if self.upcoming_block_letter == "I":
+            coords = [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "L":
+            coords = [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]
+
+        if self.upcoming_block_letter == "L_rev":
+            coords = [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "O":
+            coords = [(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]
+
+        if self.upcoming_block_letter == "E":
+            coords = [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]
+
+        if self.upcoming_block_letter == "Z":
+            coords = [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "Z_rev":
+            coords = [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
+        return coords
+
     def block_hits_bottom_if_it_moves_down(self):
         return any(
             (x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()
@@ -339,11 +367,11 @@ class Game:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
                 self.full_line_clear()
+                self.game_over_check()
                 self.new_block()
             elif not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
-                self.game_over_check()
             self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
             self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
