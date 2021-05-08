@@ -26,7 +26,7 @@ TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
-GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
+GameStatus = Enum("GameStatus", "in_progress, game_over, paused")
 
 try:
     # When an end user is running the app or exe created with pyinstaller,
@@ -43,11 +43,12 @@ def set_button_image(button_image, event):
     event.widget.config(image=button_image)
 
 
+root = tkinter.Tk()
+root.resizable(False, False)
+
+
 def run_gui():
-
-    root = tkinter.Tk()
-    root.resizable(False, False)
-
+    global game_canvas
     game_canvas = tkinter.Canvas(
         root,
         width=square_size * game_width,
@@ -60,6 +61,7 @@ def run_gui():
     topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
     topbar.grid(row=0, columnspan=2, sticky="we")
 
+    global topbar_time
     topbar_time = tkinter.Label(
         topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
     )
@@ -76,6 +78,7 @@ def run_gui():
     topbar_canvas_container.pack(side="right")
     topbar_canvas_container.pack_propagate(0)  # don't overlook width and height
 
+    global topbar_canvas
     topbar_canvas = tkinter.Canvas(
         topbar_canvas_container,
         bg=D_GREY,
@@ -85,6 +88,7 @@ def run_gui():
     )
     topbar_canvas.pack(side="right", expand=True)
 
+    global topbar_score
     topbar_score = tkinter.Label(
         topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", anchor="e"
     )
@@ -109,16 +113,15 @@ def run_gui():
             button_images[filename], "copy", transparent_image, "-compositingrule", "overlay"
         )
 
-    tetris_gui = TetrisGUI(topbar_time, game_canvas, topbar_score, topbar_canvas)
-    tetris_gui.move_block_down()
-    tetris_gui.timer()
+    global tetris_control
+    tetris_control = TetrisControl()
 
     new_game_button = tkinter.Button(
         sidebar,
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=tetris_gui.new_game,
+        command=partial(tetris_control.game_over, forced=True)
     )
     new_game_button.grid(sticky="n")
 
@@ -134,12 +137,12 @@ def run_gui():
 
     draw_board(game_canvas)
 
-    root.bind("<Left>", tetris_gui.move_block_left)
-    root.bind("<Right>", tetris_gui.move_block_right)
-    root.bind("<Up>", tetris_gui.rotate_block)
-    root.bind("<p>", tetris_gui.pause_game)
-    root.bind("<Down>", tetris_gui.move_block_down_press)
-    root.bind("<KeyRelease-Down>", tetris_gui.move_block_down_release)
+    root.bind("<Left>", tetris_control.move_block_left)
+    root.bind("<Right>", tetris_control.move_block_right)
+    root.bind("<Up>", tetris_control.rotate_block)
+    root.bind("<p>", tetris_control.pause_game)
+    root.bind("<Down>", tetris_control.move_block_down_press)
+    root.bind("<KeyRelease-Down>", tetris_control.move_block_down_release)
 
     new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
     new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
@@ -150,8 +153,6 @@ def run_gui():
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
-
-    root.mainloop()
 
 
 def draw_board(canvas):
@@ -175,6 +176,15 @@ def draw_board(canvas):
         x_gap += square_size
 
 
+def new_game():
+    small_board = Board(topbar_canvas, None)
+    main_board = Board(game_canvas, small_board)
+    game = Game(main_board, small_board, topbar_score, topbar_time)
+    game.move_current_block_down()
+    small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
+    tetris_control.game = game
+
+
 def rotate_point(point, center):
     x, y = center
     point_x, point_y = point
@@ -184,16 +194,9 @@ def rotate_point(point, center):
 
 
 class Board:
-    def __init__(self, canvas, current_block_center, small_board, topbar_score):
+    def __init__(self, canvas, small_board):
         self.canvas = canvas
-        self.landed_blocks = {}
-        self.current_block_center = current_block_center
-        self.block_letter = random.choice(block_letters)
-        self.rotate_counter = 0
         self.small_board = small_board
-        self.topbar_score = topbar_score
-        self.game_score = 0
-        self.fast_down = False
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
@@ -205,11 +208,11 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self):
+    def draw_block(self, block, block_letter, landed_blocks):
         """
         Draws the different shapes on the board
         """
-        self.color_dict = {
+        color_dict = {
             "L": YELLOW,
             "I": RED,
             "E": GREEN,
@@ -220,44 +223,64 @@ class Board:
         }
         self.canvas.delete("block")
 
-        for x, y in self.get_block_shape():
-            self.draw_rectangle(x, y, "block", self.color_dict[self.block_letter])
+        if self.small_board is not None:
+            for letter, coord_list in landed_blocks.items():
+                for (x, y) in coord_list:
+                    self.draw_rectangle(x, y, "block", color_dict[letter])
+        else:
+            self.resize_to_fit(block_letter)
 
-        for letter, coord_list in self.landed_blocks.items():
-            for (x, y) in coord_list:
-                self.draw_rectangle(x, y, "block", self.color_dict[letter])
+        for x, y in block:
+            self.draw_rectangle(x, y, "block", color_dict[block_letter])
 
-    def new_block(self):
-        self.current_block_center = (int(game_width / 2), -2)
-        self.block_letter = self.small_board.block_letter
-        self.small_board.block_letter = random.choice(block_letters)
-        self.small_board.resize_to_fit()
-        self.small_board.draw_block()
-        self.rotate_counter = 0
-        self.fast_down = False
-
-    def resize_to_fit(self):
-        if self.block_letter == "L":
+    def resize_to_fit(self, block_letter):
+        if block_letter == "L":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "L_rev":
+        if block_letter == "L_rev":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "O":
+        if block_letter == "O":
             self.canvas.config(width=square_size * 2, height=square_size * 2)
-        if self.block_letter == "E":
+        if block_letter == "E":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "Z":
+        if block_letter == "Z":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "Z_rev":
+        if block_letter == "Z_rev":
             self.canvas.config(width=square_size * 3, height=square_size * 2)
-        if self.block_letter == "I":
+        if block_letter == "I":
             self.canvas.config(width=square_size * 4, height=square_size * 1)
-
-        if self.block_letter == "I":
             self.canvas.pack(pady=square_size / 2 + 10)
-            self.current_block_center = (2, 0)
         else:
             self.canvas.pack(pady=10)
-            self.current_block_center = (1, 1)
+
+
+class Game:
+    def __init__(self, main_board, small_board, topbar_score, topbar_time):
+        self.landed_blocks = {}
+        self.block_letter = random.choice(block_letters)
+        self.upcoming_block_letter = random.choice(block_letters)
+        self.current_block_center = (int(game_width / 2), -2)
+        self.upcoming_block_center = (1, 1)
+        self.topbar_score = topbar_score
+        self.main_board = main_board
+        self.small_board = small_board
+        self.topbar_time = topbar_time
+        self.fast_down = False
+        self.start_time = time.time()
+        self.rotate_counter = 0
+        self.game_score = 0
+        self.pause_start = 0
+        self.paused_time = 0
+        self.game_status = GameStatus.in_progress
+        self.timer()
+
+    def new_block(self):
+        if self.game_status == GameStatus.in_progress:
+            self.current_block_center = (int(game_width / 2), -2)
+            self.block_letter = self.upcoming_block_letter
+            self.upcoming_block_letter = random.choice(block_letters)
+            self.small_board.draw_block(self.get_upcoming_block_shape(), self.upcoming_block_letter, self.landed_blocks)
+            self.rotate_counter = 0
+            self.fast_down = False
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
@@ -296,6 +319,35 @@ class Board:
 
         return coords[self.rotate_counter % len(coords)]
 
+    def get_upcoming_block_shape(self):
+        if self.upcoming_block_letter == 'I':
+            self.upcoming_block_center = (2, 0)
+        else:
+            self.upcoming_block_center = (1, 1)
+        (x, y) = self.upcoming_block_center
+
+        if self.upcoming_block_letter == "I":
+            coords = [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "L":
+            coords = [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]
+
+        if self.upcoming_block_letter == "L_rev":
+            coords = [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "O":
+            coords = [(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]
+
+        if self.upcoming_block_letter == "E":
+            coords = [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]
+
+        if self.upcoming_block_letter == "Z":
+            coords = [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "Z_rev":
+            coords = [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
+        return coords
+
     def block_hits_bottom_if_it_moves_down(self):
         return any(
             (x, y + 1) in self.coord_extractor() for (x, y) in self.get_block_shape()
@@ -305,15 +357,21 @@ class Board:
         """
         Moves the current block downwards one square on the canvas
         """
-        if self.block_hits_bottom_if_it_moves_down():
-            if self.block_letter not in self.landed_blocks:
-                self.landed_blocks[self.block_letter] = []
-            self.landed_blocks[self.block_letter].extend(self.get_block_shape())
-            self.full_line_clear()
-            self.new_block()
-        elif not self.fast_down:
-            x, y = self.current_block_center
-            self.current_block_center = (x, y + 1)
+        if self.game_status == GameStatus.paused:
+            self.main_board.canvas.after(game_speed, self.move_current_block_down)
+        elif self.game_status == GameStatus.in_progress:
+            if self.block_hits_bottom_if_it_moves_down():
+                if self.block_letter not in self.landed_blocks:
+                    self.landed_blocks[self.block_letter] = []
+                self.landed_blocks[self.block_letter].extend(self.get_block_shape())
+                self.full_line_clear()
+                self.game_over()
+                self.new_block()
+            elif not self.fast_down:
+                x, y = self.current_block_center
+                self.current_block_center = (x, y + 1)
+            self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+            self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
     def user_input_left(self):
         """
@@ -325,6 +383,7 @@ class Board:
             return
         x, y = self.current_block_center
         self.current_block_center = (x - 1, y)
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
 
     def user_input_right(self):
         """
@@ -336,13 +395,14 @@ class Board:
             return
         x, y = self.current_block_center
         self.current_block_center = (x + 1, y)
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
 
     def user_input_down(self):
         if self.fast_down and not self.block_hits_bottom_if_it_moves_down():
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-            self.draw_block()
-            self.canvas.after(25, self.user_input_down)
+            self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+            self.main_board.canvas.after(25, self.user_input_down)
 
     def coord_extractor(self):
         coords = []
@@ -361,6 +421,7 @@ class Board:
             for (x, y) in self.get_block_shape()
         ):
             self.rotate_counter -= 1
+        self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
 
     def full_line_clear(self):
         """
@@ -377,19 +438,18 @@ class Board:
         if full_lines:
             for flash in range(2):
                 self.flasher(full_lines, "pink")
-                self.canvas.update()
+                self.main_board.canvas.update()
                 time.sleep(0.1)
                 self.flasher(full_lines, "black")
-                self.canvas.update()
+                self.main_board.canvas.update()
                 time.sleep(0.1)
-            self.canvas.delete("flash")
+            self.main_board.canvas.delete("flash")
 
         for x_line in full_lines:
             for letter, coord_list in self.landed_blocks.items():
                 self.landed_blocks[letter] = [(a, b) for (a, b) in coord_list if b > x_line] + [
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
-
         if len(full_lines) == 1:
             self.game_score += 10
         elif len(full_lines) == 2:
@@ -407,60 +467,7 @@ class Board:
         """
         for x in range(game_width):
             for x_line in full_lines:
-                self.draw_rectangle(x, x_line, "flash", fill)
-
-
-class TetrisGUI:
-    def __init__(self, topbar_time, game_canvas, topbar_score, topbar_canvas):
-        self.topbar_time = topbar_time
-        self.topbar_canvas = topbar_canvas
-        self.game_canvas = game_canvas
-        self.topbar_score = topbar_score
-        self.new_game()
-
-    def game_over_check(self):
-        y_coordinates = [y for (x, y) in self.main_board.coord_extractor()]
-        if any(y < 0 for y in y_coordinates):
-            self.game_status = GameStatus.game_lost
-
-    def pause_game(self, event):
-        if self.game_status == GameStatus.paused:
-            self.game_status = GameStatus.in_progress
-            self.paused_time += time.time() - self.pause_start
-            self.timer()
-        elif self.game_status == GameStatus.in_progress:
-            self.game_status = GameStatus.paused
-            self.pause_start = time.time()
-
-    def move_block_left(self, event):
-        if self.game_status == GameStatus.in_progress:
-            self.main_board.user_input_left()
-            self.main_board.draw_block()
-
-    def move_block_right(self, event):
-        if self.game_status == GameStatus.in_progress:
-            self.main_board.user_input_right()
-            self.main_board.draw_block()
-
-    def move_block_down(self):
-        if self.game_status == GameStatus.in_progress:
-            self.main_board.move_current_block_down()
-            self.game_over_check()
-            self.main_board.draw_block()
-        self.main_board.canvas.after(game_speed, self.move_block_down)
-
-    def move_block_down_press(self, event):
-        if not self.main_board.fast_down:
-            self.main_board.fast_down = True
-            self.main_board.user_input_down()
-
-    def move_block_down_release(self, event):
-        self.main_board.fast_down = False
-
-    def rotate_block(self, event):
-        if self.game_status == GameStatus.in_progress:
-            self.main_board.block_rotator()
-            self.main_board.draw_block()
+                self.main_board.draw_rectangle(x, x_line, "flash", fill)
 
     def timer(self):
         if self.game_status == GameStatus.in_progress:
@@ -468,28 +475,57 @@ class TetrisGUI:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    def new_game(self):
-        self.small_board = Board(
-            self.topbar_canvas,
-            (1, 1),
-            None,
-            None,
-        )
-        self.small_board.resize_to_fit()
-        self.small_board.draw_block()
+    def game_over(self, forced=False):
+        y_coordinates = [y for (x, y) in self.coord_extractor()]
+        if any(y < 0 for y in y_coordinates):
+            self.game_status = GameStatus.game_over
+        elif forced == True:
+            self.game_status = GameStatus.game_over
+            new_game()
 
-        self.main_board = Board(
-            self.game_canvas,
-            (int(game_width / 2), -2),
-            self.small_board,
-            self.topbar_score,
-        )
-        self.start_time = time.time()
-        self.pause_start = 0
-        self.paused_time = 0
-        self.game_status = GameStatus.in_progress
-        self.main_board.game_score = 0
-        self.main_board.topbar_score.config(text=self.main_board.game_score)
+
+class TetrisControl:
+    def __init__(self):
+        self.game = None
+
+    def pause_game(self, event):
+        if self.game.game_status == GameStatus.paused:
+            self.game.game_status = GameStatus.in_progress
+            self.game.paused_time += time.time() - self.game.pause_start
+            self.game.timer()
+        elif self.game.game_status == GameStatus.in_progress:
+            self.game.game_status = GameStatus.paused
+            self.game.pause_start = time.time()
+
+    def move_block_left(self, event):
+        if self.game.game_status == GameStatus.in_progress:
+            self.game.user_input_left()
+
+    def move_block_right(self, event):
+        if self.game.game_status == GameStatus.in_progress:
+            self.game.user_input_right()
+
+    def move_block_down_press(self, event):
+        if not self.game.fast_down:
+            self.game.fast_down = True
+            self.game.user_input_down()
+
+    def move_block_down_release(self, event):
+        self.game.fast_down = False
+
+    def rotate_block(self, event):
+        if self.game.game_status == GameStatus.in_progress:
+            self.game.block_rotator()
+
+    def game_over(self, forced=False):
+        y_coordinates = [y for (x, y) in self.game.coord_extractor()]
+        if any(y < 0 for y in y_coordinates):
+            self.game.game_status = GameStatus.game_over
+        elif forced == True:
+            self.game.game_status = GameStatus.game_over
+            new_game()
 
 
 run_gui()
+new_game()
+root.mainloop()
