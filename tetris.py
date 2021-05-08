@@ -26,7 +26,7 @@ TEAL = "paleturquoise3"
 
 block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
-GameStatus = Enum("GameStatus", "in_progress, game_lost, paused")
+GameStatus = Enum("GameStatus", "in_progress, game_over, paused")
 
 try:
     # When an end user is running the app or exe created with pyinstaller,
@@ -113,12 +113,15 @@ def run_gui():
             button_images[filename], "copy", transparent_image, "-compositingrule", "overlay"
         )
 
+    global tetris_control
+    tetris_control = TetrisControl()
+
     new_game_button = tkinter.Button(
         sidebar,
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=new_game
+        command=partial(tetris_control.game_over, forced=True)
     )
     new_game_button.grid(sticky="n")
 
@@ -133,9 +136,6 @@ def run_gui():
     high_scores_button.grid(sticky="n")
 
     draw_board(game_canvas)
-
-    global tetris_control
-    tetris_control = TetrisControl()
 
     root.bind("<Left>", tetris_control.move_block_left)
     root.bind("<Right>", tetris_control.move_block_right)
@@ -183,7 +183,6 @@ def new_game():
     game.move_current_block_down()
     small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
     tetris_control.game = game
-    root.mainloop()
 
 
 def rotate_point(point, center):
@@ -366,7 +365,7 @@ class Game:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
                 self.full_line_clear()
-                self.game_over_check()
+                self.game_over()
                 self.new_block()
             elif not self.fast_down:
                 x, y = self.current_block_center
@@ -476,10 +475,13 @@ class Game:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    def game_over_check(self):
+    def game_over(self, forced=False):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
-            self.game_status = GameStatus.game_lost
+            self.game_status = GameStatus.game_over
+        elif forced == True:
+            self.game_status = GameStatus.game_over
+            new_game()
 
 
 class TetrisControl:
@@ -515,7 +517,15 @@ class TetrisControl:
         if self.game.game_status == GameStatus.in_progress:
             self.game.block_rotator()
 
+    def game_over(self, forced=False):
+        y_coordinates = [y for (x, y) in self.game.coord_extractor()]
+        if any(y < 0 for y in y_coordinates):
+            self.game.game_status = GameStatus.game_over
+        elif forced == True:
+            self.game.game_status = GameStatus.game_over
+            new_game()
+
 
 run_gui()
 new_game()
-
+root.mainloop()
