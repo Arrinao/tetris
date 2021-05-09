@@ -24,7 +24,7 @@ ORANGE = "Orangered2"
 PINK = "#FF00FF"
 TEAL = "paleturquoise3"
 
-block_letters = ["I", "L"]
+block_letters = ["I", "L", "L_rev", "O", "E", "Z", "Z_rev"]
 
 GameStatus = Enum("GameStatus", "in_progress, game_over, paused")
 
@@ -183,7 +183,7 @@ def new_game():
     main_board = Board(game_canvas, small_board)
     game = Game(main_board, small_board, topbar_score, topbar_time)
     game.move_current_block_down()
-    small_board.draw_block(game.get_block_shape(), game.upcoming_block_letter, game.landed_blocks)
+    small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
     tetris_control.game = game
 
 
@@ -281,27 +281,75 @@ class Game:
             self.current_block_center = (int(game_width / 2), -2)
             self.block_letter = self.upcoming_block_letter
             self.upcoming_block_letter = random.choice(block_letters)
-            self.small_board.draw_block(self.get_block_shape(), self.upcoming_block_letter, self.landed_blocks)
+            self.small_board.draw_block(self.get_upcoming_block_shape(), self.upcoming_block_letter, self.landed_blocks)
             self.rotate_counter = 0
             self.fast_down = False
 
     def get_block_shape(self):
-        if self.upcoming_block_letter == 'I':
-            self.upcoming_block_center = (2, 0)
-        else:
-            self.upcoming_block_center = (1, 1)
         (x, y) = self.current_block_center
-        if self.block_letter == "I" or self.upcoming_block_letter == 'I':
+        if self.block_letter == "I":
             coords = [[(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
-        if self.block_letter == "L" or self.upcoming_block_letter == "L":
+        if self.block_letter == "L":
             coords = [[(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]]
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
+        if self.block_letter == "L_rev":
+            coords = [[(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
+        if self.block_letter == "O":
+            coords = [[(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]]
+
+        if self.block_letter == "E":
+            coords = [[(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
+        if self.block_letter == "Z":
+            coords = [[(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
+        if self.block_letter == "Z_rev":
+            coords = [[(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]]
+            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+
         return coords[self.rotate_counter % len(coords)]
+
+    def get_upcoming_block_shape(self):
+        if self.upcoming_block_letter == 'I':
+            self.upcoming_block_center = (2, 0)
+        else:
+            self.upcoming_block_center = (1, 1)
+        (x, y) = self.upcoming_block_center
+
+        if self.upcoming_block_letter == "I":
+            coords = [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "L":
+            coords = [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]
+
+        if self.upcoming_block_letter == "L_rev":
+            coords = [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "O":
+            coords = [(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]
+
+        if self.upcoming_block_letter == "E":
+            coords = [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]
+
+        if self.upcoming_block_letter == "Z":
+            coords = [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]
+
+        if self.upcoming_block_letter == "Z_rev":
+            coords = [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
+        return coords
 
     def block_hits_bottom_if_it_moves_down(self):
         return any(
