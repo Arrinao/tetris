@@ -121,7 +121,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=partial(tetris_control.game_over, forced=True)
+        command=new_game
     )
     new_game_button.grid(sticky="n")
 
@@ -177,6 +177,8 @@ def draw_board(canvas):
 
 
 def new_game():
+    if tetris_control.game is not None:
+        tetris_control.game.game_status = GameStatus.game_over
     small_board = Board(topbar_canvas, None)
     main_board = Board(game_canvas, small_board)
     game = Game(main_board, small_board, topbar_score, topbar_time)
@@ -476,13 +478,10 @@ class Game:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    def game_over(self, forced=False):
+    def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.game_status = GameStatus.game_over
-        elif forced:
-            self.game_status = GameStatus.game_over
-            new_game()
 
 
 class TetrisControl:
@@ -517,14 +516,6 @@ class TetrisControl:
     def rotate_block(self, event):
         if self.game.game_status == GameStatus.in_progress:
             self.game.block_rotator()
-
-    def game_over(self, forced=False):
-        y_coordinates = [y for (x, y) in self.game.coord_extractor()]
-        if any(y < 0 for y in y_coordinates):
-            self.game.game_status = GameStatus.game_over
-        elif forced == True:
-            self.game.game_status = GameStatus.game_over
-            new_game()
 
 
 run_gui()
