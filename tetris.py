@@ -272,6 +272,7 @@ class Game:
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
+        self.topbar_score.config(text=self.game_score)
 
     def new_block(self):
         if self.game_status == GameStatus.in_progress:
@@ -479,7 +480,7 @@ class Game:
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.game_status = GameStatus.game_over
-        elif forced == True:
+        elif forced:
             self.game_status = GameStatus.game_over
             new_game()
 
