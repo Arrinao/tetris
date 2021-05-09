@@ -272,6 +272,7 @@ class Game:
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
+        self.topbar_score.config(text=self.game_score)
 
     def new_block(self):
         if self.game_status == GameStatus.in_progress:
@@ -365,7 +366,7 @@ class Game:
                     self.landed_blocks[self.block_letter] = []
                 self.landed_blocks[self.block_letter].extend(self.get_block_shape())
                 self.full_line_clear()
-                self.game_over()
+                self.tetris_control.game_over()
                 self.new_block()
             elif not self.fast_down:
                 x, y = self.current_block_center
@@ -475,14 +476,6 @@ class Game:
             self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
-    def game_over(self, forced=False):
-        y_coordinates = [y for (x, y) in self.coord_extractor()]
-        if any(y < 0 for y in y_coordinates):
-            self.game_status = GameStatus.game_over
-        elif forced == True:
-            self.game_status = GameStatus.game_over
-            new_game()
-
 
 class TetrisControl:
     def __init__(self):
@@ -521,7 +514,7 @@ class TetrisControl:
         y_coordinates = [y for (x, y) in self.game.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.game.game_status = GameStatus.game_over
-        elif forced == True:
+        elif forced:
             self.game.game_status = GameStatus.game_over
             new_game()
 
