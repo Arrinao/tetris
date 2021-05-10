@@ -288,28 +288,13 @@ class Game:
     def get_block_shape(self):
         (x, y) = self.current_block_center
         coords = [self.get_coords(self.block_letter, x, y)]
-        if self.block_letter == "I":
+
+        if self.block_letter == "I" or self.block_letter == "Z" or self.block_letter == "Z_rev":
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
-        if self.block_letter == "L":
+        if self.block_letter == "L" or self.block_letter == "L_rev" or self.block_letter == "E":
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-
-        if self.block_letter == "L_rev":
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-
-        if self.block_letter == "E":
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-
-        if self.block_letter == "Z":
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-
-        if self.block_letter == "Z_rev":
             coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         return coords[self.rotate_counter % len(coords)]
