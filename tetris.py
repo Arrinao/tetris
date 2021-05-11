@@ -6,6 +6,7 @@ import pathlib
 import sys
 from functools import partial
 from enum import Enum
+from tkinter import messagebox as mb
 
 game_speed = 300
 square_size = 32
@@ -121,7 +122,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=new_game,
+        command=start_dialogue,
     )
     new_game_button.grid(sticky="n")
 
@@ -154,7 +155,6 @@ def run_gui():
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
 
-
 def draw_board(canvas):
     """
     Draws the board consisting of 15x10 rectangles on top of the canvas before the game starts
@@ -185,6 +185,17 @@ def new_game():
     game.move_current_block_down()
     small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter)
     tetris_control.game = game
+
+
+def start_dialogue():
+    if tetris_control.game.game_status == GameStatus.in_progress or tetris_control.game.game_status == GameStatus.paused:
+        tetris_control.game.game_status = GameStatus.paused
+        if mb.askokcancel('End current game?', 'Do you want to end the current game and start anew?', parent=root):
+            new_game()
+        else:
+            tetris_control.game.game_status = GameStatus.in_progress
+    else:
+        new_game()
 
 
 class Board:
