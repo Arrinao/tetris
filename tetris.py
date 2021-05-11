@@ -179,8 +179,8 @@ def draw_board(canvas):
 def new_game():
     if tetris_control.game is not None:
         tetris_control.game.game_status = GameStatus.game_over
-    small_board = Board(topbar_canvas, None)
-    main_board = Board(game_canvas, small_board)
+    small_board = Board(topbar_canvas, False)
+    main_board = Board(game_canvas, True)
     game = Game(main_board, small_board, topbar_score, topbar_time)
     game.move_current_block_down()
     small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter)
@@ -188,9 +188,9 @@ def new_game():
 
 
 class Board:
-    def __init__(self, canvas, small_board):
+    def __init__(self, canvas, is_main):
         self.canvas = canvas
-        self.small_board = small_board
+        self.is_main = is_main
 
     def draw_rectangle(self, x, y, tags, fill):
         self.canvas.create_rectangle(
@@ -217,7 +217,7 @@ class Board:
         }
         self.canvas.delete("block")
 
-        if self.small_board:
+        if self.is_main:
             for letter, coord_list in landed_blocks.items():
                 for (x, y) in coord_list:
                     self.draw_rectangle(x, y, "block", color_dict[letter])
