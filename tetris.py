@@ -217,7 +217,7 @@ class Board:
         }
         self.canvas.delete("block")
 
-        if self.small_board is not None:
+        if self.small_board:
             for letter, coord_list in landed_blocks.items():
                 for (x, y) in coord_list:
                     self.draw_rectangle(x, y, "block", color_dict[letter])
@@ -253,7 +253,6 @@ class Game:
         self.block_letter = random.choice(block_letters)
         self.upcoming_block_letter = random.choice(block_letters)
         self.current_block_center = (int(game_width / 2), -2)
-        self.upcoming_block_center = (1, 1)
         self.topbar_score = topbar_score
         self.main_board = main_board
         self.small_board = small_board
@@ -293,36 +292,34 @@ class Game:
 
     def get_upcoming_block_shape(self):
         if self.upcoming_block_letter == 'I':
-            self.upcoming_block_center = (2, 0)
+            center = (2, 0)
         else:
-            self.upcoming_block_center = (1, 1)
-        (x, y) = self.upcoming_block_center
+            center = (1, 1)
+        (x, y) = center
 
         return self.get_coords_from_letter(self.upcoming_block_letter, x, y)
 
     def get_coords_from_letter(self, block_letter, x, y):
         if block_letter == "I":
-            coords = [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
+            return [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
 
         if block_letter == "L":
-            coords = [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]
+            return [(x - 1, y), (x, y), (x + 1, y), (x + 1, y - 1)]
 
         if block_letter == "L_rev":
-            coords = [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
+            return [(x - 1, y - 1), (x - 1, y), (x, y), (x + 1, y)]
 
         if block_letter == "O":
-            coords = [(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]
+            return [(x - 1, y), (x, y), (x, y - 1), (x - 1, y - 1)]
 
         if block_letter == "E":
-            coords = [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]
+            return [(x - 1, y), (x, y), (x + 1, y), (x, y - 1)]
 
         if block_letter == "Z":
-            coords = [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]
+            return [(x - 1, y - 1), (x, y - 1), (x, y), (x + 1, y)]
 
         if block_letter == "Z_rev":
-            coords = [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
-
-        return coords
+            return [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
 
     def rotate_point(self, point, center):
         x, y = center
