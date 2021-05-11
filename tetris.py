@@ -183,7 +183,7 @@ def new_game():
     main_board = Board(game_canvas, small_board)
     game = Game(main_board, small_board, topbar_score, topbar_time)
     game.move_current_block_down()
-    small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter, game.landed_blocks)
+    small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter)
     tetris_control.game = game
 
 
@@ -202,7 +202,7 @@ class Board:
             fill=fill,
         )
 
-    def draw_block(self, block, block_letter, landed_blocks):
+    def draw_block(self, block, block_letter, landed_blocks=None):
         """
         Draws the different shapes on the board
         """
@@ -298,8 +298,7 @@ class Game:
             self.upcoming_block_center = (1, 1)
         (x, y) = self.upcoming_block_center
 
-        coords = self.get_coords_from_letter(self.upcoming_block_letter, x, y)
-        return coords
+        return self.get_coords_from_letter(self.upcoming_block_letter, x, y)
 
     def get_coords_from_letter(self, block_letter, x, y):
         if block_letter == "I":
@@ -341,9 +340,7 @@ class Game:
         """
         Moves the current block downwards one square on the canvas
         """
-        if self.game_status == GameStatus.paused:
-            self.main_board.canvas.after(game_speed, self.move_current_block_down)
-        elif self.game_status == GameStatus.in_progress:
+        if self.game_status == GameStatus.in_progress:
             if self.block_hits_bottom_if_it_moves_down():
                 if self.block_letter not in self.landed_blocks:
                     self.landed_blocks[self.block_letter] = []
@@ -355,6 +352,7 @@ class Game:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
             self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+        if self.game_status != GameStatus.game_over:
             self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
     def user_input_left(self):
