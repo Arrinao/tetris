@@ -272,7 +272,7 @@ class Game:
             self.current_block_center = (int(game_width / 2), -2)
             self.block_letter = self.upcoming_block_letter
             self.upcoming_block_letter = random.choice(block_letters)
-            self.small_board.draw_block(self.get_upcoming_block_shape(), self.upcoming_block_letter, self.landed_blocks)
+            self.small_board.draw_block(self.get_upcoming_block_shape(), self.upcoming_block_letter)
             self.rotate_counter = 0
             self.fast_down = False
 
