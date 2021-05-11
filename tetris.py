@@ -281,20 +281,12 @@ class Game:
         coords = [self.get_coords_from_letter(self.block_letter, x, y)]
 
         if self.block_letter == "I" or self.block_letter == "Z" or self.block_letter == "Z_rev":
-            coords.append(
-                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
-            )
+            coords.append([self.rotate_point(point) for point in coords[-1]])
 
         if self.block_letter == "L" or self.block_letter == "L_rev" or self.block_letter == "E":
-            coords.append(
-                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
-            )
-            coords.append(
-                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
-            )
-            coords.append(
-                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
-            )
+            coords.append([self.rotate_point(point) for point in coords[-1]])
+            coords.append([self.rotate_point(point) for point in coords[-1]])
+            coords.append([self.rotate_point(point) for point in coords[-1]])
 
         return coords[self.rotate_counter % len(coords)]
 
@@ -329,8 +321,8 @@ class Game:
         if block_letter == "Z_rev":
             return [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
 
-    def rotate_point(self, point, center):
-        x, y = center
+    def rotate_point(self, point):
+        x, y = self.current_block_center
         point_x, point_y = point
         a = point_x - x
         b = point_y - y
