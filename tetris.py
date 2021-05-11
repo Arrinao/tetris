@@ -121,7 +121,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=new_game
+        command=new_game,
     )
     new_game_button.grid(sticky="n")
 
@@ -281,17 +281,25 @@ class Game:
         coords = [self.get_coords_from_letter(self.block_letter, x, y)]
 
         if self.block_letter == "I" or self.block_letter == "Z" or self.block_letter == "Z_rev":
-            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append(
+                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
+            )
 
         if self.block_letter == "L" or self.block_letter == "L_rev" or self.block_letter == "E":
-            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append(
+                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
+            )
+            coords.append(
+                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
+            )
+            coords.append(
+                [self.rotate_point(point, self.current_block_center) for point in coords[-1]]
+            )
 
         return coords[self.rotate_counter % len(coords)]
 
     def get_upcoming_block_shape(self):
-        if self.upcoming_block_letter == 'I':
+        if self.upcoming_block_letter == "I":
             center = (2, 0)
         else:
             center = (1, 1)
@@ -348,7 +356,9 @@ class Game:
             elif not self.fast_down:
                 x, y = self.current_block_center
                 self.current_block_center = (x, y + 1)
-            self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+            self.main_board.draw_block(
+                self.get_block_shape(), self.block_letter, self.landed_blocks
+            )
         if self.game_status != GameStatus.game_over:
             self.main_board.canvas.after(game_speed, self.move_current_block_down)
 
@@ -380,7 +390,9 @@ class Game:
         if self.fast_down and not self.block_hits_bottom_if_it_moves_down():
             x, y = self.current_block_center
             self.current_block_center = (x, y + 1)
-            self.main_board.draw_block(self.get_block_shape(), self.block_letter, self.landed_blocks)
+            self.main_board.draw_block(
+                self.get_block_shape(), self.block_letter, self.landed_blocks
+            )
             self.main_board.canvas.after(25, self.user_input_down)
 
     def coord_extractor(self):
