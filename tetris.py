@@ -187,14 +187,6 @@ def new_game():
     tetris_control.game = game
 
 
-def rotate_point(point, center):
-    x, y = center
-    point_x, point_y = point
-    a = point_x - x
-    b = point_y - y
-    return (x - b, y + a)
-
-
 class Board:
     def __init__(self, canvas, small_board):
         self.canvas = canvas
@@ -269,12 +261,12 @@ class Game:
         self.fast_down = False
         self.start_time = time.time()
         self.rotate_counter = 0
-        self.game_score = 0
+        self.score = 0
         self.pause_start = 0
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
-        self.topbar_score.config(text=self.game_score)
+        self.topbar_score.config(text=self.score)
 
     def new_block(self):
         if self.game_status == GameStatus.in_progress:
@@ -287,15 +279,15 @@ class Game:
 
     def get_block_shape(self):
         (x, y) = self.current_block_center
-        coords = [self.get_coords(self.block_letter, x, y)]
+        coords = [self.get_coords_from_letter(self.block_letter, x, y)]
 
         if self.block_letter == "I" or self.block_letter == "Z" or self.block_letter == "Z_rev":
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         if self.block_letter == "L" or self.block_letter == "L_rev" or self.block_letter == "E":
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
-            coords.append([rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
+            coords.append([self.rotate_point(point, self.current_block_center) for point in coords[-1]])
 
         return coords[self.rotate_counter % len(coords)]
 
@@ -306,10 +298,10 @@ class Game:
             self.upcoming_block_center = (1, 1)
         (x, y) = self.upcoming_block_center
 
-        coords = self.get_coords(self.upcoming_block_letter, x, y)
+        coords = self.get_coords_from_letter(self.upcoming_block_letter, x, y)
         return coords
 
-    def get_coords(self, block_letter, x, y):
+    def get_coords_from_letter(self, block_letter, x, y):
         if block_letter == "I":
             coords = [(x - 2, y), (x - 1, y), (x, y), (x + 1, y)]
 
@@ -332,6 +324,13 @@ class Game:
             coords = [(x + 1, y - 1), (x, y - 1), (x, y), (x - 1, y)]
 
         return coords
+
+    def rotate_point(self, point, center):
+        x, y = center
+        point_x, point_y = point
+        a = point_x - x
+        b = point_y - y
+        return (x - b, y + a)
 
     def block_hits_bottom_if_it_moves_down(self):
         return any(
@@ -436,14 +435,14 @@ class Game:
                     (a, b + 1) for (a, b) in coord_list if b < x_line
                 ]
         if len(full_lines) == 1:
-            self.game_score += 10
+            self.score += 10
         elif len(full_lines) == 2:
-            self.game_score += 30
+            self.score += 30
         elif len(full_lines) == 3:
-            self.game_score += 60
+            self.score += 60
         elif len(full_lines) == 4:
-            self.game_score += 100
-        self.topbar_score.config(text=self.game_score)
+            self.score += 100
+        self.topbar_score.config(text=self.score)
 
     def flasher(self, full_lines, fill):
         """
