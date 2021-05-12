@@ -315,12 +315,9 @@ class Game:
 
     def get_upcoming_block_shape(self):
         if self.upcoming_block_letter == "I":
-            center = (2, 0)
+            return self.get_coords_from_letter(self.upcoming_block_letter, 2, 0)
         else:
-            center = (1, 1)
-        (x, y) = center
-
-        return self.get_coords_from_letter(self.upcoming_block_letter, x, y)
+            return self.get_coords_from_letter(self.upcoming_block_letter, 1, 1)
 
     def get_coords_from_letter(self, block_letter, x, y):
         if block_letter == "I":
