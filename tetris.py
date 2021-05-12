@@ -196,7 +196,11 @@ def new_game_if_user_wants():
         else:
             game_running = False
 
-        if mb.askokcancel('End current game?', 'Do you want to end the current game and start anew?', parent=topbar_time):
+        if mb.askokcancel(
+            "End current game?",
+            "Do you want to end the current game and start anew?",
+            parent=topbar_time,
+        ):
             new_game()
         else:
             if game_running:
