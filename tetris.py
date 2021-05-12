@@ -510,8 +510,8 @@ class TetrisControl:
 
     def move_block_down_press(self, event):
         if self.game.status == GameStatus.in_progress and not self.game.fast_down:
-                self.game.fast_down = True
-                self.game.user_input_down()
+            self.game.fast_down = True
+            self.game.user_input_down()
 
     def move_block_down_release(self, event):
         self.game.fast_down = False
