@@ -188,7 +188,7 @@ def new_game():
     tetris_control.game = game
 
 
-def start_dialogue():
+def new_game_if_user_wants():
     if tetris_control.game.status != GameStatus.game_over:
         if tetris_control.game.status != GameStatus.paused:
             game_running = True
