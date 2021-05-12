@@ -191,12 +191,13 @@ def new_game():
 def start_dialogue():
     if tetris_control.game.status != GameStatus.game_over:
         if tetris_control.game.status != GameStatus.paused:
+            game_running = True
             tetris_control.pause_game()
         if mb.askokcancel('End current game?', 'Do you want to end the current game and start anew?', parent=topbar_time):
             new_game()
         else:
-            return
-
+            if game_running is True:
+                tetris_control.pause_game()
     else:
         new_game()
 
