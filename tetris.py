@@ -122,7 +122,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=start_dialogue,
+        command=new_game_if_user_wants,
     )
     new_game_button.grid(sticky="n")
 
@@ -509,9 +509,10 @@ class TetrisControl:
             self.game.user_input_right()
 
     def move_block_down_press(self, event):
-        if not self.game.fast_down:
-            self.game.fast_down = True
-            self.game.user_input_down()
+        if self.game.status == GameStatus.in_progress:
+            if not self.game.fast_down:
+                self.game.fast_down = True
+                self.game.user_input_down()
 
     def move_block_down_release(self, event):
         self.game.fast_down = False
