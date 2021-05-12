@@ -155,6 +155,7 @@ def run_gui():
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
 
+
 def draw_board(canvas):
     """
     Draws the board consisting of 15x10 rectangles on top of the canvas before the game starts
@@ -189,11 +190,11 @@ def new_game():
 
 def start_dialogue():
     if tetris_control.game.game_status == GameStatus.in_progress or tetris_control.game.game_status == GameStatus.paused:
-        tetris_control.game.game_status = GameStatus.paused
-        if mb.askokcancel('End current game?', 'Do you want to end the current game and start anew?', parent=root):
+        tetris_control.pause_game()
+        if mb.askokcancel('End current game?', 'Do you want to end the current game and start anew?', parent=topbar_time):
             new_game()
         else:
-            tetris_control.game.game_status = GameStatus.in_progress
+            tetris_control.pause_game()
     else:
         new_game()
 
@@ -487,7 +488,7 @@ class TetrisControl:
     def __init__(self):
         self.game = None
 
-    def pause_game(self, event):
+    def pause_game(self, event=None):
         if self.game.game_status == GameStatus.paused:
             self.game.game_status = GameStatus.in_progress
             self.game.paused_time += time.time() - self.game.pause_start
