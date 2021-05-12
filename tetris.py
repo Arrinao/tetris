@@ -242,6 +242,8 @@ class Board:
             self.canvas.config(width=square_size * 3, height=square_size * 2)
         if block_letter == "I":
             self.canvas.config(width=square_size * 4, height=square_size * 1)
+
+        if block_letter == "I":
             self.canvas.pack(pady=square_size / 2 + 10)
         else:
             self.canvas.pack(pady=10)
