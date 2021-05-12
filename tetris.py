@@ -181,7 +181,7 @@ def new_game():
         tetris_control.game.game_status = GameStatus.game_over
     small_board = Board(topbar_canvas, False)
     main_board = Board(game_canvas, True)
-    game = Game(main_board, small_board, topbar_score, topbar_time)
+    game = Game(main_board, small_board, topbar_time)
     game.move_current_block_down()
     small_board.draw_block(game.get_upcoming_block_shape(), game.upcoming_block_letter)
     tetris_control.game = game
@@ -248,12 +248,11 @@ class Board:
 
 
 class Game:
-    def __init__(self, main_board, small_board, topbar_score, topbar_time):
+    def __init__(self, main_board, small_board, topbar_time):
         self.landed_blocks = {}
         self.block_letter = random.choice(block_letters)
         self.upcoming_block_letter = random.choice(block_letters)
         self.current_block_center = (int(game_width / 2), -2)
-        self.topbar_score = topbar_score
         self.main_board = main_board
         self.small_board = small_board
         self.topbar_time = topbar_time
@@ -265,7 +264,7 @@ class Game:
         self.paused_time = 0
         self.game_status = GameStatus.in_progress
         self.timer()
-        self.topbar_score.config(text=self.score)
+        topbar_score.config(text=self.score)
 
     def new_block(self):
         if self.game_status == GameStatus.in_progress:
@@ -441,7 +440,7 @@ class Game:
             self.score += 60
         elif len(full_lines) == 4:
             self.score += 100
-        self.topbar_score.config(text=self.score)
+        topbar_score.config(text=self.score)
 
     def flasher(self, full_lines, fill):
         """
