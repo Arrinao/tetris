@@ -40,14 +40,10 @@ except AttributeError:
     # this file is.
     image_dir = pathlib.Path(__file__).parent / "images"
 
-try:
-    with open(image_dir / "game_data.json", "r") as source:
-        json_dict = json.load(source)
-except FileNotFoundError:
-    # TODO: game_data.json shouldn't be in image_dir
-    json_dict = {
-        "high_scores": [], 
-    }
+
+json_dict = {
+    "high_scores": [], 
+}
 
 
 
@@ -293,7 +289,6 @@ class Game:
         self.topbar_time = topbar_time
         self.fast_down = False
         self.start_time = time.time()
-        self.time = 0
         self.rotate_counter = 0
         self.score = 0
         self.pause_start = 0
@@ -487,17 +482,20 @@ class Game:
             for x_line in full_lines:
                 self.main_board.draw_rectangle(x, x_line, "flash", fill)
 
+    def get_time(self):
+        return time.time() - self.start_time - self.paused_time
+
     def timer(self):
         if self.status == GameStatus.in_progress:
-            self.time = time.time() - self.start_time - self.paused_time
-            self.topbar_time.config(text=f"{int(self.time / 60):02d}:{int(self.time % 60):02d}")
+            self.get_time()
+            self.topbar_time.config(text=f"{int(self.get_time() / 60):02d}:{int(self.get_time() % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
     def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
-            json_dict['high_scores'].append({'Time': self.time, 'Game Speed': game_speed, 'Score': self.score})
+            json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
             print(json_dict)
 
 
