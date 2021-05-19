@@ -46,7 +46,7 @@ try:
 except FileNotFoundError:
     # TODO: game_data.json shouldn't be in image_dir
     json_dict = {
-        "high_scores": [],  # list of dicts with keys: 'time', 'width', 'height', 'mine_count'
+        "high_scores": [], 
     }
 
 
