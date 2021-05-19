@@ -1,6 +1,7 @@
 import random
 import tkinter
 import collections
+import json
 import time
 import pathlib
 import sys
@@ -38,6 +39,16 @@ except AttributeError:
     # sys._MEIPASS attribute, and we need to find the images based on where
     # this file is.
     image_dir = pathlib.Path(__file__).parent / "images"
+
+try:
+    with open(image_dir / "game_data.json", "r") as source:
+        json_dict = json.load(source)
+except FileNotFoundError:
+    # TODO: game_data.json shouldn't be in image_dir
+    json_dict = {
+        "high_scores": [],  # list of dicts with keys: 'time', 'width', 'height', 'mine_count'
+    }
+
 
 
 def set_button_image(button_image, event):
@@ -282,6 +293,7 @@ class Game:
         self.topbar_time = topbar_time
         self.fast_down = False
         self.start_time = time.time()
+        self.time = 0
         self.rotate_counter = 0
         self.score = 0
         self.pause_start = 0
@@ -477,14 +489,16 @@ class Game:
 
     def timer(self):
         if self.status == GameStatus.in_progress:
-            game_time = time.time() - self.start_time - self.paused_time
-            self.topbar_time.config(text=f"{int(game_time / 60):02d}:{int(game_time % 60):02d}")
+            self.time = time.time() - self.start_time - self.paused_time
+            self.topbar_time.config(text=f"{int(self.time / 60):02d}:{int(self.time % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
     def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
+            json_dict['high_scores'].append({'Time': self.time, 'Game Speed': game_speed, 'Score': self.score})
+            print(json_dict)
 
 
 class TetrisControl:
