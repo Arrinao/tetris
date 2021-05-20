@@ -8,6 +8,7 @@ import sys
 from functools import partial
 from enum import Enum
 from tkinter import messagebox as mb
+from tkinter import ttk
 
 game_speed = 300
 square_size = 32
@@ -158,6 +159,20 @@ def run_gui():
     game_mode_button.bind("<Leave>", partial(set_button_image, button_images["gamemode.png"]))
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
+
+    treeview = ttk.Treeview(root)
+    # Defining columns
+    treeview['columns'] = ('Time Spent', 'Game Speed', 'Score')
+    treeview.column('#0', width=150, minwidth=150, stretch='NO')
+    treeview.column('Time Spent', width=150, minwidth=150, stretch='NO')
+    treeview.column('Game Speed', width=150, minwidth=150, stretch='NO')
+    treeview.column('Score', width=150, minwidth=150, stretch='NO')
+
+    # Defining headings
+    treeview.heading('#0', text='', anchor='w')
+    treeview.heading('Time Spent', text='Time Spent', anchor='w')
+    treeview.heading('Game Speed', text='Time Spent', anchor='w')
+    treeview.heading('Score', text='Game Speed', anchor='w')
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -487,7 +502,6 @@ class Game:
 
     def timer(self):
         if self.status == GameStatus.in_progress:
-            self.get_time()
             self.topbar_time.config(text=f"{int(self.get_time() / 60):02d}:{int(self.get_time() % 60):02d}")
             self.topbar_time.after(1000, self.timer)
 
@@ -496,7 +510,6 @@ class Game:
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
-            print(json_dict)
 
 
 class TetrisControl:
