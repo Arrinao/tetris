@@ -14,7 +14,7 @@ game_speed = 300
 square_size = 32
 game_width = 10
 game_height = 15
-sidebar_width = 100
+sidebar_width = 106
 BLACK = "#000000"
 BLUE = "Blue2"
 RED = "red2"
@@ -45,7 +45,6 @@ except AttributeError:
 json_dict = {
     "high_scores": [], 
 }
-
 
 
 def set_button_image(button_image, event):
@@ -130,7 +129,7 @@ def run_gui():
         image=button_images["start.png"],
         borderwidth=0,
         highlightthickness=0,
-        command=new_game_if_user_wants,
+        command=new_game_request,
     )
     new_game_button.grid(sticky="n")
 
@@ -140,7 +139,7 @@ def run_gui():
     game_mode_button.grid(sticky="n")
 
     high_scores_button = tkinter.Button(
-        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0
+        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_highscores
     )
     high_scores_button.grid(sticky="n")
 
@@ -161,19 +160,19 @@ def run_gui():
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
     global treeview
-    treeview = ttk.Treeview(root)
+    treeview = ttk.Treeview(game_canvas)
     # Defining columns
     treeview['columns'] = ('Time Spent', 'Game Speed', 'Score')
-    treeview.column('#0', width=150, minwidth=150, stretch='NO')
-    treeview.column('Time Spent', width=150, minwidth=150, stretch='NO')
-    treeview.column('Game Speed', width=150, minwidth=150, stretch='NO')
-    treeview.column('Score', width=150, minwidth=150, stretch='NO')
+    treeview.column('#0', width=0, minwidth=0, stretch='NO')
+    treeview.column('Time Spent', width=110, minwidth=110, stretch='NO')
+    treeview.column('Game Speed', width=100, minwidth=100, stretch='NO')
+    treeview.column('Score', width=110, minwidth=110, stretch='NO')
 
     # Defining headings
     treeview.heading('#0', text='', anchor='w')
     treeview.heading('Time Spent', text='Time Spent', anchor='w')
-    treeview.heading('Game Speed', text='Time Spent', anchor='w')
-    treeview.heading('Score', text='Game Speed', anchor='w')
+    treeview.heading('Game Speed', text='Game Speed', anchor='w')
+    treeview.heading('Score', text='Score', anchor='w')
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -200,6 +199,10 @@ def draw_board(canvas):
         x_gap += square_size
 
 
+def display_highscores():
+    return treeview.pack(side='top', fill='both', expand=True)
+
+
 def new_game():
     if tetris_control.game is not None:
         tetris_control.game.status = GameStatus.game_over
@@ -211,7 +214,7 @@ def new_game():
     tetris_control.game = game
 
 
-def new_game_if_user_wants():
+def new_game_request():
     if tetris_control.game.status != GameStatus.game_over:
         if tetris_control.game.status != GameStatus.paused:
             game_running = True
@@ -486,7 +489,7 @@ class Game:
         elif len(full_lines) == 3:
             self.score += 60
         elif len(full_lines) == 4:
-            self.score += 100
+            self.score += 106
         topbar_score.config(text=self.score)
 
     def flasher(self, full_lines, fill):
@@ -504,7 +507,7 @@ class Game:
     def timer(self):
         if self.status == GameStatus.in_progress:
             self.topbar_time.config(text=f"{int(self.get_time() / 60):02d}:{int(self.get_time() % 60):02d}")
-            self.topbar_time.after(1000, self.timer)
+            self.topbar_time.after(1060, self.timer)
 
     def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
