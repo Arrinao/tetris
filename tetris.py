@@ -160,6 +160,7 @@ def run_gui():
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
+    global treeview
     treeview = ttk.Treeview(root)
     # Defining columns
     treeview['columns'] = ('Time Spent', 'Game Speed', 'Score')
@@ -510,6 +511,10 @@ class Game:
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
+            game_data = open('game_data.json', 'w')
+            json.dump(json_dict, game_data)
+            treeview.insert('', 'end', values=json_dict['high_scores'])
+            print(json_dict)
 
 
 class TetrisControl:
