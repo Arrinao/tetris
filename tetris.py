@@ -56,15 +56,20 @@ root.resizable(False, False)
 
 
 def run_gui():
+    global game_frame
+    game_frame = tkinter.Frame(root, width=square_size * game_width,
+        height=square_size * game_height)
+    game_frame.grid(row=1, sticky='nswe')
+
     global game_canvas
     game_canvas = tkinter.Canvas(
-        root,
+        game_frame,
         width=square_size * game_width,
         height=square_size * game_height,
         highlightthickness=1,
         highlightbackground="royal blue",
     )
-    game_canvas.grid(row=1, sticky="nswe")
+    game_canvas.pack(fill='both', expand=True)
 
     topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
     topbar.grid(row=0, columnspan=2, sticky="we")
@@ -160,7 +165,7 @@ def run_gui():
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
     global treeview
-    treeview = ttk.Treeview(game_canvas)
+    treeview = ttk.Treeview(game_frame)
     # Defining columns
     treeview['columns'] = ('Time Spent', 'Game Speed', 'Score')
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
@@ -200,7 +205,13 @@ def draw_board(canvas):
 
 
 def display_highscores():
-    return treeview.pack(side='top', fill='both', expand=True)
+    if game_canvas.pack(expand=True):
+        game_canvas.pack_forget()
+        treeview.pack(side='top', fill='both', expand=True)
+    else:
+        treeview.pack_forget()
+        game_canvas.pack(fill='both', expand=True)
+
 
 
 def new_game():
@@ -489,7 +500,7 @@ class Game:
         elif len(full_lines) == 3:
             self.score += 60
         elif len(full_lines) == 4:
-            self.score += 106
+            self.score += 100
         topbar_score.config(text=self.score)
 
     def flasher(self, full_lines, fill):
