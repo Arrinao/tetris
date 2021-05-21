@@ -165,9 +165,10 @@ def run_gui():
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
     global treeview
-    treeview = ttk.Treeview(game_frame)
+    treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
+    style = ttk.Style()
+    style.configure('treeview', background=D_GREY)
     # Defining columns
-    treeview['columns'] = ('Time Spent', 'Game Speed', 'Score')
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
     treeview.column('Time Spent', width=110, minwidth=110, stretch='NO')
     treeview.column('Game Speed', width=100, minwidth=100, stretch='NO')
@@ -205,13 +206,13 @@ def draw_board(canvas):
 
 
 def display_highscores():
-    if game_canvas.pack(expand=True):
+    try:
+        game_canvas.pack_info()
         game_canvas.pack_forget()
         treeview.pack(side='top', fill='both', expand=True)
-    else:
+    except tkinter.TclError:
         treeview.pack_forget()
         game_canvas.pack(fill='both', expand=True)
-
 
 
 def new_game():
