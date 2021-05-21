@@ -164,15 +164,17 @@ def run_gui():
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
+    style = ttk.Style(game_frame)
+    style.theme_use('clam')
+    style.configure('Treeview', background=D_GREY, fieldbackground=D_GREY)
     global treeview
     treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
-    style = ttk.Style()
-    style.configure('treeview', background=D_GREY)
+
     # Defining columns
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
-    treeview.column('Time Spent', width=110, minwidth=110, stretch='NO')
+    treeview.column('Time Spent', width=109, minwidth=110, stretch='NO')
     treeview.column('Game Speed', width=100, minwidth=100, stretch='NO')
-    treeview.column('Score', width=110, minwidth=110, stretch='NO')
+    treeview.column('Score', width=109, minwidth=110, stretch='NO')
 
     # Defining headings
     treeview.heading('#0', text='', anchor='w')
