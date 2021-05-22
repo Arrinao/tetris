@@ -43,7 +43,8 @@ except AttributeError:
 
 
 json_dict = {
-    "high_scores": [], 
+    'game_speed': 300,
+    "high_scores": [],
 }
 
 
@@ -57,8 +58,7 @@ root.resizable(False, False)
 
 def run_gui():
     global game_frame
-    game_frame = tkinter.Frame(root, width=square_size * game_width,
-        height=square_size * game_height)
+    game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
     game_frame.grid(row=1, sticky='nswe')
 
     global game_canvas
@@ -211,6 +211,7 @@ def display_highscores():
     try:
         game_canvas.pack_info()
         game_canvas.pack_forget()
+        tetris_control.pause_game()
         treeview.pack(side='top', fill='both', expand=True)
     except tkinter.TclError:
         treeview.pack_forget()
@@ -528,10 +529,10 @@ class Game:
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
-            game_data = open('game_data.json', 'w')
-            json.dump(json_dict, game_data)
-            treeview.insert('', 'end', values=json_dict['high_scores'])
-            print(json_dict)
+            for high_score_dict in json_dict['high_scores']:
+                treeview.insert(parent="", index="end", values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
+            with open('game_data.json', 'w') as game_data:
+                json.dump(json_dict, game_data)
 
 
 class TetrisControl:
