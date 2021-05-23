@@ -129,6 +129,24 @@ def run_gui():
     global tetris_control
     tetris_control = TetrisControl()
 
+    root.tk.eval('''ttk::style configure Treeview -background gray7 -fieldbackground gray7
+    ttk::style theme use clam''')
+    global treeview
+    treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
+
+
+    # Defining columns
+    treeview.column('#0', width=0, minwidth=0, stretch='NO')
+    treeview.column('Time Spent', width=109, minwidth=110, stretch='NO')
+    treeview.column('Game Speed', width=100, minwidth=100, stretch='NO')
+    treeview.column('Score', width=109, minwidth=110, stretch='NO')
+
+    # Defining headings
+    treeview.heading('#0', text='', anchor='w')
+    treeview.heading('Time Spent', text='Time Spent', anchor='w')
+    treeview.heading('Game Speed', text='Game Speed', anchor='w')
+    treeview.heading('Score', text='Score', anchor='w')
+
     new_game_button = tkinter.Button(
         sidebar,
         image=button_images["start.png"],
@@ -148,7 +166,8 @@ def run_gui():
     )
     high_scores_button.grid(sticky="n")
 
-    draw_board(game_canvas)
+    return_button = tkinter.Button(treeview, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_highscores)
+    return_button.place(relx=1, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
     root.bind("<Right>", tetris_control.move_block_right)
@@ -164,23 +183,7 @@ def run_gui():
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
 
-    style = ttk.Style(game_frame)
-    style.theme_use('clam')
-    style.configure('Treeview', background=D_GREY, fieldbackground=D_GREY)
-    global treeview
-    treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
-
-    # Defining columns
-    treeview.column('#0', width=0, minwidth=0, stretch='NO')
-    treeview.column('Time Spent', width=109, minwidth=110, stretch='NO')
-    treeview.column('Game Speed', width=100, minwidth=100, stretch='NO')
-    treeview.column('Score', width=109, minwidth=110, stretch='NO')
-
-    # Defining headings
-    treeview.heading('#0', text='', anchor='w')
-    treeview.heading('Time Spent', text='Time Spent', anchor='w')
-    treeview.heading('Game Speed', text='Game Speed', anchor='w')
-    treeview.heading('Score', text='Score', anchor='w')
+    draw_board(game_canvas)
 
     root.title("Tetris – by The Philgrim, Arrinao, and Master Akuli")
     # root.iconphoto(False, tkinter.PhotoImage(file=image_name.png")) TODO: INSERT LATER
@@ -211,7 +214,8 @@ def display_highscores():
     try:
         game_canvas.pack_info()
         game_canvas.pack_forget()
-        tetris_control.pause_game()
+        if tetris_control.game.status == GameStatus.in_progress:
+            tetris_control.pause_game()
         treeview.pack(side='top', fill='both', expand=True)
     except tkinter.TclError:
         treeview.pack_forget()
@@ -221,6 +225,9 @@ def display_highscores():
 def new_game():
     if tetris_control.game is not None:
         tetris_control.game.status = GameStatus.game_over
+    if treeview:
+        treeview.pack_forget()
+        game_canvas.pack(fill='both', expand=True)
     small_board = Board(topbar_canvas, False)
     main_board = Board(game_canvas, True)
     game = Game(main_board, small_board, topbar_time)
