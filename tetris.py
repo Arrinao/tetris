@@ -129,11 +129,11 @@ def run_gui():
     global tetris_control
     tetris_control = TetrisControl()
 
-    root.tk.eval('''ttk::style configure Treeview -background gray7 -fieldbackground gray7
-    ttk::style theme use clam''')
+
     global treeview
     treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
-
+    treeview.tk.eval('''ttk::style theme use clam
+    ttk::style configure Treeview -fieldbackground gray7 -bordercolor royalblue''')
 
     # Defining columns
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
