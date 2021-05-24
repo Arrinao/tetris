@@ -543,6 +543,7 @@ class Game:
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
             index = 0
+            treeview.delete(*treeview.get_children())
             for high_score_dict in json_dict['high_scores']:
                 if index == 0:
                     tag = 'odd_row'
