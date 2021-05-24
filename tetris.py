@@ -60,6 +60,7 @@ def run_gui():
     global game_frame
     game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
     game_frame.grid(row=1, sticky='nswe')
+    game_frame.pack_propagate(0)
 
     global game_canvas
     game_canvas = tkinter.Canvas(
@@ -76,8 +77,9 @@ def run_gui():
 
     global topbar_time
     topbar_time = tkinter.Label(
-        topbar, bg=D_GREY, text="00:00", font=("Digital-7 Mono", 20), fg="red", borderwidth=1
+        topbar, bg='black', text="00:00", font=("Digital-7 Mono", 20), fg="hot pink"
     )
+    topbar_time.config(highlightbackground='red', highlightcolor='red')
     topbar_time.pack(side="left", padx=15)
 
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
@@ -103,7 +105,7 @@ def run_gui():
 
     global topbar_score
     topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="0", font=("Digital-7 Mono", 32), fg="lightblue", anchor="e"
+        topbar, bg='black', text="0", font=("Digital-7 Mono", 32), fg="lightblue", anchor="e"
     )
     topbar_score.pack(side="right", padx=20, fill="x", expand=True)
 
@@ -131,11 +133,11 @@ def run_gui():
 
     style = ttk.Style(game_frame)
     style.theme_use('default')
-    style.configure('Treeview', rowheight=30, background=D_GREY, foreground='orange', fieldbackground=D_GREY, font=('Viner Hand ITC', 16))
+    style.configure('Treeview', rowheight=25, background=D_GREY, foreground='dark orange', fieldbackground=D_GREY, font=('Bahnschrift Condensed', 16))
     style.map('Treeview', background=[('selected', '#BFBFBF')], foreground=[('selected', 'black')])
     style.configure("Treeview.Heading", background='gray4', foreground='orangered', font=('Arrr Matey BB', 22), padding=[5,0])
     global treeview
-    treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
+    treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=32)
     #treeview.tk.eval('''ttk::style theme use clam
     #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
@@ -527,12 +529,13 @@ class Game:
                 self.main_board.draw_rectangle(x, x_line, "flash", fill)
 
     def get_time(self):
-        return time.time() - self.start_time - self.paused_time
+        game_time = time.time() - self.start_time - self.paused_time
+        return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
 
     def timer(self):
         if self.status == GameStatus.in_progress:
-            self.topbar_time.config(text=f"{int(self.get_time() / 60):02d}:{int(self.get_time() % 60):02d}")
-            self.topbar_time.after(1060, self.timer)
+            self.topbar_time.config(text=self.get_time())
+            self.topbar_time.after(1000, self.timer)
 
     def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
@@ -540,7 +543,7 @@ class Game:
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
             for high_score_dict in json_dict['high_scores']:
-                treeview.insert(parent="", index="end", tags='row', values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
+                treeview.insert(parent="", index="end", values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
             with open('game_data.json', 'w') as game_data:
                 json.dump(json_dict, game_data)
 
