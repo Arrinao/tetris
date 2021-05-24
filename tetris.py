@@ -76,7 +76,7 @@ def run_gui():
 
     global topbar_time
     topbar_time = tkinter.Label(
-        topbar, bg=D_GREY, text="00:00", font="digital-7", fg="orange", borderwidth=1
+        topbar, bg=D_GREY, text="00:00", font=("Digital-7 Mono", 20), fg="red", borderwidth=1
     )
     topbar_time.pack(side="left", padx=15)
 
@@ -103,7 +103,7 @@ def run_gui():
 
     global topbar_score
     topbar_score = tkinter.Label(
-        topbar, bg=D_GREY, text="0", font="digital-7", fg="orange", anchor="e"
+        topbar, bg=D_GREY, text="0", font=("Digital-7 Mono", 32), fg="lightblue", anchor="e"
     )
     topbar_score.pack(side="right", padx=20, fill="x", expand=True)
 
@@ -129,17 +129,21 @@ def run_gui():
     global tetris_control
     tetris_control = TetrisControl()
 
-
+    style = ttk.Style(game_frame)
+    style.theme_use('default')
+    style.configure('Treeview', rowheight=30, background=D_GREY, foreground='orange', fieldbackground=D_GREY, font=('Viner Hand ITC', 16))
+    style.map('Treeview', background=[('selected', '#BFBFBF')], foreground=[('selected', 'black')])
+    style.configure("Treeview.Heading", background='gray4', foreground='orangered', font=('Arrr Matey BB', 22), padding=[5,0])
     global treeview
     treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=23)
-    treeview.tk.eval('''ttk::style theme use clam
-    ttk::style configure Treeview -fieldbackground gray7 -bordercolor royalblue''')
+    #treeview.tk.eval('''ttk::style theme use clam
+    #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
     # Defining columns
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
-    treeview.column('Time Spent', width=109, minwidth=110, stretch='NO')
-    treeview.column('Game Speed', width=100, minwidth=100, stretch='NO')
-    treeview.column('Score', width=109, minwidth=110, stretch='NO')
+    treeview.column('Time Spent', width=100, minwidth=90, stretch='NO')
+    treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
+    treeview.column('Score', width=100, minwidth=90, stretch='NO')
 
     # Defining headings
     treeview.heading('#0', text='', anchor='w')
@@ -225,9 +229,8 @@ def display_highscores():
 def new_game():
     if tetris_control.game is not None:
         tetris_control.game.status = GameStatus.game_over
-    if treeview:
-        treeview.pack_forget()
-        game_canvas.pack(fill='both', expand=True)
+    treeview.pack_forget()
+    game_canvas.pack(fill='both', expand=True)
     small_board = Board(topbar_canvas, False)
     main_board = Board(game_canvas, True)
     game = Game(main_board, small_board, topbar_time)
@@ -537,7 +540,7 @@ class Game:
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
             for high_score_dict in json_dict['high_scores']:
-                treeview.insert(parent="", index="end", values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
+                treeview.insert(parent="", index="end", tags='row', values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
             with open('game_data.json', 'w') as game_data:
                 json.dump(json_dict, game_data)
 
