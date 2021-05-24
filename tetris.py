@@ -41,11 +41,14 @@ except AttributeError:
     # this file is.
     image_dir = pathlib.Path(__file__).parent / "images"
 
-
-json_dict = {
-    'game_speed': 300,
-    "high_scores": [],
-}
+try:
+    with open(pathlib.Path(__file__).parent / 'game_data.json', 'r') as source:
+        json_dict = json.load(source)
+except FileNotFoundError:
+    json_dict = {
+        'game_speed': 300,
+        'high_scores': [],
+        }
 
 
 def set_button_image(button_image, event):
@@ -170,11 +173,11 @@ def run_gui():
     game_mode_button.grid(sticky="n")
 
     high_scores_button = tkinter.Button(
-        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_highscores
+        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores
     )
     high_scores_button.grid(sticky="n")
 
-    return_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=display_highscores)
+    return_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     return_button.place(relx=1, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
@@ -220,7 +223,23 @@ def draw_board(canvas):
         x_gap += square_size
 
 
-def display_highscores():
+def get_high_scores():
+    index = 0
+    treeview.delete(*treeview.get_children())
+    for high_score_dict in json_dict['high_scores']:
+        if index == 0:
+            tag = 'odd_row'
+        else:
+            tag = 'even_row'
+        treeview.insert(parent="", index="end", tags=tag, values=(high_score_dict['Time'], high_score_dict['Game Speed'], high_score_dict['Score']))
+        index += 1
+        index %= 2
+    treeview.tag_configure('odd_row', background=D_GREY)
+    treeview.tag_configure('even_row', background='black')
+
+
+def display_high_scores():
+    get_high_scores()
     try:
         game_canvas.pack_info()
         game_canvas.pack_forget()
@@ -546,18 +565,6 @@ class Game:
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
-            index = 0
-            treeview.delete(*treeview.get_children())
-            for high_score_dict in json_dict['high_scores']:
-                if index == 0:
-                    tag = 'odd_row'
-                else:
-                    tag = 'even_row'
-                treeview.insert(parent="", index="end", tags=tag, values=(high_score_dict['Time'], high_score_dict['Game Speed'], high_score_dict['Score']))
-                index += 1
-                index %= 2
-            treeview.tag_configure('odd_row', background=D_GREY)
-            treeview.tag_configure('even_row', background='black')
             with open('game_data.json', 'w') as game_data:
                 json.dump(json_dict, game_data)
 
