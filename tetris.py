@@ -117,6 +117,8 @@ def run_gui():
     for filename in [
         "start.png",
         "hstart.png",
+        "return.png",
+        "hreturn.png",
         "gamemode.png",
         "hgamemode.png",
         "highscores.png",
@@ -172,7 +174,7 @@ def run_gui():
     )
     high_scores_button.grid(sticky="n")
 
-    return_button = tkinter.Button(treeview, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_highscores)
+    return_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=display_highscores)
     return_button.place(relx=1, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
@@ -188,6 +190,8 @@ def run_gui():
     game_mode_button.bind("<Leave>", partial(set_button_image, button_images["gamemode.png"]))
     high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
+    return_button.bind("<Enter>", partial(set_button_image, button_images["hreturn.png"]))
+    return_button.bind("<Leave>", partial(set_button_image, button_images["return.png"]))
 
     draw_board(game_canvas)
 
@@ -549,7 +553,7 @@ class Game:
                     tag = 'odd_row'
                 else:
                     tag = 'even_row'
-                treeview.insert(parent="", index="end", tags=tag, values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
+                treeview.insert(parent="", index="end", tags=tag, values=(high_score_dict['Time'], high_score_dict['Game Speed'], high_score_dict['Score']))
                 index += 1
                 index %= 2
             treeview.tag_configure('odd_row', background=D_GREY)
