@@ -542,8 +542,17 @@ class Game:
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
             json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
+            index = 0
             for high_score_dict in json_dict['high_scores']:
-                treeview.insert(parent="", index="end", values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
+                if index == 0:
+                    tag = 'odd_row'
+                else:
+                    tag = 'even_row'
+                treeview.insert(parent="", index="end", tags=tag, values=((high_score_dict['Time']), (high_score_dict['Game Speed']), (high_score_dict['Score'])))
+                index += 1
+                index %= 2
+            treeview.tag_configure('odd_row', background=D_GREY)
+            treeview.tag_configure('even_row', background='black')
             with open('game_data.json', 'w') as game_data:
                 json.dump(json_dict, game_data)
 
