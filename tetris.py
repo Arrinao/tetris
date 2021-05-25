@@ -124,6 +124,8 @@ def run_gui():
         "hreturn.png",
         "gamemode.png",
         "hgamemode.png",
+        "clearlist.png",
+        "hclearlist.png",
         "highscores.png",
         "hhighscores.png",
     ]:
@@ -168,19 +170,17 @@ def run_gui():
     new_game_button.grid(sticky="n")
 
     game_mode_button = tkinter.Button(
-        sidebar, image=button_images["gamemode.png"], borderwidth=0, highlightthickness=0
-    )
+        sidebar, image=button_images["gamemode.png"], borderwidth=0, highlightthickness=0)
     game_mode_button.grid(sticky="n")
 
     high_scores_button = tkinter.Button(
-        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores
-    )
+        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     high_scores_button.grid(sticky="n")
 
     return_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     return_button.place(relx=1, rely=1, anchor='se')
 
-    clear_list_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
+    clear_list_button = tkinter.Button(treeview, image=button_images["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
     clear_list_button.place(relx=0.66, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
@@ -198,6 +198,8 @@ def run_gui():
     high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
     return_button.bind("<Enter>", partial(set_button_image, button_images["hreturn.png"]))
     return_button.bind("<Leave>", partial(set_button_image, button_images["return.png"]))
+    clear_list_button.bind("<Enter>", partial(set_button_image, button_images["hclearlist.png"]))
+    clear_list_button.bind("<Leave>", partial(set_button_image, button_images["clearlist.png"]))
 
     draw_board(game_canvas)
 
