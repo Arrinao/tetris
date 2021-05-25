@@ -180,6 +180,9 @@ def run_gui():
     return_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     return_button.place(relx=1, rely=1, anchor='se')
 
+    clear_list_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
+    clear_list_button.place(relx=0.66, rely=1, anchor='se')
+
     root.bind("<Left>", tetris_control.move_block_left)
     root.bind("<Right>", tetris_control.move_block_right)
     root.bind("<Up>", tetris_control.rotate_block)
@@ -249,6 +252,13 @@ def display_high_scores():
     except tkinter.TclError:
         treeview.pack_forget()
         game_canvas.pack(fill='both', expand=True)
+
+
+def clear_high_scores():
+    treeview.delete(*treeview.get_children())
+    json_dict['high_scores'] = []
+    with open('game_data.json', 'w') as game_data:
+        json.dump(json_dict, game_data)
 
 
 def new_game():
