@@ -60,7 +60,6 @@ root.resizable(False, False)
 
 
 def run_gui():
-    global game_frame
     game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
     game_frame.grid(row=1, sticky='nswe')
     game_frame.pack_propagate(0)
@@ -133,22 +132,22 @@ def run_gui():
     style.configure('Treeview', rowheight=25, background=D_GREY, foreground='dark orange', fieldbackground=D_GREY, font=('Bahnschrift Condensed', 16))
     style.map('Treeview', background=[('selected', '#BFBFBF')], foreground=[('selected', 'black')])
     style.configure("Treeview.Heading", background='gray4', foreground='orangered', font=('Arrr Matey BB', 22), padding=[5,0])
-    global treeview
-    treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=32)
-    #treeview.tk.eval('''ttk::style theme use clam
+    global high_scores_treeview
+    high_scores_treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=32)
+    #high_scores_treeview.tk.eval('''ttk::style theme use clam
     #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
     # Defining columns
-    treeview.column('#0', width=0, minwidth=0, stretch='NO')
-    treeview.column('Time Spent', width=100, minwidth=90, stretch='NO')
-    treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
-    treeview.column('Score', width=100, minwidth=90, stretch='NO')
+    high_scores_treeview.column('#0', width=0, minwidth=0, stretch='NO')
+    high_scores_treeview.column('Time Spent', width=100, minwidth=90, stretch='NO')
+    high_scores_treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
+    high_scores_treeview.column('Score', width=100, minwidth=90, stretch='NO')
 
     # Defining headings
-    treeview.heading('#0', text='', anchor='w')
-    treeview.heading('Time Spent', text='Time Spent', anchor='w')
-    treeview.heading('Game Speed', text='Game Speed', anchor='w')
-    treeview.heading('Score', text='Score', anchor='w')
+    high_scores_treeview.heading('#0', text='', anchor='w')
+    high_scores_treeview.heading('Time Spent', text='Time Spent', anchor='w')
+    high_scores_treeview.heading('Game Speed', text='Game Speed', anchor='w')
+    high_scores_treeview.heading('Score', text='Score', anchor='w')
 
     new_game_button = tkinter.Button(
         sidebar,
@@ -167,10 +166,10 @@ def run_gui():
         sidebar, image=image_paths["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     high_scores_button.grid(sticky="n")
 
-    return_button = tkinter.Button(treeview, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
+    return_button = tkinter.Button(high_scores_treeview, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     return_button.place(relx=1, rely=1, anchor='se')
 
-    clear_list_button = tkinter.Button(treeview, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
+    clear_list_button = tkinter.Button(high_scores_treeview, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
     clear_list_button.place(relx=0.66, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
@@ -218,36 +217,34 @@ def draw_board(canvas):
         x_gap += square_size
 
 
-def get_high_scores():
+def get_high_scores_into_treeview():
     index = 0
-    treeview.delete(*treeview.get_children())
-    for high_score_dict in json_dict['high_scores']:
-        if index == 0:
+    high_scores_treeview.delete(*high_scores_treeview.get_children())
+    for index, high_score_dict in enumerate(json_dict['high_scores']):
+        if index % 2 == 0:
             tag = 'odd_row'
         else:
             tag = 'even_row'
-        treeview.insert(parent="", index="end", tags=tag, values=(high_score_dict['Time'], high_score_dict['Game Speed'], high_score_dict['Score']))
-        index += 1
-        index %= 2
-    treeview.tag_configure('odd_row', background=D_GREY)
-    treeview.tag_configure('even_row', background='black')
+        high_scores_treeview.insert(parent="", index="end", tags=tag, values=(tetris_control.game.time_formatter(high_score_dict['Time']), high_score_dict['Game Speed'], high_score_dict['Score']))
+    high_scores_treeview.tag_configure('odd_row', background=D_GREY)
+    high_scores_treeview.tag_configure('even_row', background='black')
 
 
 def display_high_scores():
-    get_high_scores()
+    get_high_scores_into_treeview()
     try:
         game_canvas.pack_info()
         game_canvas.pack_forget() 
         if tetris_control.game.status == GameStatus.in_progress:
             tetris_control.pause_game()
-        treeview.pack(side='top', fill='both', expand=True)
+        high_scores_treeview.pack(side='top', fill='both', expand=True)
     except tkinter.TclError:
-        treeview.pack_forget()
+        high_scores_treeview.pack_forget()
         game_canvas.pack(fill='both', expand=True)
 
 
 def clear_high_scores():
-    treeview.delete(*treeview.get_children())
+    high_scores_treeview.delete(*high_scores_treeview.get_children())
     json_dict['high_scores'] = []
     with open('game_data.json', 'w') as game_data:
         json.dump(json_dict, game_data)
@@ -256,7 +253,7 @@ def clear_high_scores():
 def new_game():
     if tetris_control.game is not None:
         tetris_control.game.status = GameStatus.game_over
-    treeview.pack_forget()
+    high_scores_treeview.pack_forget()
     game_canvas.pack(fill='both', expand=True)
     small_board = Board(topbar_canvas, False)
     main_board = Board(game_canvas, True)
@@ -554,19 +551,21 @@ class Game:
                 self.main_board.draw_rectangle(x, x_line, "flash", fill)
 
     def get_time(self):
-        game_time = time.time() - self.start_time - self.paused_time
-        return f"{int(game_time / 60):02d}:{int(game_time % 60):02d}"
+        return time.time() - self.start_time - self.paused_time
+
+    def time_formatter(self, get_time):
+        return f"{int(get_time / 60):02d}:{int(get_time % 60):02d}"
 
     def timer(self):
         if self.status == GameStatus.in_progress:
-            self.topbar_time.config(text=self.get_time())
+            self.topbar_time.config(text=self.time_formatter(self.get_time()))
             self.topbar_time.after(1000, self.timer)
 
     def game_over(self):
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
-            json_dict['high_scores'].append({'Time': self.get_time(), 'Game Speed': game_speed, 'Score': self.score})
+            json_dict['high_scores'].append({'Time': int(self.get_time()), 'Game Speed': game_speed, 'Score': self.score})
             with open('game_data.json', 'w') as game_data:
                 json.dump(json_dict, game_data)
 
