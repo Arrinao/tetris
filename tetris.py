@@ -232,7 +232,7 @@ def get_high_scores():
 def display_high_scores():
     get_high_scores()
     try:
-        game_canvas.pack_info()
+        game_canvas.pack_info()  # Raises error if canvas not packed
         game_canvas.pack_forget() 
         if tetris_control.game.status == GameStatus.in_progress:
             tetris_control.pause_game()
