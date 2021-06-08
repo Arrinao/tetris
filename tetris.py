@@ -135,8 +135,6 @@ def run_gui():
     style.configure("Treeview.Heading", background='gray4', foreground='orangered', font=('Arrr Matey BB', 22), padding=[5,0])
     global treeview
     treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=32)
-    #treeview.tk.eval('''ttk::style theme use clam
-    #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
     # Defining columns
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
