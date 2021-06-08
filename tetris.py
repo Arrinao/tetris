@@ -136,7 +136,6 @@ def run_gui():
     global treeview
     treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=32)
 
-    # Defining columns
     treeview.column('#0', width=0, minwidth=0, stretch='NO')
     treeview.column('Time Spent', width=100, minwidth=90, stretch='NO')
     treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
