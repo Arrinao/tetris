@@ -141,7 +141,6 @@ def run_gui():
     treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
     treeview.column('Score', width=100, minwidth=90, stretch='NO')
 
-    # Defining headings
     treeview.heading('#0', text='', anchor='w')
     treeview.heading('Time Spent', text='Time Spent', anchor='w')
     treeview.heading('Game Speed', text='Game Speed', anchor='w')
