@@ -116,23 +116,13 @@ def run_gui():
     sidebar.grid(row=1, column=1, sticky="nsw")
 
     # image source https://cooltext.com/
-    button_images = {}
-    for filename in [
-        "start.png",
-        "hstart.png",
-        "return.png",
-        "hreturn.png",
-        "gamemode.png",
-        "hgamemode.png",
-        "clearlist.png",
-        "hclearlist.png",
-        "highscores.png",
-        "hhighscores.png",
-    ]:
+    image_paths = {} 
+    button_images = ["start.png", "hstart.png", "return.png", "hreturn.png", "gamemode.png", "hgamemode.png", "clearlist.png", "hclearlist.png", "highscores.png", "hhighscores.png"]
+    for filename in button_images:
         transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
-        button_images[filename] = tkinter.PhotoImage(file=image_dir / "button.png")
-        button_images[filename].tk.call(
-            button_images[filename], "copy", transparent_image, "-compositingrule", "overlay"
+        image_paths[filename] = tkinter.PhotoImage(file=image_dir / "button.png")
+        image_paths[filename].tk.call(
+            image_paths[filename], "copy", transparent_image, "-compositingrule", "overlay"
         )
 
     global tetris_control
@@ -162,7 +152,7 @@ def run_gui():
 
     new_game_button = tkinter.Button(
         sidebar,
-        image=button_images["start.png"],
+        image=image_paths["start.png"],
         borderwidth=0,
         highlightthickness=0,
         command=new_game_request,
@@ -170,17 +160,17 @@ def run_gui():
     new_game_button.grid(sticky="n")
 
     game_mode_button = tkinter.Button(
-        sidebar, image=button_images["gamemode.png"], borderwidth=0, highlightthickness=0)
+        sidebar, image=image_paths["gamemode.png"], borderwidth=0, highlightthickness=0)
     game_mode_button.grid(sticky="n")
 
     high_scores_button = tkinter.Button(
-        sidebar, image=button_images["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
+        sidebar, image=image_paths["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     high_scores_button.grid(sticky="n")
 
-    return_button = tkinter.Button(treeview, image=button_images["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
+    return_button = tkinter.Button(treeview, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     return_button.place(relx=1, rely=1, anchor='se')
 
-    clear_list_button = tkinter.Button(treeview, image=button_images["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
+    clear_list_button = tkinter.Button(treeview, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
     clear_list_button.place(relx=0.66, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
@@ -190,16 +180,16 @@ def run_gui():
     root.bind("<Down>", tetris_control.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_control.move_block_down_release)
 
-    new_game_button.bind("<Enter>", partial(set_button_image, button_images["hstart.png"]))
-    new_game_button.bind("<Leave>", partial(set_button_image, button_images["start.png"]))
-    game_mode_button.bind("<Enter>", partial(set_button_image, button_images["hgamemode.png"]))
-    game_mode_button.bind("<Leave>", partial(set_button_image, button_images["gamemode.png"]))
-    high_scores_button.bind("<Enter>", partial(set_button_image, button_images["hhighscores.png"]))
-    high_scores_button.bind("<Leave>", partial(set_button_image, button_images["highscores.png"]))
-    return_button.bind("<Enter>", partial(set_button_image, button_images["hreturn.png"]))
-    return_button.bind("<Leave>", partial(set_button_image, button_images["return.png"]))
-    clear_list_button.bind("<Enter>", partial(set_button_image, button_images["hclearlist.png"]))
-    clear_list_button.bind("<Leave>", partial(set_button_image, button_images["clearlist.png"]))
+    new_game_button.bind("<Enter>", partial(set_button_image, image_paths["hstart.png"]))
+    new_game_button.bind("<Leave>", partial(set_button_image, image_paths["start.png"]))
+    game_mode_button.bind("<Enter>", partial(set_button_image, image_paths["hgamemode.png"]))
+    game_mode_button.bind("<Leave>", partial(set_button_image, image_paths["gamemode.png"]))
+    high_scores_button.bind("<Enter>", partial(set_button_image, image_paths["hhighscores.png"]))
+    high_scores_button.bind("<Leave>", partial(set_button_image, image_paths["highscores.png"]))
+    return_button.bind("<Enter>", partial(set_button_image, image_paths["hreturn.png"]))
+    return_button.bind("<Leave>", partial(set_button_image, image_paths["return.png"]))
+    clear_list_button.bind("<Enter>", partial(set_button_image, image_paths["hclearlist.png"]))
+    clear_list_button.bind("<Leave>", partial(set_button_image, image_paths["clearlist.png"]))
 
     draw_board(game_canvas)
 
@@ -247,7 +237,7 @@ def display_high_scores():
     get_high_scores()
     try:
         game_canvas.pack_info()
-        game_canvas.pack_forget()
+        game_canvas.pack_forget() 
         if tetris_control.game.status == GameStatus.in_progress:
             tetris_control.pause_game()
         treeview.pack(side='top', fill='both', expand=True)
@@ -286,7 +276,7 @@ def new_game_request():
 
         if mb.askokcancel(
             "End current game?",
-            "Do you want to end the current game and start anew?",
+            "Do you wish to end the current game and start anew?",
             parent=topbar_time,
         ):
             new_game()
