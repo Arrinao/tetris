@@ -8,11 +8,13 @@ There is a High Scores list avaliable to access from the menu on the right side,
 
 The game itself is controllable with a keyboard. Pressing P will pause the game; arrow keys will move the blocks around. The Up arrow key in tetris serves as the rotate button.
 
-**Installation info**
+**Installation info:**
+
 All the font files (.ttf) need to be moved into the Fonts folder. On windows the directory is C:\Windows\Fonts.
 
 **Sources**
 
 _Images_ - https://cooltext.com/
+
 _Fonts_ - https://cooltext.com/
         - https://www.dafontfree.io/bahnschrift-font/
