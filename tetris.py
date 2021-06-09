@@ -235,14 +235,15 @@ def get_high_scores_into_treeview():
 def display_high_scores():
     get_high_scores_into_treeview()
     try:
-        game_canvas.pack_info()  # Raises error if canvas not packed
+        game_canvas.pack_info()  # Raises error if canvas isn't packed
+    except tkinter.TclError:
+        high_scores_treeview.pack_forget()
+        game_canvas.pack(fill='both', expand=True)
+    else:
         game_canvas.pack_forget() 
         if tetris_control.game.status == GameStatus.in_progress:
             tetris_control.pause_game()
         high_scores_treeview.pack(side='top', fill='both', expand=True)
-    except tkinter.TclError:
-        high_scores_treeview.pack_forget()
-        game_canvas.pack(fill='both', expand=True)
 
 
 def clear_high_scores():
