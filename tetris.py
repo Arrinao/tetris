@@ -133,7 +133,7 @@ def run_gui():
     style.map('Treeview', background=[('selected', '#BFBFBF')], foreground=[('selected', 'black')])
     style.configure("Treeview.Heading", background='gray4', foreground='orangered', font=('Arrr Matey BB', 22), padding=[5,0])
     global high_scores_treeview
-    high_scores_treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=32)
+    high_scores_treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=10)
     #high_scores_treeview.tk.eval('''ttk::style theme use clam
     #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
@@ -147,6 +147,9 @@ def run_gui():
     high_scores_treeview.heading('Time Spent', text='Time Spent', anchor='w')
     high_scores_treeview.heading('Game Speed', text='Game Speed', anchor='w')
     high_scores_treeview.heading('Score', text='Score', anchor='w')
+    #game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
+    lowbar = tkinter.Frame(high_scores_treeview, bg='black', height=72)
+    lowbar.pack(side='bottom', fill='x')
 
     new_game_button = tkinter.Button(
         sidebar,
@@ -165,10 +168,10 @@ def run_gui():
         sidebar, image=image_paths["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     high_scores_button.grid(sticky="n")
 
-    return_button = tkinter.Button(high_scores_treeview, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
+    return_button = tkinter.Button(lowbar, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
     return_button.place(relx=1, rely=1, anchor='se')
 
-    clear_list_button = tkinter.Button(high_scores_treeview, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
+    clear_list_button = tkinter.Button(lowbar, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
     clear_list_button.place(relx=0.66, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
