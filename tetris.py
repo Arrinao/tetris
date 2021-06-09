@@ -42,13 +42,14 @@ except AttributeError:
     image_dir = pathlib.Path(__file__).parent / "images"
 
 try:
-    with open(pathlib.Path(__file__).parent / 'game_data.json', 'r') as source:
-        json_dict = json.load(source)
+    open(pathlib.Path(__file__).parent / 'game_data.json', 'r')
 except FileNotFoundError:
     json_dict = {
         'game_speed': 300,
-        'high_scores': [],
-        }
+        'high_scores': []}
+else:
+    with open(pathlib.Path(__file__).parent / 'game_data.json', 'r') as source:
+        json_dict = json.load(source)
 
 
 def set_button_image(button_image, event):
