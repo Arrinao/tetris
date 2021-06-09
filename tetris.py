@@ -151,7 +151,6 @@ def run_gui():
     #game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
     lowbar = tkinter.Frame(high_scores_treeview, bg='black', height=72)
     lowbar.pack(side='bottom', fill='x')
-    lowbar.pack_propagate(0)
 
     new_game_button = tkinter.Button(
         sidebar,
@@ -171,10 +170,10 @@ def run_gui():
     high_scores_button.grid(sticky="n")
 
     return_button = tkinter.Button(lowbar, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
-    return_button.pack(side='right', pady=(22,0))
+    return_button.place(relx=1, rely=1, anchor='se')
 
     clear_list_button = tkinter.Button(lowbar, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
-    clear_list_button.pack(side='right', pady=(22,0))
+    clear_list_button.place(relx=0.66, rely=1, anchor='se')
 
     root.bind("<Left>", tetris_control.move_block_left)
     root.bind("<Right>", tetris_control.move_block_right)
