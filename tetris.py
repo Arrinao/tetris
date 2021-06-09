@@ -137,7 +137,6 @@ def run_gui():
     #high_scores_treeview.tk.eval('''ttk::style theme use clam
     #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
-    # Defining columns
     high_scores_treeview.column('#0', width=0, minwidth=0, stretch='NO')
     high_scores_treeview.column('Time Spent', width=100, minwidth=90, stretch='NO')
     high_scores_treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
