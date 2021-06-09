@@ -42,13 +42,13 @@ except AttributeError:
     image_dir = pathlib.Path(__file__).parent / "images"
 
 try:
-    with open(pathlib.Path(__file__).parent / 'game_data.json', 'r') as source:
+    with open(pathlib.Path(__file__).parent / "game_data.json", "r") as source:
         json_dict = json.load(source)
 except FileNotFoundError:
     json_dict = {
-        'game_speed': 300,
-        'high_scores': [],
-        }
+        "game_speed": 300,
+        "high_scores": [],
+    }
 
 
 def set_button_image(button_image, event):
@@ -60,8 +60,10 @@ root.resizable(False, False)
 
 
 def run_gui():
-    game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
-    game_frame.grid(row=1, sticky='nswe')
+    game_frame = tkinter.Frame(
+        root, width=square_size * game_width, height=square_size * game_height
+    )
+    game_frame.grid(row=1, sticky="nswe")
     game_frame.pack_propagate(0)
 
     global game_canvas
@@ -72,16 +74,16 @@ def run_gui():
         highlightthickness=1,
         highlightbackground="royal blue",
     )
-    game_canvas.pack(fill='both', expand=True)
+    game_canvas.pack(fill="both", expand=True)
 
     topbar = tkinter.Frame(root, bg=D_GREY, relief="ridge")
     topbar.grid(row=0, columnspan=2, sticky="we")
 
     global topbar_time
     topbar_time = tkinter.Label(
-        topbar, bg='black', text="00:00", font=("Digital-7 Mono", 20), fg="hot pink"
+        topbar, bg="black", text="00:00", font=("Digital-7 Mono", 20), fg="hot pink"
     )
-    topbar_time.config(highlightbackground='red', highlightcolor='red')
+    topbar_time.config(highlightbackground="red", highlightcolor="red")
     topbar_time.pack(side="left", padx=15)
 
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
@@ -107,7 +109,7 @@ def run_gui():
 
     global topbar_score
     topbar_score = tkinter.Label(
-        topbar, bg='black', text="0", font=("Digital-7 Mono", 32), fg="lightblue", anchor="e"
+        topbar, bg="black", text="0", font=("Digital-7 Mono", 32), fg="lightblue", anchor="e"
     )
     topbar_score.pack(side="right", padx=20, fill="x", expand=True)
 
@@ -115,8 +117,19 @@ def run_gui():
     sidebar.grid(row=1, column=1, sticky="nsw")
 
     # image source https://cooltext.com/
-    image_paths = {} 
-    button_images = ["start.png", "hstart.png", "return.png", "hreturn.png", "gamemode.png", "hgamemode.png", "clearlist.png", "hclearlist.png", "highscores.png", "hhighscores.png"]
+    image_paths = {}
+    button_images = [
+        "start.png",
+        "hstart.png",
+        "return.png",
+        "hreturn.png",
+        "gamemode.png",
+        "hgamemode.png",
+        "clearlist.png",
+        "hclearlist.png",
+        "highscores.png",
+        "hhighscores.png",
+    ]
     for filename in button_images:
         transparent_image = tkinter.PhotoImage(file=(image_dir / filename))
         image_paths[filename] = tkinter.PhotoImage(file=image_dir / "button.png")
@@ -128,28 +141,43 @@ def run_gui():
     tetris_control = TetrisControl()
 
     style = ttk.Style(game_frame)
-    style.theme_use('default')
-    style.configure('Treeview', rowheight=25, background=D_GREY, foreground='dark orange', fieldbackground=D_GREY, font=('Bahnschrift Condensed', 16))
-    style.map('Treeview', background=[('selected', '#BFBFBF')], foreground=[('selected', 'black')])
-    style.configure("Treeview.Heading", background='gray4', foreground='orangered', font=('Arrr Matey BB', 22), padding=[5,0])
+    style.theme_use("default")
+    style.configure(
+        "Treeview",
+        rowheight=25,
+        background=D_GREY,
+        foreground="dark orange",
+        fieldbackground=D_GREY,
+        font=("Bahnschrift Condensed", 16),
+    )
+    style.map("Treeview", background=[("selected", "#BFBFBF")], foreground=[("selected", "black")])
+    style.configure(
+        "Treeview.Heading",
+        background="gray4",
+        foreground="orangered",
+        font=("Arrr Matey BB", 22),
+        padding=[5, 0],
+    )
     global high_scores_treeview
-    high_scores_treeview = ttk.Treeview(game_frame, columns=('Time Spent', 'Game Speed', 'Score'), height=10)
-    #high_scores_treeview.tk.eval('''ttk::style theme use clam
-    #ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
+    high_scores_treeview = ttk.Treeview(
+        game_frame, columns=("Time Spent", "Game Speed", "Score"), height=10
+    )
+    # high_scores_treeview.tk.eval('''ttk::style theme use clam
+    # ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
-    high_scores_treeview.column('#0', width=0, minwidth=0, stretch='NO')
-    high_scores_treeview.column('Time Spent', width=100, minwidth=90, stretch='NO')
-    high_scores_treeview.column('Game Speed', width=119, minwidth=130, stretch='NO')
-    high_scores_treeview.column('Score', width=100, minwidth=90, stretch='NO')
+    high_scores_treeview.column("#0", width=0, minwidth=0, stretch="NO")
+    high_scores_treeview.column("Time Spent", width=100, minwidth=90, stretch="NO")
+    high_scores_treeview.column("Game Speed", width=119, minwidth=130, stretch="NO")
+    high_scores_treeview.column("Score", width=100, minwidth=90, stretch="NO")
 
     # Defining headings
-    high_scores_treeview.heading('#0', text='', anchor='w')
-    high_scores_treeview.heading('Time Spent', text='Time Spent', anchor='w')
-    high_scores_treeview.heading('Game Speed', text='Game Speed', anchor='w')
-    high_scores_treeview.heading('Score', text='Score', anchor='w')
-    #game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
-    lowbar = tkinter.Frame(high_scores_treeview, bg='black', height=72)
-    lowbar.pack(side='bottom', fill='x')
+    high_scores_treeview.heading("#0", text="", anchor="w")
+    high_scores_treeview.heading("Time Spent", text="Time Spent", anchor="w")
+    high_scores_treeview.heading("Game Speed", text="Game Speed", anchor="w")
+    high_scores_treeview.heading("Score", text="Score", anchor="w")
+    # game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
+    lowbar = tkinter.Frame(high_scores_treeview, bg="black", height=72)
+    lowbar.pack(side="bottom", fill="x")
     lowbar.pack_propagate(0)
 
     new_game_button = tkinter.Button(
@@ -162,18 +190,36 @@ def run_gui():
     new_game_button.grid(sticky="n")
 
     game_mode_button = tkinter.Button(
-        sidebar, image=image_paths["gamemode.png"], borderwidth=0, highlightthickness=0)
+        sidebar, image=image_paths["gamemode.png"], borderwidth=0, highlightthickness=0
+    )
     game_mode_button.grid(sticky="n")
 
     high_scores_button = tkinter.Button(
-        sidebar, image=image_paths["highscores.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
+        sidebar,
+        image=image_paths["highscores.png"],
+        borderwidth=0,
+        highlightthickness=0,
+        command=display_high_scores,
+    )
     high_scores_button.grid(sticky="n")
 
-    return_button = tkinter.Button(lowbar, image=image_paths["return.png"], borderwidth=0, highlightthickness=0, command=display_high_scores)
-    return_button.pack(side='right', pady=(22,0))
+    return_button = tkinter.Button(
+        lowbar,
+        image=image_paths["return.png"],
+        borderwidth=0,
+        highlightthickness=0,
+        command=display_high_scores,
+    )
+    return_button.pack(side="right", pady=(22, 0))
 
-    clear_list_button = tkinter.Button(lowbar, image=image_paths["clearlist.png"], borderwidth=0, highlightthickness=0, command=clear_high_scores)
-    clear_list_button.pack(side='right', pady=(22,0))
+    clear_list_button = tkinter.Button(
+        lowbar,
+        image=image_paths["clearlist.png"],
+        borderwidth=0,
+        highlightthickness=0,
+        command=clear_high_scores,
+    )
+    clear_list_button.pack(side="right", pady=(22, 0))
 
     root.bind("<Left>", tetris_control.move_block_left)
     root.bind("<Right>", tetris_control.move_block_right)
@@ -223,14 +269,23 @@ def draw_board(canvas):
 def get_high_scores_into_treeview():
     index = 0
     high_scores_treeview.delete(*high_scores_treeview.get_children())
-    for index, high_score_dict in enumerate(json_dict['high_scores']):
+    for index, high_score_dict in enumerate(json_dict["high_scores"]):
         if index % 2 == 0:
-            tag = 'odd_row'
+            tag = "odd_row"
         else:
-            tag = 'even_row'
-        high_scores_treeview.insert(parent="", index="end", tags=tag, values=(tetris_control.game.time_formatter(high_score_dict['Time']), high_score_dict['Game Speed'], high_score_dict['Score']))
-    high_scores_treeview.tag_configure('odd_row', background=D_GREY)
-    high_scores_treeview.tag_configure('even_row', background='black')
+            tag = "even_row"
+        high_scores_treeview.insert(
+            parent="",
+            index="end",
+            tags=tag,
+            values=(
+                tetris_control.game.time_formatter(high_score_dict["Time"]),
+                high_score_dict["Game Speed"],
+                high_score_dict["Score"],
+            ),
+        )
+    high_scores_treeview.tag_configure("odd_row", background=D_GREY)
+    high_scores_treeview.tag_configure("even_row", background="black")
 
 
 def display_high_scores():
@@ -239,19 +294,23 @@ def display_high_scores():
         game_canvas.pack_info()  # Raises error if canvas isn't packed
     except tkinter.TclError:
         high_scores_treeview.pack_forget()
-        game_canvas.pack(fill='both', expand=True)
+        game_canvas.pack(fill="both", expand=True)
     else:
-        game_canvas.pack_forget() 
+        game_canvas.pack_forget()
         if tetris_control.game.status == GameStatus.in_progress:
             tetris_control.pause_game()
-        high_scores_treeview.pack(side='top', fill='both', expand=True)
+        high_scores_treeview.pack(side="top", fill="both", expand=True)
 
 
 def clear_high_scores():
-    if mb.askokcancel("Clear high scores list?", "Are you sure you want to clear the high scores list?", parent=topbar_time):
+    if mb.askokcancel(
+        "Clear high scores list?",
+        "Are you sure you want to clear the high scores list?",
+        parent=topbar_time,
+    ):
         high_scores_treeview.delete(*high_scores_treeview.get_children())
-        json_dict['high_scores'] = []
-        with open('game_data.json', 'w') as game_data:
+        json_dict["high_scores"] = []
+        with open("game_data.json", "w") as game_data:
             json.dump(json_dict, game_data)
 
 
@@ -259,7 +318,7 @@ def new_game():
     if tetris_control.game is not None:
         tetris_control.game.status = GameStatus.game_over
     high_scores_treeview.pack_forget()
-    game_canvas.pack(fill='both', expand=True)
+    game_canvas.pack(fill="both", expand=True)
     small_board = Board(topbar_canvas, False)
     main_board = Board(game_canvas, True)
     game = Game(main_board, small_board, topbar_time)
@@ -570,8 +629,10 @@ class Game:
         y_coordinates = [y for (x, y) in self.coord_extractor()]
         if any(y < 0 for y in y_coordinates):
             self.status = GameStatus.game_over
-            json_dict['high_scores'].append({'Time': int(self.get_time()), 'Game Speed': game_speed, 'Score': self.score})
-            with open('game_data.json', 'w') as game_data:
+            json_dict["high_scores"].append(
+                {"Time": int(self.get_time()), "Game Speed": game_speed, "Score": self.score}
+            )
+            with open("game_data.json", "w") as game_data:
                 json.dump(json_dict, game_data)
 
 
