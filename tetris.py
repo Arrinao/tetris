@@ -244,10 +244,11 @@ def display_high_scores():
 
 
 def clear_high_scores():
-    high_scores_treeview.delete(*high_scores_treeview.get_children())
-    json_dict['high_scores'] = []
-    with open('game_data.json', 'w') as game_data:
-        json.dump(json_dict, game_data)
+    if mb.askokcancel("Clear high scores list?", "Are you sure you want to clear the high scores list?", parent=topbar_time):
+        high_scores_treeview.delete(*high_scores_treeview.get_children())
+        json_dict['high_scores'] = []
+        with open('game_data.json', 'w') as game_data:
+            json.dump(json_dict, game_data)
 
 
 def new_game():
