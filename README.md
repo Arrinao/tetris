@@ -16,10 +16,9 @@ All the font files (.ttf) need to be copied into the Fonts folder:
 
 **Sources**
 
-_Images_ - https://cooltext.com/
+_Images_: https://cooltext.com/
 
-_Fonts_ - https://cooltext.com/
-
-        - https://www.dafontfree.io/bahnschrift-font/
-
-        - https://www.dafont.com/digital-7.font
+_Fonts_:
+- https://cooltext.com/
+- https://www.dafontfree.io/bahnschrift-font/
+- https://www.dafont.com/digital-7.font
