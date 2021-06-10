@@ -84,7 +84,8 @@ def run_gui():
         topbar, bg="black", text="00:00", font=("Digital-7 Mono", 20), fg="hot pink"
     )
     topbar_time.config(highlightbackground="red", highlightcolor="red")
-    topbar_time.pack(side="left", padx=15)
+    # For whatever reason, on Linux, Digital-7 font needs extra space inside the label (ipady)
+    topbar_time.pack(side="left", padx=15, ipady=5)
 
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
     topbar_canvas_container = tkinter.Frame(
@@ -111,7 +112,7 @@ def run_gui():
     topbar_score = tkinter.Label(
         topbar, bg="black", text="0", font=("Digital-7 Mono", 32), fg="lightblue", anchor="e"
     )
-    topbar_score.pack(side="right", padx=20, fill="x", expand=True)
+    topbar_score.pack(side="right", padx=20, ipady=5, fill="x", expand=True)
 
     sidebar = tkinter.Frame(root, bg=D_GREY)
     sidebar.grid(row=1, column=1, sticky="nsw")
@@ -148,7 +149,7 @@ def run_gui():
         background=D_GREY,
         foreground="dark orange",
         fieldbackground=D_GREY,
-        font=("Bahnschrift Condensed", 16),
+        font=("Bahnschrift", 16),
     )
     style.map("Treeview", background=[("selected", "#BFBFBF")], foreground=[("selected", "black")])
     style.configure(
