@@ -84,6 +84,7 @@ def run_gui():
         topbar, bg="black", text="00:00", font=("Digital-7 Mono", 20), fg="hot pink"
     )
     topbar_time.config(highlightbackground="red", highlightcolor="red")
+    # For whatever reason, on Linux, Digital-7 font needs extra space inside the label (ipady)
     topbar_time.pack(side="left", padx=15, ipady=5)
 
     # This forces fixed size of topbar_canvas but allows it to resize constantly inside.
