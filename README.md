@@ -22,4 +22,4 @@ _Fonts_ - https://cooltext.com/
 
         - https://www.dafontfree.io/bahnschrift-font/
 
-        - https://fonts2u.com/digital-7-mono.font
+        - https://www.dafont.com/digital-7.font
