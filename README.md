@@ -2,7 +2,7 @@
 
 This is an attempt to recreate the good old Brick Game console in Python.
 
-![Snímek obrazovky 2021-09-27 214849](https://user-images.githubusercontent.com/62777744/134975557-0de8ccde-4917-4b91-9b3a-e98dcad01b51.png)
+![tetris_screenshot](https://user-images.githubusercontent.com/62777744/134980336-143ab2aa-31d2-483f-9b28-83e624c052cf.png)
 
 The program right now only features the game Tetris. It will feature more games in the future.
 
