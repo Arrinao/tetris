@@ -163,20 +163,17 @@ def run_gui():
     high_scores_treeview = ttk.Treeview(
         game_frame, columns=("Time Spent", "Game Speed", "Score"), height=10
     )
-    # high_scores_treeview.tk.eval('''ttk::style theme use clam
-    # ttk::style configure Treeview -fieldbackground gray7 -bordercolor red''')
 
     high_scores_treeview.column("#0", width=0, minwidth=0, stretch="NO")
     high_scores_treeview.column("Time Spent", width=100, minwidth=90, stretch="NO")
     high_scores_treeview.column("Game Speed", width=119, minwidth=130, stretch="NO")
     high_scores_treeview.column("Score", width=100, minwidth=90, stretch="NO")
 
-    # Defining headings
     high_scores_treeview.heading("#0", text="", anchor="w")
     high_scores_treeview.heading("Time Spent", text="Time Spent", anchor="w")
     high_scores_treeview.heading("Game Speed", text="Game Speed", anchor="w")
     high_scores_treeview.heading("Score", text="Score", anchor="w")
-    # game_frame = tkinter.Frame(root, width=square_size * game_width, height=square_size * game_height)
+
     lowbar = tkinter.Frame(high_scores_treeview, bg="black", height=72)
     lowbar.pack(side="bottom", fill="x")
     lowbar.pack_propagate(0)
