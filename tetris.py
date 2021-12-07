@@ -229,6 +229,22 @@ def run_gui():
     root.bind("<Down>", tetris_control.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_control.move_block_down_release)
 
+    # Mouse wheel on top of game canvas moves the block sideways
+    if sys.platform == "win32":
+
+        def on_wheel(event):
+            if event.delta > 0:  # Scrolled up
+                tetris_control.move_block_left(event)
+            else:
+                tetris_control.move_block_right(event)
+
+        game_canvas.bind("<MouseWheel>", on_wheel)
+    elif sys.platform == "darwin":
+        pass  # TODO: mouse wheel scrolling is smooth on macos, not sure what to do here
+    else:
+        game_canvas.bind("<Button-4>", tetris_control.move_block_left)
+        game_canvas.bind("<Button-5>", tetris_control.move_block_right)
+
     new_game_button.bind("<Enter>", partial(set_button_image, image_paths["hstart.png"]))
     new_game_button.bind("<Leave>", partial(set_button_image, image_paths["start.png"]))
     game_mode_button.bind("<Enter>", partial(set_button_image, image_paths["hgamemode.png"]))
