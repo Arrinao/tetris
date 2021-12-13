@@ -223,6 +223,8 @@ def run_gui():
     root.bind("<Right>", tetris_control.move_block_right)
     root.bind("<Up>", tetris_control.rotate_block)
     root.bind("<p>", tetris_control.pause_game)
+    root.bind("<w>", tetris_control.rotate_block)
+    root.bind("<s>", tetris_control.move_block_down_press)
     root.bind("<Down>", tetris_control.move_block_down_press)
     root.bind("<KeyRelease-Down>", tetris_control.move_block_down_release)
 
