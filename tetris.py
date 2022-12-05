@@ -159,10 +159,17 @@ def run_gui():
         font=("Arrr Matey BB", 22),
         padding=[5, 0],
     )
+
+    global high_scores_container
     global high_scores_treeview
+
+    # Use .pack() and .pack_forget() to toggle whether this is visible
+    high_scores_container = tkinter.Frame(game_frame)
+
     high_scores_treeview = ttk.Treeview(
-        game_frame, columns=("Time Spent", "Game Speed", "Score"), height=10
+        high_scores_container, columns=("Time Spent", "Game Speed", "Score"), height=10
     )
+    high_scores_treeview.pack(side="top", fill="both", expand=True)
 
     high_scores_treeview.column("#0", width=0, minwidth=0, stretch="NO")
     high_scores_treeview.column("Time Spent", width=100, minwidth=90, stretch="NO")
@@ -174,7 +181,7 @@ def run_gui():
     high_scores_treeview.heading("Game Speed", text="Game Speed", anchor="w")
     high_scores_treeview.heading("Score", text="Score", anchor="w")
 
-    lowbar = tkinter.Frame(high_scores_treeview, bg="black", height=72)
+    lowbar = tkinter.Frame(high_scores_container, bg="black", height=72)
     lowbar.pack(side="bottom", fill="x")
     lowbar.pack_propagate(0)
 
@@ -310,13 +317,13 @@ def display_high_scores():
     try:
         game_canvas.pack_info()  # Raises error if canvas isn't packed
     except tkinter.TclError:
-        high_scores_treeview.pack_forget()
+        high_scores_container.pack_forget()
         game_canvas.pack(fill="both", expand=True)
     else:
         game_canvas.pack_forget()
         if tetris_control.game.status == GameStatus.in_progress:
             tetris_control.pause_game()
-        high_scores_treeview.pack(side="top", fill="both", expand=True)
+        high_scores_container.pack(side="top", fill="both", expand=True)
 
 
 def clear_high_scores():
@@ -334,7 +341,7 @@ def clear_high_scores():
 def new_game():
     if tetris_control.game is not None:
         tetris_control.game.status = GameStatus.game_over
-    high_scores_treeview.pack_forget()
+    high_scores_container.pack_forget()
     game_canvas.pack(fill="both", expand=True)
     small_board = Board(topbar_canvas, False)
     main_board = Board(game_canvas, True)
